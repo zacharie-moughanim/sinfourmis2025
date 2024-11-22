@@ -26,6 +26,7 @@ type reine_action =
 
 type salle = {
   salle_type : salle_type;
+  degre : int;
   pheromone : int
 }
 
@@ -45,14 +46,9 @@ type reine_retour = {
   memoire : char array
 }
 
-(*
-module type Interface = sig
-  val fourmi_activation : fourmi_etat -> salle -> fourmi_retour
-
-  val reine_activation : fourmi_etat list -> salle -> reine_retour
-end
-*)
-
-let register_functions fourmi_activation reine_activation =
+let register_functions
+  (fourmi_activation : fourmi_etat -> salle -> fourmi_retour)
+  (reine_activation  : fourmi_etat list -> salle -> reine_retour)
+  =
   Callback.register "fourmi_activation" fourmi_activation;
   Callback.register "reine_activation" reine_activation

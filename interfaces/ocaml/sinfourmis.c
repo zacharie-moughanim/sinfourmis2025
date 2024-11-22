@@ -69,7 +69,7 @@ value salle_to_val(const salle *salle) {
     Store_field(res, 1, pheromone);
 
     value degre = Val_int(salle->degre);
-    Store_field(res, 2, pheromone);
+    Store_field(res, 2, degre);
 
     return res;
 }
