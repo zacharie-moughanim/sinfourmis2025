@@ -1,0 +1,5 @@
+.cache
+
+_build/
+sinfourmis.opam
+sinfourmis.h

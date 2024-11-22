@@ -1,0 +1,7 @@
+(library
+  (name sinfourmis)
+  (public_name sinfourmis)
+  (foreign_stubs
+    (language c)
+    (names sinfourmis)
+    (flags -fPIC)))

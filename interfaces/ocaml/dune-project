@@ -1,0 +1,10 @@
+(lang dune 3.16)
+
+(name sinfourmis)
+
+(generate_opam_files true)
+
+(package
+  (name sinfourmis)
+  (maintainers "Sinfonie")
+  (description "OCaml bindigs for Sinfourmis2025"))

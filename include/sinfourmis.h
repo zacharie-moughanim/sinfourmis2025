@@ -34,8 +34,8 @@ typedef enum reine_action {
 typedef struct salle {
     salle_type type;
     uint8_t pheromone;
-    uint32_t degre; // nombre de salles voisines
-                    // TODO add etat des arêtes (pour construction)
+    int32_t degre; // nombre de salles voisines
+                   // TODO add etat des arêtes (pour construction)
 } salle;
 
 /// structure représentant l'état d'une fourmi
@@ -47,7 +47,7 @@ typedef struct fourmi_etat {
     char memoire[256]; // on va peut-être modifier la taille de ce tableau
     int32_t result; // prend une valeur qui va dépendre de l'action prédemment réalisée (une valeur
                     // négative est à ignorer)
-    uint32_t eau; // valeur de la réserve d'eau (en nombre de tours)
+    int32_t eau; // valeur de la réserve d'eau (en nombre de tours)
 } fourmi_etat;
 
 /// structure décrivant une action de fourmi
@@ -57,7 +57,7 @@ typedef struct fourmi_etat {
 /// l'action correspondante (pas toujours nécessaire)
 typedef struct fourmi_retour {
     fourmi_action action;
-    uint32_t arg; // utilisé en argument d'action, type pas gravé dans le marbre pour l'instant
+    int32_t arg; // utilisé en argument d'action, type pas gravé dans le marbre pour l'instant
 } fourmi_retour;
 
 /// structure décrivant une action de la reine
