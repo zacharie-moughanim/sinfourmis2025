@@ -25,13 +25,42 @@ bool Map::load(const std::string_view &filename) {
         std::cerr << "Failed to find nodes in JSON" << std::endl;
         return false;
     }
+
+    std::unordered_set<std::pair<unsigned int, unsigned int>> edges;
     for (const auto &node : *json_nodes) {
         try {
-            nodes.emplace_back(node.get<salle>());
+            auto node_obj = node.get<Node>();
+            auto res = nodes.try_emplace(node_obj.get_id(), node_obj);
+            if (!res.second) {
+                std::cerr << "Duplicate node: " << node_obj.get_id() << std::endl;
+                return false;
+            }
+            auto neighbors_it = node.find("neighbors");
+            if (neighbors_it == node.end()) {
+                continue;
+            }
+            std::vector<unsigned int> neighbors = neighbors_it->get<std::vector<unsigned int>>();
+            for (const auto &neighbor : neighbors) {
+                edges.insert({node_obj.get_id(), neighbor});
+            }
         } catch (json::exception &e) {
             std::cerr << "Failed to parse node: " << e.what() << std::endl;
             return false;
         }
+    }
+    for (const auto &edge : edges) {
+        auto [node1, node2] = edge;
+        auto node1_it = nodes.find(node1);
+        if (node1_it == nodes.end()) {
+            std::cerr << "Node not found: " << node1 << std::endl;
+            return false;
+        }
+        auto node2_it = nodes.find(node2);
+        if (node2_it == nodes.end()) {
+            std::cerr << "Node not found: " << node2 << std::endl;
+            return false;
+        }
+        nodes[node1].add_edge(nodes[node2]);
     }
 
     auto json_teams = data.find("teams");
@@ -48,5 +77,26 @@ bool Map::load(const std::string_view &filename) {
         }
     }
 
+	to_dot("graph.dot");
+
     return true;
+}
+
+void Map::to_dot(const std::string_view &filename) const {
+    std::ofstream file(filename.data());
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file: " << filename << std::endl;
+        return;
+    }
+    file << "graph {" << std::endl;
+    for (const auto &node : nodes) {
+        file << "  " << node.first << std::endl;
+        for (const auto &edge : node.second.get_edges()) {
+            if (edge->get_node1()->get_id() == node.first) {
+				file << "  " << node.first << " -- " << edge->get_node2()->get_id() << std::endl;
+			}
+        }
+    }
+	file << "}" << std::endl;
+	file.close();
 }

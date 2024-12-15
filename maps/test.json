@@ -4,13 +4,31 @@
 			"id": 1,
 			"x": 0.5,
 			"y": 0.5,
-			"type": "empty"
+			"type": "empty",
+			"neighbors": [
+				2, 0
+			]
 		},
 		{
 			"id": 2,
 			"x": 0.5,
 			"y": 0.5,
 			"type": "water"
+		},
+		{
+			"id": 0,
+			"x": 20,
+			"y": 20,
+			"type": "food"
+		},
+		{
+			"id": 3,
+			"x": 0.5,
+			"y": 0.5,
+			"type": "empty",
+			"neighbors": [
+				0, 1
+			]
 		}
 	],
 	"teams": [

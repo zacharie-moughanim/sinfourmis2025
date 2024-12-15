@@ -4,6 +4,10 @@
 
 using json = nlohmann::json;
 
+/**
+ * @brief Represents a team in the game
+ * 
+ */
 class Team {
   public:
     Team() : id(-1), name("") {}
@@ -15,7 +19,8 @@ class Team {
     unsigned int getId() const {
         return id;
     }
-
+	
+	// for json serialization / deserialization
     NLOHMANN_DEFINE_TYPE_INTRUSIVE(Team, id, name)
 
   private:
