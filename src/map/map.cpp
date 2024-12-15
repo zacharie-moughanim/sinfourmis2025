@@ -27,7 +27,7 @@ bool Map::load(const std::string_view &filename) {
     }
     for (const auto &node : *json_nodes) {
         try {
-            nodes.emplace_back(node.get<Node>());
+            nodes.emplace_back(node.get<salle>());
         } catch (json::exception &e) {
             std::cerr << "Failed to parse node: " << e.what() << std::endl;
             return false;

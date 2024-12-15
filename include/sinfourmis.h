@@ -1,6 +1,7 @@
 #pragma once
 
 #ifdef __cplusplus
+// disable name mangling
 extern "C" {
 #endif
 #include <stdint.h>
@@ -35,6 +36,7 @@ typedef enum reine_action {
 
 /// structure représentant une salle
 typedef struct salle {
+	unsigned int id;
     salle_type type;
     uint8_t pheromone;
     int32_t degre; // nombre de salles voisines

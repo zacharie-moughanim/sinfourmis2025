@@ -1,7 +1,9 @@
 #pragma once
 
-#include "map/node.hpp"
+#include "sinfourmis.h"
+#include "salle_parser.hpp"
 #include "map/team.hpp"
+#include "map/node.hpp"
 #include <string_view>
 #include <vector>
 
