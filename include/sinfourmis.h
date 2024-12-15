@@ -1,5 +1,8 @@
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include <stdint.h>
 
 /// décrit le type d'une salle
@@ -86,3 +89,6 @@ reine_action reine_activation(const fourmi_etat fourmis[], const salle *salle);
 ///
 /// renvoie l'action à effectuer par la fourmi
 fourmi_retour fourmi_activation(const fourmi_etat *etat, const salle *salle);
+#ifdef __cplusplus
+}
+#endif

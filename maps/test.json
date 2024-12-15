@@ -1,0 +1,28 @@
+{
+	"nodes": [
+		{
+			"id": 1,
+			"x": 0.5,
+			"y": 0.5,
+			"type": "empty"
+		},
+		{
+			"id": 2,
+			"x": 0.5,
+			"y": 0.5,
+			"type": "water"
+		}
+	],
+	"teams": [
+		{
+			"id": 1,
+			"name": "team1",
+			"color": "red"
+		},
+		{
+			"id": 2,
+			"name": "team2",
+			"color": "blue"
+		}
+	]
+}
