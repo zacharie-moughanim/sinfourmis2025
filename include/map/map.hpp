@@ -35,6 +35,14 @@ class Map {
 	 */
     void to_dot(const std::string_view &filename) const;
 
+	size_t get_node_count() const {
+		return nodes.size();
+	}
+
+	size_t get_team_count() const {
+		return teams.size();
+	}
+
   private:
     std::vector<Team> teams;
     std::unordered_map<unsigned int, Node> nodes;
