@@ -4,7 +4,7 @@ class Node;
 
 /**
  * @brief Represents an edge between two nodes.
- * 
+ *
  */
 class Edge {
   public:

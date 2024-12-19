@@ -77,7 +77,7 @@ bool Map::load(const std::string_view &filename) {
         }
     }
 
-	to_dot("graph.dot");
+    to_dot("graph.dot");
 
     return true;
 }
@@ -93,10 +93,10 @@ void Map::to_dot(const std::string_view &filename) const {
         file << "  " << node.first << std::endl;
         for (const auto &edge : node.second.get_edges()) {
             if (edge->get_node1()->get_id() == node.first) {
-				file << "  " << node.first << " -- " << edge->get_node2()->get_id() << std::endl;
-			}
+                file << "  " << node.first << " -- " << edge->get_node2()->get_id() << std::endl;
+            }
         }
     }
-	file << "}" << std::endl;
-	file.close();
+    file << "}" << std::endl;
+    file.close();
 }

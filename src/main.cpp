@@ -7,18 +7,14 @@ int main(int argc, char **argv) {
     program.add_description("The 2025 sinfourmis simulator");
     program.add_epilog("MIT Licence - Copyright (c) 2025 - sinfonie");
     program.add_argument("map").help("The map file to use").required().metavar("MAP");
-	auto &group = program.add_mutually_exclusive_group(true);
+    auto &group = program.add_mutually_exclusive_group(true);
 
     group.add_argument("-c", "--check")
-         .help("Check the map file for errors and exit")
-         .default_value(false)
-         .implicit_value(true);
-	
-	group.add_argument("-t", "--team")
-	     .help("Team files to use")
-		 .nargs(1)
-		 .append()
-		 .metavar("TEAM");
+        .help("Check the map file for errors and exit")
+        .default_value(false)
+        .implicit_value(true);
+
+    group.add_argument("-t", "--team").help("Team files to use").nargs(1).append().metavar("TEAM");
 
     program.add_argument("-o", "--output")
         .help("The combat output file used to store the results")
@@ -55,16 +51,17 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-	auto teams_opt = program.present<std::vector<std::string>>("team");
-	if (!teams_opt.has_value()) {
-		std::cerr << "No team files provided" << std::endl;
-		return 1;
-	}
-	auto teams = teams_opt.value();
-	if (teams.size() != map.get_team_count()) {
-		std::cerr << "Invalid number of teams : " << teams.size() << " instead of " << map.get_team_count() << std::endl;
-		return 1;
-	}
+    auto teams_opt = program.present<std::vector<std::string>>("team");
+    if (!teams_opt.has_value()) {
+        std::cerr << "No team files provided" << std::endl;
+        return 1;
+    }
+    auto teams = teams_opt.value();
+    if (teams.size() != map.get_team_count()) {
+        std::cerr << "Invalid number of teams : " << teams.size() << " instead of "
+                  << map.get_team_count() << std::endl;
+        return 1;
+    }
 
 	std::cerr << "Not implemented yet (but it works until here)" << std::endl;
 

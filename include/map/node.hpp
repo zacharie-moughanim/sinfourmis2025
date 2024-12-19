@@ -13,22 +13,23 @@ class Node {
     Node() = default;
     ~Node();
 
-	// for json serialization / deserialization
+    // for json serialization / deserialization
     NLOHMANN_DEFINE_TYPE_INTRUSIVE(Node, id, type, x, y)
 
-	/**
-	 * @brief Convert the node to a salle that can be sent to the ants simulation
-	 * 
-	 * @param team_id the id of the team requesting the salle
-	 * @return salle the salle representation of the node
-	 */
+    /**
+     * @brief Convert the node to a salle that can be sent to the ants simulation
+     *
+     * @param team_id the id of the team requesting the salle
+     * @return salle the salle representation of the node
+     */
     salle as_salle(unsigned int team_id) const;
 
-	/**
-	 * @brief Add an edge from this node to another node. It is undirected so the other node will also have an edge to this node.
-	 * 
-	 * @param other the node to add an edge to
-	 */
+    /**
+     * @brief Add an edge from this node to another node. It is undirected so the other node will
+     * also have an edge to this node.
+     *
+     * @param other the node to add an edge to
+     */
     void add_edge(Node &other);
 
     unsigned int get_id() const {
