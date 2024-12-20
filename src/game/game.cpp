@@ -65,6 +65,10 @@ void Game::fourmi_action(Ant &ant) {
             break;
         case fourmi_action::ATTAQUE:
             {
+                if (ant.get_action_state() != AntActionState::NONE) {
+                    ant.set_result(-1);
+                    break;
+                }
                 if (result.arg >> 8 != 0) {
                     std::cout << "Warning: the attack is too big, it will be truncated"
                               << std::endl;
