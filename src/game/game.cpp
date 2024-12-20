@@ -64,24 +64,27 @@ void Game::fourmi_action(Ant &ant) {
             }
             break;
         case fourmi_action::ATTAQUE:
-		{
-			if (result.arg >> 8 != 0) {
-				std::cout << "Warning: the attack is too big, it will be truncated" << std::endl;
-				std::cout << "Perhaps it is a bug of your interface but else, nice try cheater ;)" << std::endl;
-			}
-			unsigned int team_id_attacked = result.arg & 0xFF;
-            if (ant.get_team_id() == team_id_attacked) {
-				std::cout << "Warning: self-attack on team" << ant.get_team_id() << std::endl;
-			}
-			int32_t result = 0;
-            for (auto &ant : ant.get_current_node()->get_ants()) {
-                if (ant->get_team_id() == team_id_attacked) {
-					result++;
-                    ant->apply_damages(ant->get_attack());
+            {
+                if (result.arg >> 8 != 0) {
+                    std::cout << "Warning: the attack is too big, it will be truncated"
+                              << std::endl;
+                    std::cout
+                        << "Perhaps it is a bug of your interface but else, nice try cheater ;)"
+                        << std::endl;
                 }
+                unsigned int team_id_attacked = result.arg & 0xFF;
+                if (ant.get_team_id() == team_id_attacked) {
+                    std::cout << "Warning: self-attack on team" << ant.get_team_id() << std::endl;
+                }
+                int32_t result = 0;
+                for (auto &ant : ant.get_current_node()->get_ants()) {
+                    if (ant->get_team_id() == team_id_attacked) {
+                        result++;
+                        ant->apply_damages(ant->get_attack());
+                    }
+                }
+                ant.set_result(result);
             }
-			ant.set_result(result);
-		}
             break;
         case fourmi_action::COMMENCE_CONSTRUCTION:
             // TODO
@@ -104,7 +107,7 @@ void Game::run() {
     std::vector<Ant> ants;
 
     while (!game_ended) {
-		map.regen_food();
+        map.regen_food();
 
         // === Ants turn ===
         ants.erase(

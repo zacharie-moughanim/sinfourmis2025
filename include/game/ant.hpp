@@ -44,9 +44,9 @@ class Ant {
         return queen->get_team_id();
     }
 
-	unsigned int get_attack() const {
-		return queen->get_attack();
-	}
+    unsigned int get_attack() const {
+        return queen->get_attack();
+    }
 
     void set_result(int32_t result) {
         this->etat.result = result;
@@ -58,7 +58,7 @@ class Ant {
 
   private:
     Node *current_Node = nullptr;
-	Queen *queen = nullptr;
+    Queen *queen = nullptr;
     fourmi_etat etat;
 
     AntActionState action_state = AntActionState::NONE;

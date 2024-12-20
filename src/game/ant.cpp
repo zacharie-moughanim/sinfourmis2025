@@ -1,7 +1,6 @@
 #include "game/ant.hpp"
 
-Ant::Ant(Node *node, Queen *queen)
-    : current_Node(node), queen(queen) {
+Ant::Ant(Node *node, Queen *queen) : current_Node(node), queen(queen) {
     etat.result = -1;
     etat.vie = queen->get_max_life();
     etat.eau = queen->get_max_water();
@@ -97,8 +96,8 @@ void Ant::stop_constructing() {
 }
 
 unsigned int Ant::gather_food() {
-	assert (current_Node->get_type() == salle_type::NOURRITURE);
-	unsigned int available_food = current_Node->gather_food(queen->get_max_food() - etat.nouriture);
-	etat.nouriture += available_food;
-	return available_food;
+    assert(current_Node->get_type() == salle_type::NOURRITURE);
+    unsigned int available_food = current_Node->gather_food(queen->get_max_food() - etat.nouriture);
+    etat.nouriture += available_food;
+    return available_food;
 }

@@ -18,8 +18,8 @@
 // =======================
 // Ant constants
 // =======================
-#define DEFAULT_MAX_LIFE 10U   // ant default maximum life
-#define DEFAULT_MAX_WATER 10U  // ant default maximum water
-#define DEFAULT_MAX_FOOD 10U   // ant default maximum food
-#define DEFAULT_ATTACK 1U      // ant default attack power
+#define DEFAULT_MAX_LIFE 10U       // ant default maximum life
+#define DEFAULT_MAX_WATER 10U      // ant default maximum water
+#define DEFAULT_MAX_FOOD 10U       // ant default maximum food
+#define DEFAULT_ATTACK 1U          // ant default attack power
 #define DEFAULT_MAX_STORED_ANT 10U // ant default maximum stored ant

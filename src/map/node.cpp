@@ -54,14 +54,14 @@ unsigned int Node::get_id_to(Node *node) const {
 }
 
 unsigned int Node::gather_food(unsigned int max_food) {
-	assert(this->type == salle_type::NOURRITURE);
-	unsigned int food = std::min(max_food, this->food);
-	this->food -= food;
-	return food;
+    assert(this->type == salle_type::NOURRITURE);
+    unsigned int food = std::min(max_food, this->food);
+    this->food -= food;
+    return food;
 }
 
 void Node::regen_food() {
-	if (this->type == salle_type::NOURRITURE) {
-		this->food = std::min(this->food + NODE_FOOD_REGEN, NODE_MAX_FOOD);
-	}
+    if (this->type == salle_type::NOURRITURE) {
+        this->food = std::min(this->food + NODE_FOOD_REGEN, NODE_MAX_FOOD);
+    }
 }
