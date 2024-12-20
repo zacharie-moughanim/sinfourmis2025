@@ -3,6 +3,7 @@
 #include "map/edge.hpp"
 #include "nlohmann/json.hpp"
 #include "salle_parser.hpp"
+#include "game/constants.hpp"
 #include "sinfourmis.h"
 #include <memory>
 #include <unordered_set>
@@ -61,6 +62,10 @@ class Node {
      */
     unsigned int get_id_to(Node *node) const;
 
+    unsigned int gather_food(unsigned int max_food);
+	#include "game/constants.hpp"
+    void regen_food();
+
     void set_pheromone(uint8_t pheromone) {
         this->pheromone = pheromone;
     }
@@ -95,6 +100,7 @@ class Node {
     float x = 0;
     float y = 0;
     uint8_t pheromone = 0;
+	unsigned int food = 0;
 
     std::vector<std::shared_ptr<Edge>> edges;
     std::unordered_set<Ant *> ants;

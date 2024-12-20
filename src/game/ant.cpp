@@ -95,3 +95,10 @@ void Ant::stop_constructing() {
     assert(action_state == AntActionState::CONSTRUCTING);
     action_state = AntActionState::NONE;
 }
+
+unsigned int Ant::gather_food() {
+	assert (current_Node->get_type() == salle_type::NOURRITURE);
+	unsigned int available_food = current_Node->gather_food(queen->get_max_food() - etat.nouriture);
+	etat.nouriture += available_food;
+	return available_food;
+}

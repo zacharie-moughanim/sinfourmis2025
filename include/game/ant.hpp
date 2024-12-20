@@ -50,6 +50,8 @@ class Ant {
     void construct();
     void stop_constructing();
 
+	unsigned int gather_food();
+
   private:
     Node *current_Node = nullptr;
 	Queen *queen = nullptr;

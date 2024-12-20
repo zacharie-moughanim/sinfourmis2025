@@ -100,3 +100,9 @@ void Map::to_dot(const std::string_view &filename) const {
     file << "}" << std::endl;
     file.close();
 }
+
+void Map::regen_food() {
+	for (auto &node : nodes) {
+		node.second.regen_food();
+	}
+}

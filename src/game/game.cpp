@@ -60,7 +60,7 @@ void Game::fourmi_action(Ant &ant) {
             if (ant.get_current_node()->get_type() != salle_type::NOURRITURE) {
                 ant.set_result(-1);
             } else {
-                // TODO
+                ant.set_result(ant.gather_food());
             }
             break;
         case fourmi_action::ATTAQUE:
@@ -87,6 +87,8 @@ void Game::run() {
     std::vector<Ant> ants;
 
     while (!game_ended) {
+		map.regen_food();
+
         // === Ants turn ===
         ants.erase(
             std::remove_if(ants.begin(), ants.end(), [](auto &ant) { return !ant.alive(); }));

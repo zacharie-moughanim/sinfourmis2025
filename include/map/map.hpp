@@ -35,6 +35,12 @@ class Map {
      */
     void to_dot(const std::string_view &filename) const;
 
+	/**
+	 * @brief Regenerate the food on the map
+	 * 
+	 */
+	void regen_food();
+
     size_t get_node_count() const {
         return nodes.size();
     }
