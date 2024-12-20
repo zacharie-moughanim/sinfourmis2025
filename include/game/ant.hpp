@@ -27,6 +27,15 @@ class Ant {
 
     bool alive();
 
+    void move_along(Edge *edge);
+    void displace();
+
+    void begin_construction(Edge *edge);
+    void construct();
+    void stop_constructing();
+
+    unsigned int gather_food();
+
     fourmi_etat as_fourmi_etat() const {
         return etat;
     }
@@ -35,6 +44,10 @@ class Ant {
         return queen->get_team_id();
     }
 
+	unsigned int get_attack() const {
+		return queen->get_attack();
+	}
+
     void set_result(int32_t result) {
         this->etat.result = result;
     }
@@ -42,15 +55,6 @@ class Ant {
     AntActionState get_action_state() const {
         return action_state;
     }
-
-    void move_along(Edge *edge);
-    void displace();
-
-    void begin_construction(Edge *edge);
-    void construct();
-    void stop_constructing();
-
-	unsigned int gather_food();
 
   private:
     Node *current_Node = nullptr;

@@ -62,8 +62,19 @@ class Node {
      */
     unsigned int get_id_to(Node *node) const;
 
+
+	/**
+	 * @brief remove `max_food` food from the node
+	 * 
+	 * @param max_food the maximum amount of food to gather
+	 * @return unsigned int the actual amount of food gathered
+	 */
     unsigned int gather_food(unsigned int max_food);
-	#include "game/constants.hpp"
+
+	/**
+	 * @brief Regenerate food on the node by `NODE_FOOD_REGEN`
+	 * 
+	 */
     void regen_food();
 
     void set_pheromone(uint8_t pheromone) {
@@ -91,6 +102,10 @@ class Node {
     std::pair<float, float> get_position() const {
         return {x, y};
     }
+
+	std::unordered_set<Ant *>& get_ants() {
+		return ants;
+	}
 
   private:
     void remove_edge(const std::shared_ptr<Edge> &edge);
