@@ -32,10 +32,23 @@ salle Node::as_salle() const {
     return salle;
 }
 
-void Node::add_ant(Ant* ant) {
-	ants.insert(ant);
+void Node::add_ant(Ant *ant) {
+    ants.insert(ant);
 }
 
-void Node::remove_ant(Ant* ant) {
-	ants.erase(ant);
+void Node::remove_ant(Ant *ant) {
+    ants.erase(ant);
+}
+
+Edge *Node::get_edge(unsigned int id) const {
+    return edges[id].get();
+}
+
+unsigned int Node::get_id_to(Node *node) const {
+    for (unsigned int i = 0; i < edges.size(); i++) {
+        if (edges[i]->get_other_node(this) == node) {
+            return i;
+        }
+    }
+    return -1;
 }

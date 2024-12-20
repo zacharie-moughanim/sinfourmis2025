@@ -19,52 +19,63 @@ Game &Game::getInstance() {
 }
 
 void Game::fourmi_action(Ant &ant) {
-	ant.water_action();
-	if (!ant.alive()) {
-		return;
-	}
-	// TODO: ant displacement
-	auto etat = ant.as_fourmi_etat();
-	auto room = ant.get_current_node()->as_salle();
-	auto result = interfaces[ant.get_team_id()]->fourmi_activation(&etat, &room);
-	switch (result.action) {
-		case FOURMI_PASSE:
-			ant.set_result(0);
-			break;
-		case fourmi_action::DEPLACEMENT:
-			if (ant.get_current_node()->degree() < (uint32_t)result.arg) {
-				ant.set_result(-1);
-			} else {
-				// TODO
-			}
-			break;
-		case fourmi_action::DEPOSE_PHEROMONE:
-			if (result.arg >> 8 != 0) {
-				std::cout << "Warning: the pheromone is too big, it will be truncated" << std::endl;
-				std::cout << "Perhaps it is a bug of your interface but else nice try cheater ;)" << std::endl;
-			}
-			ant.get_current_node()->set_pheromone(result.arg);
-			break;
-		case fourmi_action::RAMASSE_NOURRITURE:
-		    if (ant.get_current_node()->get_type() != salle_type::NOURRITURE) {
-				ant.set_result(-1);
-			} else {
-				// TODO
-			}
-			break;
-		case fourmi_action::ATTAQUE:
-			// TODO
-			break;
-		case fourmi_action::COMMENCE_CONSTRUCTION:
-			// TODO
-			break;
-		case fourmi_action::TERMINE_CONSTRUCTION:
-			// TODO
-			break;
-		default:
-			throw std::runtime_error("Invalid action");
-			break;
-	}
+    ant.water_action();
+    if (!ant.alive()) {
+        return;
+    }
+    if (ant.get_action_state() == AntActionState::MOVING) {
+        ant.displace();
+        return;
+    }
+    auto etat = ant.as_fourmi_etat();
+    auto room = ant.get_current_node()->as_salle();
+    auto result = interfaces[ant.get_team_id()]->fourmi_activation(&etat, &room);
+    switch (result.action) {
+        case FOURMI_PASSE:
+            ant.set_result(0);
+            break;
+        case fourmi_action::DEPLACEMENT:
+            if (ant.get_current_node()->degree() < (uint32_t)result.arg) {
+                ant.set_result(-1);
+            } else if (ant.get_action_state() != AntActionState::NONE) {
+                ant.set_result(-1);
+            } else if (ant.get_current_node()->get_edge(result.arg)->can_be_crossed()) {
+                ant.set_result(-2);
+            } else {
+                auto edge = ant.get_current_node()->get_edge(result.arg);
+                auto curr_node = ant.get_current_node();
+                ant.move_along(edge);
+                ant.set_result(edge->get_other_node(curr_node)->get_id_to(curr_node));
+            }
+            break;
+        case fourmi_action::DEPOSE_PHEROMONE:
+            if (result.arg >> 8 != 0) {
+                std::cout << "Warning: the pheromone is too big, it will be truncated" << std::endl;
+                std::cout << "Perhaps it is a bug of your interface but else, nice try cheater ;)"
+                          << std::endl;
+            }
+            ant.get_current_node()->set_pheromone(result.arg & 0xFF);
+            break;
+        case fourmi_action::RAMASSE_NOURRITURE:
+            if (ant.get_current_node()->get_type() != salle_type::NOURRITURE) {
+                ant.set_result(-1);
+            } else {
+                // TODO
+            }
+            break;
+        case fourmi_action::ATTAQUE:
+            // TODO
+            break;
+        case fourmi_action::COMMENCE_CONSTRUCTION:
+            // TODO
+            break;
+        case fourmi_action::TERMINE_CONSTRUCTION:
+            // TODO
+            break;
+        default:
+            throw std::runtime_error("Invalid action");
+            break;
+    }
 }
 
 void Game::run() {
@@ -80,10 +91,10 @@ void Game::run() {
         ants.erase(
             std::remove_if(ants.begin(), ants.end(), [](auto &ant) { return !ant.alive(); }));
         for (auto &ant : ants) {
-			fourmi_action(ant);
+            fourmi_action(ant);
         }
 
         // === Queen turn ===
-		// TODO
+        // TODO
     }
 }

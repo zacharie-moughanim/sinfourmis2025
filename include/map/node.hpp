@@ -1,7 +1,6 @@
 #pragma once
 
 #include "map/edge.hpp"
-#include "game/ant.hpp"
 #include "nlohmann/json.hpp"
 #include "salle_parser.hpp"
 #include "sinfourmis.h"
@@ -11,6 +10,7 @@
 using json = nlohmann::json;
 
 class Ant;
+class Edge;
 
 class Node {
   public:
@@ -35,23 +35,35 @@ class Node {
      */
     void add_edge(Node &other);
 
-	/**
-	 * @brief Add an ant to the node as a visitor
-	 * 
-	 * @param ant the ant to add
-	 */
-	void add_ant(Ant* ant);
-	
-	/**
-	 * @brief Remove an ant from the node
-	 * 
-	 * @param ant the ant to remove
-	 */
-	void remove_ant(Ant* ant);
+    /**
+     * @brief Add an ant to the node as a visitor
+     *
+     * @param ant the ant to add
+     */
+    void add_ant(Ant *ant);
 
-	void set_pheromone(uint8_t pheromone) {
-		this->pheromone = pheromone;
-	}
+    /**
+     * @brief Remove an ant from the node
+     *
+     * @param ant the ant to remove
+     */
+    void remove_ant(Ant *ant);
+
+    /**
+     * @param id the id of the edge to get
+     * @return Edge* the edge with the given id
+     */
+    Edge *get_edge(unsigned int id) const;
+
+    /**
+     * @param node the node to get the edge to
+     * @return Edge* the edge to the given node
+     */
+    unsigned int get_id_to(Node *node) const;
+
+    void set_pheromone(uint8_t pheromone) {
+        this->pheromone = pheromone;
+    }
 
     unsigned int get_id() const {
         return id;
@@ -67,9 +79,13 @@ class Node {
         return type;
     }
 
-	size_t degree() const {
-		return edges.size();
-	}
+    size_t degree() const {
+        return edges.size();
+    }
+
+    std::pair<float, float> get_position() const {
+        return {x, y};
+    }
 
   private:
     void remove_edge(const std::shared_ptr<Edge> &edge);
@@ -78,8 +94,8 @@ class Node {
     salle_type type = salle_type::VIDE;
     float x = 0;
     float y = 0;
-	uint8_t pheromone = 0;
+    uint8_t pheromone = 0;
 
     std::vector<std::shared_ptr<Edge>> edges;
-	std::unordered_set<Ant*> ants;
+    std::unordered_set<Ant *> ants;
 };

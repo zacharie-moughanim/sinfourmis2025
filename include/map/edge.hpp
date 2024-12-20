@@ -1,5 +1,9 @@
 #pragma once
 
+#include "game/constants.hpp"
+#include "map/node.hpp"
+#include <cmath>
+
 class Node;
 
 /**
@@ -9,7 +13,24 @@ class Node;
 class Edge {
   public:
     Edge() = default;
-    Edge(Node *n1, Node *n2) : node1(n1), node2(n2) {}
+    Edge(Node *n1, Node *n2);
+
+    /**
+     * @brief Get the other side node of the edge.
+     *
+     * @param node the current node
+     * @return Node* the other node
+     */
+    Node *get_other_node(Node *node) const;
+
+    bool can_be_crossed() const;
+
+    void attack(unsigned int damages);
+    void construct();
+
+    float get_length() const {
+        return length;
+    }
 
     Node *get_node1() const {
         return node1;
@@ -21,4 +42,6 @@ class Edge {
   private:
     Node *node1 = nullptr;
     Node *node2 = nullptr;
+    float length = 0;
+    unsigned int life = EDGE_LIFE;
 };

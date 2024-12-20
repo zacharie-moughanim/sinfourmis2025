@@ -5,6 +5,7 @@ project(Sinfourmis)
 add_executable(Sinfourmis 
 	src/map/map.cpp
 	src/map/node.cpp
+	src/map/edge.cpp
 	src/game/game.cpp
 	src/game/ant.cpp
 	src/main.cpp

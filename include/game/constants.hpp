@@ -1,6 +1,5 @@
 #pragma once
 
-
 // TODO: Equilibrate the game constants
 
 // =======================
@@ -15,4 +14,3 @@
 // =======================
 #define NODE_MAX_FOOD 100 // node maximum food quantity
 #define NODE_FOOD_REGEN 5 // node food regeneration quantity in unit/turn
-

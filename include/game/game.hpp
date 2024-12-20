@@ -3,8 +3,8 @@
 #include "game/ant.hpp"
 #include "interfaces/interface.hpp"
 #include "map/map.hpp"
-#include <vector>
 #include <iostream>
+#include <vector>
 
 /**
  * @brief Game object. It is a singleton that holds the game state and runs the game
@@ -18,7 +18,7 @@ class Game {
     void setMap(const Map &map);
     void addInterface(Interface *interface);
 
-	void fourmi_action(Ant &ant);
+    void fourmi_action(Ant &ant);
     void run();
 
     Game(const Game &) = delete;
