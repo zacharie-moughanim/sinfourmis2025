@@ -17,6 +17,7 @@ typedef enum fourmi_action {
     COMMENCE_CONSTRUCTION,
     TERMINE_CONSTRUCTION,
     ATTAQUE,
+    ATTAQUE_TUNNEL,
     FOURMI_PASSE
 } fourmi_action;
 

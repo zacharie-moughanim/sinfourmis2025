@@ -9,7 +9,7 @@
 enum class AntActionState {
     NONE,
     MOVING,
-    CONSTRUCTING,
+    DIGGING,
 };
 
 class Ant {
@@ -30,9 +30,9 @@ class Ant {
     void move_along(Edge *edge);
     void displace();
 
-    void begin_construction(Edge *edge);
-    void construct();
-    void stop_constructing();
+    void begin_digging(Edge *edge);
+    void dig();
+    void stop_digging();
 
     unsigned int gather_food();
 

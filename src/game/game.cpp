@@ -27,6 +27,10 @@ void Game::fourmi_action(Ant &ant) {
         ant.displace();
         return;
     }
+    if (ant.get_action_state() == AntActionState::DIGGING) {
+        ant.dig();
+        return;
+    }
     auto etat = ant.as_fourmi_etat();
     auto room = ant.get_current_node()->as_salle();
     auto result = interfaces[ant.get_team_id()]->fourmi_activation(&etat, &room);
@@ -57,7 +61,8 @@ void Game::fourmi_action(Ant &ant) {
             ant.get_current_node()->set_pheromone(result.arg & 0xFF);
             break;
         case fourmi_action::RAMASSE_NOURRITURE:
-            if (ant.get_current_node()->get_type() != salle_type::NOURRITURE) {
+            if (ant.get_current_node()->get_type() != salle_type::NOURRITURE ||
+                ant.get_action_state() != AntActionState::NONE) {
                 ant.set_result(-1);
             } else {
                 ant.set_result(ant.gather_food());
@@ -91,10 +96,35 @@ void Game::fourmi_action(Ant &ant) {
             }
             break;
         case fourmi_action::COMMENCE_CONSTRUCTION:
-            // TODO
+            if (ant.get_action_state() != AntActionState::NONE) {
+                ant.set_result(-1);
+                break;
+            }
+            if (ant.get_current_node()->degree() < (uint32_t)result.arg) {
+                ant.set_result(-1);
+                break;
+            }
+            ant.begin_digging(ant.get_current_node()->get_edge(result.arg));
+            ant.set_result(0);
             break;
         case fourmi_action::TERMINE_CONSTRUCTION:
-            // TODO
+            if (ant.get_action_state() != AntActionState::DIGGING) {
+                ant.set_result(-1);
+                break;
+            }
+            ant.stop_digging();
+            ant.set_result(0);
+            break;
+        case fourmi_action::ATTAQUE_TUNNEL:
+            if (ant.get_action_state() != AntActionState::NONE) {
+                ant.set_result(-1);
+                break;
+            }
+            if (ant.get_current_node()->degree() < (uint32_t)result.arg) {
+                ant.set_result(-1);
+                break;
+            }
+            ant.set_result(ant.get_current_node()->get_edge(result.arg)->attack(ant.get_attack()));
             break;
         default:
             throw std::runtime_error("Invalid action");

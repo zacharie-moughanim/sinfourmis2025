@@ -79,19 +79,19 @@ void Ant::displace() {
     }
 }
 
-void Ant::begin_construction(Edge *edge) {
+void Ant::begin_digging(Edge *edge) {
     assert(action_state == AntActionState::NONE);
-    action_state = AntActionState::CONSTRUCTING;
+    action_state = AntActionState::DIGGING;
     current_edge = edge;
 }
 
-void Ant::construct() {
-    assert(action_state == AntActionState::CONSTRUCTING);
-    current_edge->construct();
+void Ant::dig() {
+    assert(action_state == AntActionState::DIGGING);
+    current_edge->dig();
 }
 
-void Ant::stop_constructing() {
-    assert(action_state == AntActionState::CONSTRUCTING);
+void Ant::stop_digging() {
+    assert(action_state == AntActionState::DIGGING);
     action_state = AntActionState::NONE;
 }
 

@@ -25,8 +25,8 @@ class Edge {
 
     bool can_be_crossed() const;
 
-    void attack(unsigned int damages);
-    void construct();
+    unsigned int attack(unsigned int damages);
+    void dig();
 
     float get_length() const {
         return length;

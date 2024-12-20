@@ -20,15 +20,16 @@ bool Edge::can_be_crossed() const {
     return life > EDGE_MIN_LIFE;
 }
 
-void Edge::attack(unsigned int damages) {
+unsigned int Edge::attack(unsigned int damages) {
     if (life > damages) {
         life -= damages;
     } else {
         life = 0;
     }
+    return life;
 }
 
-void Edge::construct() {
+void Edge::dig() {
     if (life < EDGE_LIFE) {
         life++;
     }
