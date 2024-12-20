@@ -1,12 +1,16 @@
 #pragma once
 
 #include "map/edge.hpp"
+#include "game/ant.hpp"
 #include "nlohmann/json.hpp"
 #include "salle_parser.hpp"
 #include "sinfourmis.h"
 #include <memory>
+#include <unordered_set>
 
 using json = nlohmann::json;
+
+class Ant;
 
 class Node {
   public:
@@ -19,10 +23,9 @@ class Node {
     /**
      * @brief Convert the node to a salle that can be sent to the ants simulation
      *
-     * @param team_id the id of the team requesting the salle
      * @return salle the salle representation of the node
      */
-    salle as_salle(unsigned int team_id) const;
+    salle as_salle() const;
 
     /**
      * @brief Add an edge from this node to another node. It is undirected so the other node will
@@ -31,6 +34,24 @@ class Node {
      * @param other the node to add an edge to
      */
     void add_edge(Node &other);
+
+	/**
+	 * @brief Add an ant to the node as a visitor
+	 * 
+	 * @param ant the ant to add
+	 */
+	void add_ant(Ant* ant);
+	
+	/**
+	 * @brief Remove an ant from the node
+	 * 
+	 * @param ant the ant to remove
+	 */
+	void remove_ant(Ant* ant);
+
+	void set_pheromone(uint8_t pheromone) {
+		this->pheromone = pheromone;
+	}
 
     unsigned int get_id() const {
         return id;
@@ -42,6 +63,14 @@ class Node {
         return edges;
     }
 
+    salle_type get_type() const {
+        return type;
+    }
+
+	size_t degree() const {
+		return edges.size();
+	}
+
   private:
     void remove_edge(const std::shared_ptr<Edge> &edge);
 
@@ -49,7 +78,8 @@ class Node {
     salle_type type = salle_type::VIDE;
     float x = 0;
     float y = 0;
+	uint8_t pheromone = 0;
 
-    std::unordered_map<unsigned int, uint8_t> pheromones;
     std::vector<std::shared_ptr<Edge>> edges;
+	std::unordered_set<Ant*> ants;
 };

@@ -24,14 +24,18 @@ void Node::remove_edge(const std::shared_ptr<Edge> &edge) {
     }
 }
 
-salle Node::as_salle(unsigned int team_id) const {
+salle Node::as_salle() const {
     salle salle;
     salle.degre = edges.size();
     salle.type = type;
-    if (auto it = pheromones.find(team_id); it != pheromones.end()) {
-        salle.pheromone = it->second;
-    } else {
-        salle.pheromone = 0;
-    }
+    salle.pheromone = pheromone;
     return salle;
+}
+
+void Node::add_ant(Ant* ant) {
+	ants.insert(ant);
+}
+
+void Node::remove_ant(Ant* ant) {
+	ants.erase(ant);
 }

@@ -13,10 +13,10 @@ class Team {
     Team() : id(-1), name("") {}
     Team(int id, std::string name, std::string color) : id(id), name(name) {}
 
-    std::string getName() const {
+    std::string get_name() const {
         return name;
     }
-    unsigned int getId() const {
+    unsigned int get_id() const {
         return id;
     }
 

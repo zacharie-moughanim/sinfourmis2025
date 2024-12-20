@@ -1,7 +1,7 @@
 #pragma once
 
+#include "game/team.hpp"
 #include "map/node.hpp"
-#include "map/team.hpp"
 #include "pair_hash.hpp"
 #include "salle_parser.hpp"
 #include "sinfourmis.h"
@@ -41,6 +41,10 @@ class Map {
 
     size_t get_team_count() const {
         return teams.size();
+    }
+
+    const Team &get_team(unsigned int id) const {
+        return teams.at(id);
     }
 
   private:

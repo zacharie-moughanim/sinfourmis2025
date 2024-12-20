@@ -1,4 +1,5 @@
 #include "argparse/argparse.hpp"
+#include "game/game.hpp"
 #include "map/map.hpp"
 #include <iostream>
 
@@ -63,9 +64,10 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-	std::cerr << "Not implemented yet (but it works until here)" << std::endl;
+    Game &game = Game::getInstance();
+    game.setMap(map);
 
-    // TODO: Run the simulation
+    game.run();
 
     return 0;
 }

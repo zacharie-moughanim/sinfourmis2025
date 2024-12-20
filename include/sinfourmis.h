@@ -52,6 +52,7 @@ typedef struct fourmi_etat {
     int32_t result; // prend une valeur qui va dépendre de l'action prédemment réalisée (une valeur
                     // négative est à ignorer)
     int32_t eau; // valeur de la réserve d'eau (en nombre de tours)
+	int32_t nouriture;
 } fourmi_etat;
 
 /// structure décrivant une action de fourmi
