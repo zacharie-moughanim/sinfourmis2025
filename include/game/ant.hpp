@@ -1,6 +1,7 @@
 #pragma once
 
 #include "game/constants.hpp"
+#include "game/queen.hpp"
 #include "map/node.hpp"
 #include "sinfourmis.h"
 #include <functional>
@@ -13,7 +14,7 @@ enum class AntActionState {
 
 class Ant {
   public:
-    Ant(unsigned int team_id, Node *node, uint8_t max_life, uint32_t max_water);
+    Ant(Node *node, Queen *queen);
     Ant(const Ant &&ant);
     Ant &operator=(const Ant &&ant);
     ~Ant();
@@ -31,7 +32,7 @@ class Ant {
     }
 
     unsigned int get_team_id() const {
-        return team_id;
+        return queen->get_team_id();
     }
 
     void set_result(int32_t result) {
@@ -50,11 +51,9 @@ class Ant {
     void stop_constructing();
 
   private:
-    unsigned int team_id = 0;
     Node *current_Node = nullptr;
+	Queen *queen = nullptr;
     fourmi_etat etat;
-    uint8_t max_life = 0;
-    uint32_t max_water = 0;
 
     AntActionState action_state = AntActionState::NONE;
     float displacement = 0;

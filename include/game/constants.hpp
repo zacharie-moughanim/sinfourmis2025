@@ -14,3 +14,12 @@
 // =======================
 #define NODE_MAX_FOOD 100 // node maximum food quantity
 #define NODE_FOOD_REGEN 5 // node food regeneration quantity in unit/turn
+
+// =======================
+// Ant constants
+// =======================
+#define DEFAULT_MAX_LIFE 10   // ant default maximum life
+#define DEFAULT_MAX_WATER 10  // ant default maximum water
+#define DEFAULT_MAX_FOOD 10   // ant default maximum food
+#define DEFAULT_ATTACK 1      // ant default attack power
+#define DEFAULT_MAX_STORED_ANT 10 // ant default maximum stored ant

@@ -50,7 +50,7 @@ typedef struct fourmi_etat {
     uint8_t vie;
     char memoire[256]; // on va peut-être modifier la taille de ce tableau
     int32_t result; // prend une valeur qui va dépendre de l'action prédemment réalisée (une valeur
-                    // négative est à ignorer)
+                    // négative correspond à une erreur)
     int32_t eau; // valeur de la réserve d'eau (en nombre de tours)
     int32_t nouriture;
 } fourmi_etat;

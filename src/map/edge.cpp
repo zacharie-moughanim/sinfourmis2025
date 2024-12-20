@@ -6,7 +6,7 @@ Edge::Edge(Node *n1, Node *n2) : node1(n1), node2(n2) {
     length = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
 }
 
-Node *Edge::get_other_node(Node *node) const {
+Node *Edge::get_other_node(const Node *node) const {
     if (node == node1) {
         return node2;
     }

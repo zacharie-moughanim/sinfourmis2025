@@ -21,7 +21,7 @@ class Edge {
      * @param node the current node
      * @return Node* the other node
      */
-    Node *get_other_node(Node *node) const;
+    Node *get_other_node(const Node *node) const;
 
     bool can_be_crossed() const;
 

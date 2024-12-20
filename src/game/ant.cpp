@@ -1,22 +1,22 @@
 #include "game/ant.hpp"
 
-Ant::Ant(unsigned int team_id, Node *node, uint8_t max_life, uint32_t max_water)
-    : team_id(team_id), current_Node(node), max_life(max_life), max_water(max_water) {
+Ant::Ant(Node *node, Queen *queen)
+    : current_Node(node), queen(queen) {
     etat.result = -1;
-    etat.vie = max_life;
-    etat.eau = max_water;
+    etat.vie = queen->get_max_life();
+    etat.eau = queen->get_max_water();
     etat.nouriture = 0;
     if (current_Node != nullptr) {
         node->add_ant(this);
     }
 }
 
-Ant::Ant(const Ant &&ant) : team_id(ant.team_id), current_Node(ant.current_Node) {
+Ant::Ant(const Ant &&ant) : current_Node(ant.current_Node), queen(ant.queen) {
     etat = ant.etat;
 }
 
 Ant &Ant::operator=(const Ant &&ant) {
-    team_id = ant.team_id;
+    queen = ant.queen;
     current_Node = ant.current_Node;
     etat = ant.etat;
     return *this;
@@ -52,7 +52,7 @@ void Ant::apply_damages(uint8_t damages) {
 
 void Ant::water_action() {
     if (current_Node != nullptr && current_Node->get_type() == salle_type::EAU) {
-        etat.eau = max_water;
+        etat.eau = queen->get_max_water();
     } else if (etat.eau > 0) {
         etat.eau--;
     }
