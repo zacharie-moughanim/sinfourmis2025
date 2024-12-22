@@ -41,6 +41,14 @@ class Map {
      */
     void regen_food();
 
+	/**
+	 * @brief Get the starting node for a team
+	 *
+	 * @param team_id the id of the team
+	 * @return the starting node for the team
+	 */
+	Node *get_starting_node(unsigned int team_id);
+
     size_t get_node_count() const {
         return nodes.size();
     }
@@ -49,11 +57,19 @@ class Map {
         return teams.size();
     }
 
+	const std::vector<Team> &get_teams() const {
+		return teams;
+	}
+
     const Team &get_team(unsigned int id) const {
         return teams.at(id);
     }
 
   private:
+	bool load_teams(const json &data);
+	bool load_nodes(const json &data);
+
     std::vector<Team> teams;
     std::unordered_map<unsigned int, Node> nodes;
+	std::unordered_map<unsigned int, unsigned int> starting_nodes;
 };

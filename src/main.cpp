@@ -2,6 +2,7 @@
 #include "game/game.hpp"
 #include "map/map.hpp"
 #include <iostream>
+#include <random>
 
 int main(int argc, char **argv) {
     argparse::ArgumentParser program("sinfourmis");
@@ -9,6 +10,8 @@ int main(int argc, char **argv) {
     program.add_epilog("MIT Licence - Copyright (c) 2025 - sinfonie");
     program.add_argument("map").help("The map file to use").required().metavar("MAP");
     auto &group = program.add_mutually_exclusive_group(true);
+
+    std::random_device rd;
 
     group.add_argument("-c", "--check")
         .help("Check the map file for errors and exit")
@@ -23,14 +26,14 @@ int main(int argc, char **argv) {
 
     program.add_group("Simulation options:");
     program.add_argument("-d", "--duration")
-        .help("The duration of the simulation in ticks")
+        .help("The duration of the simulation in turns")
         .default_value(1000)
         .nargs(1)
         .scan<'i', unsigned int>()
         .metavar("DURATION");
     program.add_argument("-s", "--seed")
-        .help("The seed to use for the random number generator")
-        .default_value(42)
+        .help("The seed to use for the random number generator, default to a random value")
+        .default_value(rd())
         .nargs(1)
         .scan<'i', unsigned int>()
         .metavar("SEED");
@@ -57,7 +60,7 @@ int main(int argc, char **argv) {
         std::cerr << "No team files provided" << std::endl;
         return 1;
     }
-    auto teams = teams_opt.value();
+    const std::vector<std::string> &teams = teams_opt.value();
     if (teams.size() != map.get_team_count()) {
         std::cerr << "Invalid number of teams : " << teams.size() << " instead of "
                   << map.get_team_count() << std::endl;
@@ -67,7 +70,7 @@ int main(int argc, char **argv) {
     Game &game = Game::getInstance();
     game.setMap(map);
 
-    game.run();
+    game.run(program.get<unsigned int>("duration"), program.get<unsigned int>("seed"));
 
     return 0;
 }

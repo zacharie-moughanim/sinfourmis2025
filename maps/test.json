@@ -5,6 +5,7 @@
 			"x": 0.5,
 			"y": 0.5,
 			"type": "empty",
+			"team": 1,
 			"neighbors": [
 				2, 0
 			]
@@ -25,6 +26,7 @@
 			"id": 3,
 			"x": 0.5,
 			"y": 0.5,
+			"team": 2,
 			"type": "empty",
 			"neighbors": [
 				0, 1
