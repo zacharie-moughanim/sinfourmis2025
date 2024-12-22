@@ -137,17 +137,17 @@ void Game::run(unsigned int duration, unsigned int seed) {
         throw std::runtime_error("Not enough interfaces");
     }
 
-	std::cout << "Running game with seed " << seed << std::endl;
+    std::cout << "Running game with seed " << seed << std::endl;
 
     bool game_ended = false;
     unsigned int turn = 0;
     gen.seed(seed);
 
-	std::unordered_map<unsigned int, Queen> queens;
-	for (auto &team : map.get_teams()) {
-		queens.emplace(team.get_id(), Queen(team.get_id(), map.get_starting_node(team.get_id())));
-	}
-    std::list<Ant> ants;
+    std::unordered_map<unsigned int, Queen> queens;
+    for (auto &team : map.get_teams()) {
+        queens.emplace(team.get_id(), Queen(team.get_id(), map.get_starting_node(team.get_id())));
+    }
+    std::vector<Ant> ants;
 
     while (!game_ended && turn < duration) {
         turn++;
@@ -156,7 +156,7 @@ void Game::run(unsigned int duration, unsigned int seed) {
         // === Ants turn ===
         ants.erase(
             std::remove_if(ants.begin(), ants.end(), [](auto &ant) { return !ant.alive(); }));
-		std::shuffle(ants.begin(), ants.end(), gen);
+        std::shuffle(ants.begin(), ants.end(), gen);
         for (auto &ant : ants) {
             fourmi_action(ant);
         }

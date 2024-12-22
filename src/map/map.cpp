@@ -16,7 +16,7 @@ bool Map::load_teams(const json &data) {
             return false;
         }
     }
-	return true;
+    return true;
 }
 
 bool Map::load_nodes(const json &data) {
@@ -63,8 +63,8 @@ bool Map::load_nodes(const json &data) {
             return false;
         }
     }
-    
-	if (teams.size() != starting_nodes.size()) {
+
+    if (teams.size() != starting_nodes.size()) {
         std::cerr << "Not enough starting nodes for teams" << std::endl;
         return false;
     }
@@ -83,7 +83,7 @@ bool Map::load_nodes(const json &data) {
         }
         nodes[node1].add_edge(nodes[node2]);
     }
-	return true;
+    return true;
 }
 
 bool Map::load(const std::string_view &filename) {
@@ -104,18 +104,17 @@ bool Map::load(const std::string_view &filename) {
         return false;
     }
 
+    if (!load_teams(data)) {
+        return false;
+    }
+    if (teams.empty()) {
+        std::cerr << "No teams found" << std::endl;
+        return false;
+    }
 
-	if (!load_teams(data)) {
-		return false;
-	}
-	if (teams.empty()) {
-		std::cerr << "No teams found" << std::endl;
-		return false;
-	}
-
-	if (!load_nodes(data)) {
-		return false;
-	}
+    if (!load_nodes(data)) {
+        return false;
+    }
 
     to_dot("graph.dot");
 
@@ -148,9 +147,9 @@ void Map::regen_food() {
 }
 
 Node *Map::get_starting_node(unsigned int team_id) {
-	auto it = starting_nodes.find(team_id);
-	if (it == starting_nodes.end()) {
-		throw std::runtime_error("Team not found in starting nodes");
-	}
-	return &nodes.at(it->second);
+    auto it = starting_nodes.find(team_id);
+    if (it == starting_nodes.end()) {
+        throw std::runtime_error("Team not found in starting nodes");
+    }
+    return &nodes.at(it->second);
 }
