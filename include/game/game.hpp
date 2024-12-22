@@ -4,8 +4,8 @@
 #include "game/queen.hpp"
 #include "interfaces/interface.hpp"
 #include "map/map.hpp"
+#include <algorithm>
 #include <iostream>
-#include <list>
 #include <random>
 
 /**

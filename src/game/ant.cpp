@@ -2,21 +2,25 @@
 
 Ant::Ant(Node *node, Queen *queen) : current_Node(node), queen(queen) {
     etat.result = -1;
-    etat.vie = queen->get_max_life();
-    etat.eau = queen->get_max_water();
+    etat.vie = queen->get_stat(Queen::Stat::LIFE);
+    max_water = queen->get_stat(Queen::Stat::WATER);
+    etat.eau = queen->get_stat(Queen::Stat::WATER);
+    max_food = queen->get_stat(Queen::Stat::FOOD);
     etat.nouriture = 0;
     if (current_Node != nullptr) {
         node->add_ant(this);
     }
 }
 
-Ant::Ant(const Ant &&ant) : current_Node(ant.current_Node), queen(ant.queen) {
+Ant::Ant(const Ant &&ant) : current_Node(ant.current_Node), queen(ant.queen), max_water(ant.max_water), max_food(ant.max_food) {
     etat = ant.etat;
 }
 
 Ant &Ant::operator=(const Ant &&ant) {
     queen = ant.queen;
     current_Node = ant.current_Node;
+	max_water = ant.max_water;
+	max_food = ant.max_food;
     etat = ant.etat;
     return *this;
 }
@@ -51,7 +55,7 @@ void Ant::apply_damages(uint8_t damages) {
 
 void Ant::water_action() {
     if (current_Node != nullptr && current_Node->get_type() == salle_type::EAU) {
-        etat.eau = queen->get_max_water();
+        etat.eau = max_water;
     } else if (etat.eau > 0) {
         etat.eau--;
     }
@@ -71,13 +75,13 @@ void Ant::move_along(Edge *edge) {
 void Ant::displace() {
     assert(action_state == AntActionState::MOVING);
     if (displacement < current_edge->get_length()) {
-		if (current_Node != nullptr) {
-			current_Node->remove_ant(this);
-		}
+        if (current_Node != nullptr) {
+            current_Node->remove_ant(this);
+        }
         displacement += EDGE_CROSS_SPEED;
     } else {
-		current_Node = current_edge->get_other_node(current_Node);
-		current_Node->add_ant(this);
+        current_Node = current_edge->get_other_node(current_Node);
+        current_Node->add_ant(this);
         action_state = AntActionState::NONE;
         displacement = 0;
     }
@@ -101,7 +105,7 @@ void Ant::stop_digging() {
 
 unsigned int Ant::gather_food() {
     assert(current_Node->get_type() == salle_type::NOURRITURE);
-    unsigned int available_food = current_Node->gather_food(queen->get_max_food() - etat.nouriture);
+    unsigned int available_food = current_Node->gather_food(max_food - etat.nouriture);
     etat.nouriture += available_food;
     return available_food;
 }

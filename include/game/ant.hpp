@@ -45,7 +45,7 @@ class Ant {
     }
 
     unsigned int get_attack() const {
-        return queen->get_attack();
+        return queen->get_stat(Queen::Stat::ATTACK);
     }
 
     void set_result(int32_t result) {
@@ -60,6 +60,8 @@ class Ant {
     Node *current_Node = nullptr;
     Queen *queen = nullptr;
     fourmi_etat etat;
+    unsigned int max_water = 0;
+    unsigned int max_food = 0;
 
     AntActionState action_state = AntActionState::NONE;
     float displacement = 0;

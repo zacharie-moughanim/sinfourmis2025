@@ -9,6 +9,17 @@ class Queen {
   public:
     Queen(unsigned int team_id, Node *node) : team_id(team_id), current_node(node) {}
 
+    enum class Stat : unsigned int { LIFE, WATER, FOOD, ATTACK, STORED_ANT };
+
+    void game_turn();
+    bool can_perform_action() const;
+    bool upgrade(Stat type);
+    unsigned int get_stat(Stat type) const;
+
+    unsigned int get_victory_points() const {
+        return victory_points;
+    }
+
     unsigned int get_team_id() const {
         return team_id;
     }
@@ -17,33 +28,16 @@ class Queen {
         return current_node;
     }
 
-    unsigned int get_max_life() const {
-        return max_life;
-    }
-
-    unsigned int get_max_water() const {
-        return max_water;
-    }
-
-    unsigned int get_max_food() const {
-        return max_food;
-    }
-
-    unsigned int get_attack() const {
-        return attack;
-    }
-
-    unsigned int get_max_stored_ant() const {
-        return max_stored_ant;
-    }
-
   private:
     unsigned int team_id = 0;
     Node *current_node = nullptr;
+    unsigned int waiting_upgrade = 0;
+    unsigned int victory_points = 0;
 
-    unsigned int max_life = DEFAULT_MAX_LIFE;
-    unsigned int max_water = DEFAULT_MAX_WATER;
-    unsigned int max_food = DEFAULT_MAX_FOOD;
-    unsigned int attack = DEFAULT_ATTACK;
-    unsigned int max_stored_ant = DEFAULT_MAX_STORED_ANT;
+    unsigned int stats[5] = {DEFAULT_MAX_LIFE, DEFAULT_MAX_WATER, DEFAULT_MAX_FOOD, DEFAULT_ATTACK,
+                             DEFAULT_MAX_STORED_ANT};
+
+    const static unsigned int upgrade_costs[5];
+
+    std::vector<char[256]> ants_memory;
 };
