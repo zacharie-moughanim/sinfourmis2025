@@ -71,9 +71,13 @@ void Ant::move_along(Edge *edge) {
 void Ant::displace() {
     assert(action_state == AntActionState::MOVING);
     if (displacement < current_edge->get_length()) {
+		if (current_Node != nullptr) {
+			current_Node->remove_ant(this);
+		}
         displacement += EDGE_CROSS_SPEED;
     } else {
-        set_current_node(current_edge->get_other_node(current_Node));
+		current_Node = current_edge->get_other_node(current_Node);
+		current_Node->add_ant(this);
         action_state = AntActionState::NONE;
         displacement = 0;
     }
