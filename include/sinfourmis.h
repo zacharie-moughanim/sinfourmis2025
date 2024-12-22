@@ -83,7 +83,8 @@ typedef struct reine_retour {
 /// salle: l'état de la salle dans laquelle se trouve la reine
 ///
 /// renvoie l'action à effectuer par la reine
-reine_action reine_activation(const fourmi_etat fourmis[], const salle *salle);
+reine_action reine_activation(const fourmi_etat fourmis[], const unsigned int nb_fourmis,
+                              const salle *salle);
 
 /// fonction d'activation des fourmis
 ///
