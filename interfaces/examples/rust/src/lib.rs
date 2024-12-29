@@ -16,11 +16,15 @@ pub extern "C" fn reine_activation(
     nb_fourmis: usize,
     salle: *const Salle,
 ) -> ReineRetour {
+    let fourmis;
     unsafe {
-        let fourmis = std::slice::from_raw_parts(fourmis_ptr as *const FourmiEtat, nb_fourmis);
+        let slice = std::slice::from_raw_parts(fourmis_ptr as *const FourmiEtat, nb_fourmis);
+        fourmis = slice.to_vec();
     }
-    let mut mem = [0; 256];
-    mem[0] = 1;
+
+    let mut mem: [u8; 256] = [0; 256];
+    let i = fourmis[0].nourriture;
+    mem[0] = i as u8;
     ReineRetour {
         action: ReineAction::RecupererFourmi,
         memoire: mem,

@@ -1,5 +1,6 @@
 /// décrit le type d'une salle
 #[repr(C)]
+#[derive(Debug, Clone, Copy)]
 pub enum SalleType {
     Vide,
     Eau,
@@ -8,6 +9,7 @@ pub enum SalleType {
 
 /// décrit l'action effectuée par une fourmi
 #[repr(C)]
+#[derive(Debug, Clone, Copy)]
 pub enum FourmiAction {
     Deplacement,
     RamasseNourriture,
@@ -21,6 +23,7 @@ pub enum FourmiAction {
 
 /// décrit l'action effectuée par la reine
 #[repr(C)]
+#[derive(Debug, Clone, Copy)]
 pub enum ReineAction {
     CreerFourmi,
     EnvouerFourmi,
@@ -36,6 +39,7 @@ pub enum ReineAction {
 
 /// structure représentant une salle
 #[repr(C)]
+#[derive(Debug, Clone, Copy)]
 pub struct Salle {
     pub salle_type: SalleType,
     pub pheromone: u8,
@@ -48,6 +52,7 @@ pub struct Salle {
 /// Cette structure est utilisée lors de l'éveil d'une fourmi. Le champ `memoire`
 /// n'est jamais modifié entre deux activations.
 #[repr(C)]
+#[derive(Debug, Clone, Copy)]
 pub struct FourmiEtat {
     pub vie: u8,
     pub memoire: [u8; 256],
@@ -63,6 +68,7 @@ pub struct FourmiEtat {
 /// décrit le type d'action réalisé à la fin du tour, et contient l'argument de
 /// l'action correspondante (pas toujours nécessaire)
 #[repr(C)]
+#[derive(Debug, Clone, Copy)]
 pub struct FourmiRetour {
     pub action: FourmiAction,
     pub arg: i32,
@@ -74,6 +80,7 @@ pub struct FourmiRetour {
 /// décrit le type d'action réalisé à la fin du tour, et contient la mémoire
 /// initiale de la fourmi à envoyer (si l'action est un envoi de fourmi)
 #[repr(C)]
+#[derive(Debug, Clone, Copy)]
 pub struct ReineRetour {
     pub action: ReineAction,
     pub memoire: [u8; 256],

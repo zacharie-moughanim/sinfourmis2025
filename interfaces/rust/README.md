@@ -42,8 +42,10 @@ pub extern "C" fn fourmi_activation(etat: *const FourmiEtat, salle: *const Salle
 /// renvoie l'action à effectuer par la reine
 #[no_mangle]
 pub extern "C" fn reine_activation(fourmis_ptr: usize, nb_fourmis: usize, salle: *const Salle) -> ReineRetour {
+    let fourmis;
     unsafe {
-        let fourmis = std::slice::from_raw_parts(fourmis_ptr as *const FourmiEtat, nb_fourmis);
+        let slice = std::slice::from_raw_parts(fourmis_ptr as *const FourmiEtat, nb_fourmis);
+        fourmis = slice.to_vec();
     }
     // VOTRE CODE ICI
 }
