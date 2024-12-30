@@ -68,6 +68,11 @@ int main(int argc, char **argv) {
     }
 
     Game &game = Game::getInstance();
+
+	for (const std::string &team : teams) {
+		// TODO: add interfaces
+	}
+
     game.setMap(map);
 
     game.run(program.get<unsigned int>("duration"), program.get<unsigned int>("seed"));

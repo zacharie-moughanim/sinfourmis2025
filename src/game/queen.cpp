@@ -23,10 +23,40 @@ bool Queen::upgrade(Stat type) {
     }
     stats[(unsigned int)type]++;
     victory_points -= upgrade_costs[(unsigned int)type];
-    waiting_upgrade = QUEEN_ACTION_TIME;
+    waiting_upgrade = upgrade_duration;
+    return true;
+}
+
+bool Queen::upgrade_queen(QueenStat type) {
+    if (waiting_upgrade > 0) {
+        return false;
+    }
+    switch (type) {
+		case QueenStat::STORED_ANTS:
+			if (victory_points < QUEEN_UPGRADE_NB_ANT_COST) {
+				return false;
+			}
+			max_ants++;
+			victory_points -= QUEEN_UPGRADE_NB_ANT_COST;
+			break;
+		case QueenStat::UPGRADE_DURATION:
+			if (victory_points < QUEEN_REDUCE_UPGRADE_TIME_COST) {
+				return false;
+			}
+			if (upgrade_duration > 1) {
+				upgrade_duration--;
+				victory_points -= QUEEN_REDUCE_UPGRADE_TIME_COST;
+			} else {
+				return false;
+			}
+			break;
+	}
+	waiting_upgrade = upgrade_duration;
+
     return true;
 }
 
 unsigned int Queen::get_stat(Stat type) const {
     return stats[(unsigned int)type];
 }
+

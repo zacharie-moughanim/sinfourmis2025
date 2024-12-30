@@ -20,7 +20,6 @@ class Game {
     void setMap(const Map &map);
     void addInterface(Interface *interface);
 
-    void fourmi_action(Ant &ant);
     void run(unsigned int duration, unsigned int seed);
 
     Game(const Game &) = delete;
@@ -28,6 +27,8 @@ class Game {
 
   private:
     Game() = default;
+    void fourmi_action(Ant &ant);
+	void queen_action(Queen &queen);
 
     std::mt19937_64 gen;
     Map map;

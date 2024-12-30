@@ -14,7 +14,7 @@ class Interface {
 
     virtual void load(std::string_view path) = 0;
     virtual reine_action reine_activation(const fourmi_etat fourmis[],
-                                          const unsigned int nb_fourmis, const salle *salle) = 0;
+                                          const size_t nb_fourmis, const salle *salle) = 0;
     virtual fourmi_retour fourmi_activation(const fourmi_etat *fourmi, const salle *salle) = 0;
 
   private:

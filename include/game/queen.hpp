@@ -1,6 +1,7 @@
 #pragma once
 
 #include "game/constants.hpp"
+#include "sinfourmis.h"
 #include <vector>
 
 class Node;
@@ -10,10 +11,13 @@ class Queen {
     Queen(unsigned int team_id, Node *node) : team_id(team_id), current_node(node) {}
 
     enum class Stat : unsigned int { LIFE, WATER, FOOD, ATTACK, STORED_ANT };
+	enum class QueenStat: unsigned int {STORED_ANTS, UPGRADE_DURATION};
 
     void game_turn();
     bool can_perform_action() const;
     bool upgrade(Stat type);
+	bool upgrade_queen(QueenStat type);
+
     unsigned int get_stat(Stat type) const;
 
     unsigned int get_victory_points() const {
@@ -28,6 +32,10 @@ class Queen {
         return current_node;
     }
 
+	std::vector<fourmi_etat> get_states() const {
+		return ants_memory;
+	}
+
   private:
     unsigned int team_id = 0;
     Node *current_node = nullptr;
@@ -38,6 +46,8 @@ class Queen {
                              DEFAULT_MAX_STORED_ANT};
 
     const static unsigned int upgrade_costs[5];
+	unsigned int upgrade_duration = DEFAULT_QUEEN_UPGRADE_DURATION;
 
-    std::vector<char[256]> ants_memory;
+    std::vector<fourmi_etat> ants_memory;
+	size_t max_ants = DEFAULT_MAX_STORED_ANT;
 };

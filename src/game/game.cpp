@@ -132,6 +132,50 @@ void Game::fourmi_action(Ant &ant) {
     }
 }
 
+void Game::queen_action(Queen &queen) {
+	queen.game_turn();
+	if (!queen.can_perform_action()) {
+		return;
+	}
+	auto memories = queen.get_states();
+	auto salle = queen.get_current_node()->as_salle();
+	auto result = interfaces[queen.get_team_id()]->reine_activation(memories.data(), memories.size(), &salle);
+	switch (result) {
+		case reine_action::REINE_PASSE:
+			break;
+		case reine_action::AMELIORE_DEGATS:
+			queen.upgrade(Queen::Stat::ATTACK);
+			break;
+		case reine_action::AMELIORE_VIE:
+			queen.upgrade(Queen::Stat::LIFE);
+			break;
+		case reine_action::AMELIORE_EAU:
+			queen.upgrade(Queen::Stat::WATER);
+			break;
+		case reine_action::AMELIORE_RAMASSAGE:
+			queen.upgrade(Queen::Stat::FOOD);
+			break;
+		case reine_action::AMELIORE_REINE:
+			queen.upgrade_queen(Queen::QueenStat::UPGRADE_DURATION);
+			break;
+		case reine_action::AMELIORE_ENVOI:
+			queen.upgrade_queen(Queen::QueenStat::STORED_ANTS);
+			break;
+		case reine_action::CREER_FOURMI:
+			std::cout << "Warning: TODO: CREER_FOURMI" << std::endl;
+			break;
+		case reine_action::ENVOYER_FOURMI:
+			std::cout << "Warning: TODO: AMELIORE_FOURMI" << std::endl;
+			break;
+		case reine_action::RECUPERER_FOURMI:
+			std::cout << "Warning: TODO: RECUPERER_FOURMI" << std::endl;
+			break;
+		default:
+			throw std::runtime_error("Invalid action");
+			break;
+	}
+}
+
 void Game::run(unsigned int duration, unsigned int seed) {
     if (interfaces.size() != map.get_team_count()) {
         throw std::runtime_error("Not enough interfaces");
@@ -162,6 +206,8 @@ void Game::run(unsigned int duration, unsigned int seed) {
         }
 
         // === Queen turn ===
-        // TODO
+        for (auto &queen: queens) {
+			queen_action(queen.second);
+		}
     }
 }
