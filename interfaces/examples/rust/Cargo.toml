@@ -1,0 +1,9 @@
+[package]
+name = "rust_test"
+
+[lib]
+crate-type = ["cdylib"] # Creates dynamic lib
+
+[dependencies]
+# TODO:  change to git = "https://gitlab.ens-rennes.fr/sinfonie/sinfourmis2025"
+sinfourmis = { path = "../../rust/" }

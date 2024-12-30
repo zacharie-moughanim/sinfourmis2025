@@ -5,6 +5,7 @@
 extern "C" {
 #endif
 #include <stdint.h>
+#include <stdlib.h>
 
 /// décrit le type d'une salle
 typedef enum salle_type { VIDE, EAU, NOURRITURE } salle_type;
@@ -80,11 +81,11 @@ typedef struct reine_retour {
 ///
 /// fourmis: si l'action précédente était un ramassage de fourmis, contient les
 /// états des fourmis ramassées
+/// nb_fourmis: nombre de fourmis ramassées
 /// salle: l'état de la salle dans laquelle se trouve la reine
 ///
 /// renvoie l'action à effectuer par la reine
-reine_action reine_activation(const fourmi_etat fourmis[], const unsigned int nb_fourmis,
-                              const salle *salle);
+reine_retour reine_activation(const fourmi_etat fourmis[], const unsigned int nb_fourmis, const salle *salle);
 
 /// fonction d'activation des fourmis
 ///
@@ -92,7 +93,7 @@ reine_action reine_activation(const fourmi_etat fourmis[], const unsigned int nb
 /// salle: l'état de la salle dans laquelle se trouve la fourmi
 ///
 /// renvoie l'action à effectuer par la fourmi
-fourmi_retour fourmi_activation(const fourmi_etat *etat, const salle *salle);
+fourmi_retour fourmi_activation(fourmi_etat *etat, const salle *salle);
 #ifdef __cplusplus
 }
 #endif
