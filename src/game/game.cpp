@@ -132,54 +132,92 @@ void Game::fourmi_action(Ant &ant) {
     }
 }
 
-void Game::queen_action(Queen &queen) {
-	queen.game_turn();
-	if (!queen.can_perform_action()) {
-		return;
-	}
-	auto memories = queen.get_states();
-	auto salle = queen.get_current_node()->as_salle();
-	auto result = interfaces[queen.get_team_id()]->reine_activation(memories.data(), memories.size(), &salle);
-	switch (result) {
-		case reine_action::REINE_PASSE:
-			break;
-		case reine_action::AMELIORE_DEGATS:
-			queen.set_result(!queen.upgrade(Queen::Stat::ATTACK));
-			break;
-		case reine_action::AMELIORE_VIE:
-			queen.set_result(!queen.upgrade(Queen::Stat::LIFE));
-			break;
-		case reine_action::AMELIORE_EAU:
-			queen.set_result(!queen.upgrade(Queen::Stat::WATER));
-			break;
-		case reine_action::AMELIORE_RAMASSAGE:
-			queen.set_result(!queen.upgrade(Queen::Stat::FOOD));
-			break;
+void Game::queen_action(Queen &queen, std::vector<Ant> &ants) {
+    queen.game_turn();
+    if (!queen.can_perform_action()) {
+        return;
+    }
+    auto memories = queen.get_states();
+    auto salle = queen.get_current_node()->as_salle();
+    auto result =
+        interfaces[queen.get_team_id()]->reine_activation(memories.data(), memories.size(), &salle);
+    switch (result.action) {
+        case reine_action::REINE_PASSE:
+            break;
+        case reine_action::AMELIORE_DEGATS:
+            queen.set_result(!queen.upgrade(Queen::Stat::ATTACK));
+            break;
+        case reine_action::AMELIORE_VIE:
+            queen.set_result(!queen.upgrade(Queen::Stat::LIFE));
+            break;
+        case reine_action::AMELIORE_EAU:
+            queen.set_result(!queen.upgrade(Queen::Stat::WATER));
+            break;
+        case reine_action::AMELIORE_RAMASSAGE:
+            queen.set_result(!queen.upgrade(Queen::Stat::FOOD));
+            break;
         case reine_action::AMELIORE_VITESSE_AMELIORATION:
             queen.set_result(!queen.upgrade_queen(Queen::QueenStat::UPGRADE_DURATION));
-			break;
-		case reine_action::AMELIORE_STOCKAGE:
-			queen.set_result(!queen.upgrade_queen(Queen::QueenStat::STORED_ANTS));
-			break;
-		case reine_action::AMELIORE_ENVOI:
-			queen.set_result(!queen.upgrade_queen(Queen::QueenStat::ANTS_SENDING));
-			break;
-		case reine_action::AMELIORE_PRODUCTION:
-			queen.set_result(!queen.upgrade_queen(Queen::QueenStat::PRODUCED_ANTS));
-			break;
-		case reine_action::CREER_FOURMI:
-			std::cout << "Warning: TODO: CREER_FOURMI" << std::endl;
-			break;
-		case reine_action::ENVOYER_FOURMI:
-			std::cout << "Warning: TODO: AMELIORE_FOURMI" << std::endl;
-			break;
-		case reine_action::RECUPERER_FOURMI:
-			std::cout << "Warning: TODO: RECUPERER_FOURMI" << std::endl;
-			break;
-		default:
-			throw std::runtime_error("Invalid action");
-			break;
-	}
+            break;
+        case reine_action::AMELIORE_STOCKAGE:
+            queen.set_result(!queen.upgrade_queen(Queen::QueenStat::STORED_ANTS));
+            break;
+        case reine_action::AMELIORE_ENVOI:
+            queen.set_result(!queen.upgrade_queen(Queen::QueenStat::ANTS_SENDING));
+            break;
+        case reine_action::AMELIORE_PRODUCTION:
+            queen.set_result(!queen.upgrade_queen(Queen::QueenStat::PRODUCED_ANTS));
+            break;
+        case reine_action::CREER_FOURMI:
+            {
+                unsigned int created = 0;
+                for (int i = 0; i < result.arg && queen.create_ant(); i++) {
+                    created++;
+                }
+                queen.set_result(created);
+            }
+            break;
+        case reine_action::ENVOYER_FOURMI:
+            {
+                unsigned int sent = 0;
+                for (int i = 0; i < std::min(result.arg, (int32_t)queen.get_queen_stat(
+                                                             Queen::QueenStat::ANTS_SENDING));
+                     i++) {
+                    auto ant_state = queen.pop_ant();
+                    if (ant_state.has_value()) {
+                        sent++;
+                        ants.push_back(Ant(&queen, std::move(ant_state.value())));
+                    } else {
+                        break;
+                    }
+                }
+                queen.set_result(sent);
+            }
+            break;
+        case reine_action::RECUPERER_FOURMI:
+            {
+                unsigned int received = 0;
+                Node *node = queen.get_current_node();
+                auto ants = node->get_ants();
+                for (auto it = ants.begin();
+                     it != ants.end() && (int32_t)received < result.arg &&
+                     received < queen.get_queen_stat(Queen::QueenStat::STORED_ANTS);
+                     it++) {
+                    if ((*it)->get_team_id() != queen.get_team_id() || !(*it)->alive()) {
+                        continue;
+                    }
+                    if (queen.push_ant((*it)->as_fourmi_etat())) {
+                        received++;
+                        (*it)->kill(); // Kill the ant, it will be removed at the end of the turn
+                    }
+                }
+                queen.set_result(received);
+            }
+            break;
+        default:
+            throw std::runtime_error("Invalid action");
+            break;
+    }
 }
 
 void Game::run(unsigned int duration, unsigned int seed) {
@@ -212,8 +250,8 @@ void Game::run(unsigned int duration, unsigned int seed) {
         }
 
         // === Queen turn ===
-        for (auto &queen: queens) {
-			queen_action(queen.second);
-		}
+        for (auto &queen : queens) {
+            queen_action(queen.second, ants);
+        }
     }
 }

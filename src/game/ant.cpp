@@ -1,15 +1,20 @@
 #include "game/ant.hpp"
 
-Ant::Ant(Node *node, Queen *queen) : current_Node(node), queen(queen) {
+Ant::Ant(Queen *queen, fourmi_etat &&etat) : current_Node(queen->get_current_node()), queen(queen) {
     etat.result = -1;
-    etat.vie = queen->get_stat(Queen::Stat::LIFE);
-    max_water = queen->get_stat(Queen::Stat::WATER);
-    etat.eau = queen->get_stat(Queen::Stat::WATER);
+	this->etat = etat;
     max_food = queen->get_stat(Queen::Stat::FOOD);
-    etat.nouriture = 0;
-    if (current_Node != nullptr) {
-        node->add_ant(this);
-    }
+    max_water = queen->get_stat(Queen::Stat::WATER);
+    assert (current_Node != nullptr);
+    current_Node->add_ant(this);
+}
+
+Ant::Ant(Queen *queen) : current_Node(queen->get_current_node()), queen(queen) {
+	etat = queen->default_fourmi_etat();
+	max_food = queen->get_stat(Queen::Stat::FOOD);
+	max_water = queen->get_stat(Queen::Stat::WATER);
+	assert (current_Node != nullptr);
+	current_Node->add_ant(this);
 }
 
 Ant::Ant(const Ant &&ant) : current_Node(ant.current_Node), queen(ant.queen), max_water(ant.max_water), max_food(ant.max_food) {
@@ -51,6 +56,10 @@ void Ant::apply_damages(uint8_t damages) {
     } else {
         etat.vie -= damages;
     }
+}
+
+void Ant::kill() {
+	etat.vie = 0;
 }
 
 void Ant::water_action() {

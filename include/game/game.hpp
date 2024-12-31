@@ -28,7 +28,7 @@ class Game {
   private:
     Game() = default;
     void fourmi_action(Ant &ant);
-	void queen_action(Queen &queen);
+	void queen_action(Queen &queen, std::vector<Ant> &ants);
 
     std::mt19937_64 gen;
     Map map;

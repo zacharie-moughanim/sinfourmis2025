@@ -14,7 +14,8 @@ enum class AntActionState {
 
 class Ant {
   public:
-    Ant(Node *node, Queen *queen);
+	Ant(Queen *queen, fourmi_etat &&etat);
+	Ant(Queen *queen);
     Ant(const Ant &&ant);
     Ant &operator=(const Ant &&ant);
     ~Ant();
@@ -23,6 +24,7 @@ class Ant {
     void set_current_node(Node *node);
 
     void apply_damages(uint8_t damages);
+	void kill();
     void water_action();
 
     bool alive();
