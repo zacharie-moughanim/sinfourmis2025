@@ -16,9 +16,33 @@ class Queen {
     enum class Stat : uint32_t { LIFE, WATER, FOOD, ATTACK, STORED_ANT };
 	enum class QueenStat: uint32_t {STORED_ANTS, PRODUCED_ANTS, UPGRADE_DURATION, ANTS_SENDING};
 
+	/**
+	 * @brief Signal the queen that a game turn passed
+	 * 
+	 */
     void game_turn();
+
+	/**
+	 * @brief Check if the queen can perform an actions
+	 * 
+	 * @return true if the queen can perform an action
+	 */
     bool can_perform_action() const;
+
+	/**
+	 * @brief Run the upgrade of the given ant stat
+	 * 
+	 * @param type the stat to upgrade
+	 * @return true if the upgrade can be performed
+	 */
     bool upgrade(Stat type);
+
+	/**
+	 * @brief Run the upgrade for the given queen stat
+	 * 
+	 * @param type the stat to upgrade
+	 * @return true if the upgrade can be performed
+	 */
 	bool upgrade_queen(QueenStat type);
 
     uint32_t get_stat(Stat type) const;
@@ -27,8 +51,26 @@ class Queen {
 	
 	fourmi_etat default_fourmi_etat() const;
 	
+	/**
+	 * @brief create a new ant in the queen storage
+	 * 
+	 * @return true if the ant has been created
+	 */
 	bool create_ant();
+
+	/**
+	 * @brief push the given ant to the queen storage
+	 * 
+	 * @param ant the ant state tu push
+	 * @return true if the ant has been successfully pushed
+	 */
 	bool push_ant(fourmi_etat ant);
+
+	/**
+	 * @brief pop an ant state from the queen storage
+	 * 
+	 * @return std::optional<fourmi_etat> the state popped or `std::nullopt` if here is no ants to pop
+	 */
 	std::optional<fourmi_etat> pop_ant();
 
 

@@ -19,7 +19,7 @@ Game &Game::getInstance() {
 }
 
 void Game::fourmi_action(Ant &ant) {
-    ant.water_action();
+    ant.consume_water();
     if (!ant.alive()) {
         return;
     }

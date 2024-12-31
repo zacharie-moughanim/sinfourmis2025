@@ -23,19 +23,68 @@ class Ant {
     Node *get_current_node() const;
     void set_current_node(Node *node);
 
+	/**
+	 * @brief Apply `damages` damages to the ant
+	 * 
+	 * @param damages 
+	 */
     void apply_damages(uint8_t damages);
+	
+	/**
+	 * @brief Kill the ant
+	 * 
+	 */
 	void kill();
-    void water_action();
 
+	/**
+	 * @brief Consume one unit of water. Kill the ant if the water is 0
+	 * 
+	 */
+    void consume_water();
+
+	/**
+	 * @brief Check if the ant is alive
+	 * 
+	 * @return true if the ant is alive
+	 */
     bool alive();
 
+	/**
+	 * @brief Put the ant on the edge and put it in the moving state
+	 * 
+	 * @param edge the edge to move along
+	 */
     void move_along(Edge *edge);
+	/**
+	 * @brief Move the ant along the edge. The ant must be in the moving state
+	 * 
+	 */
     void displace();
 
+	/**
+	 * @brief Start the digging of the given edge
+	 * 
+	 * @param edge the edge to dig
+	 */
     void begin_digging(Edge *edge);
+
+	/**
+	 * @brief Dig the current edge. Crashes if the ant is not in digging state
+	 * 
+	 */
     void dig();
+
+	/**
+	 * @brief Stop the digging
+	 * 
+	 */
     void stop_digging();
 
+	/**
+	 * @brief Gather food from the current node. The current node must be a food node
+	 * 
+	 * @return unsigned int the quantity of gathered food
+	 */
     unsigned int gather_food();
 
     fourmi_etat as_fourmi_etat() const {
