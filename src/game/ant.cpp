@@ -62,14 +62,14 @@ void Ant::kill() {
 	etat.vie = 0;
 }
 
-void Ant::water_action() {
+void Ant::consume_water() {
     if (current_Node != nullptr && current_Node->get_type() == salle_type::EAU) {
         etat.eau = max_water;
     } else if (etat.eau > 0) {
         etat.eau--;
     }
     if (etat.eau == 0) {
-        etat.vie = 0;
+        kill();
     }
 }
 
@@ -87,7 +87,9 @@ void Ant::displace() {
         if (current_Node != nullptr) {
             current_Node->remove_ant(this);
         }
-        displacement += EDGE_CROSS_SPEED;
+		if (current_edge->can_be_crossed()) {
+        	displacement += EDGE_CROSS_SPEED;
+		}
     } else {
         current_Node = current_edge->get_other_node(current_Node);
         current_Node->add_ant(this);
