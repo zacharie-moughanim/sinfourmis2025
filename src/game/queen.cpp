@@ -1,10 +1,10 @@
 #include "game/queen.hpp"
 
-const std::array<unsigned int, 5> Queen::upgrade_costs = {QUEEN_UPGRADE_LIFE_COST, QUEEN_UPGRADE_WATER_COST,
+const std::array<uint32_t, 5> Queen::upgrade_costs = {QUEEN_UPGRADE_LIFE_COST, QUEEN_UPGRADE_WATER_COST,
                                               QUEEN_UPGRADE_FOOD_COST, QUEEN_UPGRADE_ATTACK_COST,
                                               QUEEN_UPGRADE_NB_ANT_COST};
 
-const std::array<unsigned int, 4> Queen::queen_upgrade_costs = {QUEEN_UPGRADE_NB_ANT_COST, QUEEN_UPGRADE_PRODUCED_ANTS_COST,
+const std::array<uint32_t, 4> Queen::queen_upgrade_costs = {QUEEN_UPGRADE_NB_ANT_COST, QUEEN_UPGRADE_PRODUCED_ANTS_COST,
 													QUEEN_REDUCE_UPGRADE_TIME_COST, QUEEN_UPGRADE_NB_ANT_SENDING_COST};
 
 void Queen::game_turn() {
@@ -34,32 +34,48 @@ bool Queen::upgrade_queen(QueenStat type) {
     if (waiting_upgrade > 0) {
         return false;
     }
-    if (food < queen_upgrade_costs[(unsigned int)type]) {
+    if (food < queen_upgrade_costs[(uint32_t)type]) {
 		return false;
 	}
 	switch (type) {
 		case QueenStat::UPGRADE_DURATION: {
-			unsigned int &upgrade_duration = queen_stats[(unsigned int)type];
+			uint32_t &upgrade_duration = queen_stats[(uint32_t)type];
 			if (upgrade_duration > 1) {
 				upgrade_duration--;
 			}
 		}
 			break;
 		default:
-			queen_stats[(unsigned int)type]++;
+			queen_stats[(uint32_t)type]++;
 			break;
 	}
 	waiting_upgrade = get_queen_stat(QueenStat::UPGRADE_DURATION);
     return true;
 }
 
-unsigned int Queen::get_stat(Stat type) const {
-    return stats[(unsigned int)type];
+uint32_t Queen::get_stat(Stat type) const {
+    return stats[(uint32_t)type];
 }
 
-unsigned int Queen::get_queen_stat(QueenStat type) const {
-    return queen_stats[(unsigned int)type];
+uint32_t Queen::get_queen_stat(QueenStat type) const {
+    return queen_stats[(uint32_t)type];
 }
+
+reine_etat Queen::as_reine_etat() const {
+    reine_etat etat;
+	etat.result = result;
+	etat.nourriture = food;
+	etat.max_nourriture = get_stat(Stat::FOOD);
+	etat.max_eau = get_stat(Stat::WATER);
+	etat.max_vie = get_stat(Stat::LIFE);
+	etat.max_degats = get_stat(Stat::ATTACK);
+	etat.duree_amelioration = get_queen_stat(QueenStat::UPGRADE_DURATION);
+	etat.max_stockage = get_queen_stat(QueenStat::STORED_ANTS);
+	etat.max_production = get_queen_stat(QueenStat::PRODUCED_ANTS);
+	etat.max_envoi = get_queen_stat(QueenStat::ANTS_SENDING);
+	return etat;
+}
+
 fourmi_etat Queen::default_fourmi_etat() const {
     fourmi_etat etat;
 	etat.result = -1;
@@ -96,6 +112,6 @@ std::optional<fourmi_etat> Queen::pop_ant() {
 	ants_memory.pop_back();
     ant.nouriture = 0;
     ant.eau = get_stat(Stat::WATER);
-    ant.vie = std::max((unsigned int)UINT8_MAX, get_stat(Stat::LIFE));
+    ant.vie = std::max((uint32_t)UINT8_MAX, get_stat(Stat::LIFE));
     return ant;
 }

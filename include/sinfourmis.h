@@ -27,8 +27,10 @@ typedef enum reine_action {
     CREER_FOURMI,
     ENVOYER_FOURMI,
     RECUPERER_FOURMI,
-    AMELIORE_REINE,
+    AMELIORE_STOCKAGE,
+	AMELIORE_PRODUCTION,
     AMELIORE_ENVOI,
+	AMELIORE_VITESSE_AMELIORATION,
     AMELIORE_RAMASSAGE,
     AMELIORE_VIE,
     AMELIORE_EAU,
@@ -67,6 +69,25 @@ typedef struct fourmi_retour {
     int32_t arg; // utilisé en argument d'action, type pas gravé dans le marbre pour l'instant
 } fourmi_retour;
 
+
+/// structure représentant l'état d'une reine
+///
+/// Cette structure est utilisée lors de l'éveil d'une reine.
+/// Elle contient les fourmis gérées par la reine, les points de nourriture
+/// et le résultat de l'action précédente
+typedef struct reine_etat {
+	uint32_t nourriture;
+	int32_t result;
+	uint32_t max_nourriture;
+	uint32_t max_eau;
+	uint32_t max_vie;
+	uint32_t max_degats;
+	uint32_t duree_amelioration;
+	uint32_t max_stockage;
+	uint32_t max_production;
+	uint32_t max_envoi;
+} reine_etat;
+
 /// structure décrivant une action de la reine
 ///
 /// Cette structure est renvoyée par la fonction d'activation de la reine. Elle
@@ -74,7 +95,7 @@ typedef struct fourmi_retour {
 /// initiale de la fourmi à envoyer (si l'action est un envoi de fourmi)
 typedef struct reine_retour {
     reine_action action;
-    char memoire[256]; // utilisé pour
+    int32_t arg;
 } reine_retour;
 
 /// fonction d'activation de la reine
@@ -85,7 +106,7 @@ typedef struct reine_retour {
 /// salle: l'état de la salle dans laquelle se trouve la reine
 ///
 /// renvoie l'action à effectuer par la reine
-reine_retour reine_activation(const fourmi_etat fourmis[], const unsigned int nb_fourmis, const salle *salle);
+reine_retour reine_activation(const fourmi_etat fourmis[], const unsigned int nb_fourmis, const reine_etat *etat, const salle *salle);
 
 /// fonction d'activation des fourmis
 ///

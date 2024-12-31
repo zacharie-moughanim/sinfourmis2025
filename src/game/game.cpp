@@ -138,9 +138,10 @@ void Game::queen_action(Queen &queen, std::vector<Ant> &ants) {
         return;
     }
     auto memories = queen.get_states();
+	auto etat = queen.as_reine_etat();
     auto salle = queen.get_current_node()->as_salle();
     auto result =
-        interfaces[queen.get_team_id()]->reine_activation(memories.data(), memories.size(), &salle);
+        interfaces[queen.get_team_id()]->reine_activation(memories.data(), memories.size(), &etat, &salle);
     switch (result.action) {
         case reine_action::REINE_PASSE:
             break;

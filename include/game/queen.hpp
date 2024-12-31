@@ -13,16 +13,17 @@ class Queen {
   public:
     Queen(unsigned int team_id, Node *node) : team_id(team_id), current_node(node) {}
 
-    enum class Stat : unsigned int { LIFE, WATER, FOOD, ATTACK, STORED_ANT };
-	enum class QueenStat: unsigned int {STORED_ANTS, PRODUCED_ANTS, UPGRADE_DURATION, ANTS_SENDING};
+    enum class Stat : uint32_t { LIFE, WATER, FOOD, ATTACK, STORED_ANT };
+	enum class QueenStat: uint32_t {STORED_ANTS, PRODUCED_ANTS, UPGRADE_DURATION, ANTS_SENDING};
 
     void game_turn();
     bool can_perform_action() const;
     bool upgrade(Stat type);
 	bool upgrade_queen(QueenStat type);
 
-    unsigned int get_stat(Stat type) const;
-	unsigned int get_queen_stat(QueenStat type) const;
+    uint32_t get_stat(Stat type) const;
+	uint32_t get_queen_stat(QueenStat type) const;
+	reine_etat as_reine_etat() const;
 	
 	fourmi_etat default_fourmi_etat() const;
 	
@@ -58,13 +59,13 @@ class Queen {
     unsigned int food = 0;
 	int32_t result = 0;
 
-	std::array<unsigned int, 5> stats{DEFAULT_MAX_LIFE, DEFAULT_MAX_WATER, DEFAULT_MAX_FOOD, DEFAULT_ATTACK,
+	std::array<uint32_t, 5> stats{DEFAULT_MAX_LIFE, DEFAULT_MAX_WATER, DEFAULT_MAX_FOOD, DEFAULT_ATTACK,
                              QUEEN_DEFAULT_MAX_STORED_ANT};
 	
-	std::array<unsigned int, 4> queen_stats{QUEEN_DEFAULT_MAX_STORED_ANT, QUEEN_DEFAULT_PRODUCED_ANTS, QUEEN_DEFAULT_UPGRADE_DURATION, QUEEN_DEFAULT_SENT_ANTS};
+	std::array<uint32_t, 4> queen_stats{QUEEN_DEFAULT_MAX_STORED_ANT, QUEEN_DEFAULT_PRODUCED_ANTS, QUEEN_DEFAULT_UPGRADE_DURATION, QUEEN_DEFAULT_SENT_ANTS};
 
-    const static std::array<unsigned int, 5> upgrade_costs;
-	const static std::array<unsigned int, 4> queen_upgrade_costs;
+    const static std::array<uint32_t, 5> upgrade_costs;
+	const static std::array<uint32_t, 4> queen_upgrade_costs;
 
 
     std::vector<fourmi_etat> ants_memory;
