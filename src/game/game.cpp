@@ -144,22 +144,28 @@ void Game::queen_action(Queen &queen) {
 		case reine_action::REINE_PASSE:
 			break;
 		case reine_action::AMELIORE_DEGATS:
-			queen.upgrade(Queen::Stat::ATTACK);
+			queen.set_result(!queen.upgrade(Queen::Stat::ATTACK));
 			break;
 		case reine_action::AMELIORE_VIE:
-			queen.upgrade(Queen::Stat::LIFE);
+			queen.set_result(!queen.upgrade(Queen::Stat::LIFE));
 			break;
 		case reine_action::AMELIORE_EAU:
-			queen.upgrade(Queen::Stat::WATER);
+			queen.set_result(!queen.upgrade(Queen::Stat::WATER));
 			break;
 		case reine_action::AMELIORE_RAMASSAGE:
-			queen.upgrade(Queen::Stat::FOOD);
+			queen.set_result(!queen.upgrade(Queen::Stat::FOOD));
 			break;
-		case reine_action::AMELIORE_REINE:
-			queen.upgrade_queen(Queen::QueenStat::UPGRADE_DURATION);
+        case reine_action::AMELIORE_VITESSE_AMELIORATION:
+            queen.set_result(!queen.upgrade_queen(Queen::QueenStat::UPGRADE_DURATION));
+			break;
+		case reine_action::AMELIORE_STOCKAGE:
+			queen.set_result(!queen.upgrade_queen(Queen::QueenStat::STORED_ANTS));
 			break;
 		case reine_action::AMELIORE_ENVOI:
-			queen.upgrade_queen(Queen::QueenStat::STORED_ANTS);
+			queen.set_result(!queen.upgrade_queen(Queen::QueenStat::ANTS_SENDING));
+			break;
+		case reine_action::AMELIORE_PRODUCTION:
+			queen.set_result(!queen.upgrade_queen(Queen::QueenStat::PRODUCED_ANTS));
 			break;
 		case reine_action::CREER_FOURMI:
 			std::cout << "Warning: TODO: CREER_FOURMI" << std::endl;
