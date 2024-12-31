@@ -69,9 +69,9 @@ int main(int argc, char **argv) {
 
     Game &game = Game::getInstance();
 
-	for (const std::string &team : teams) {
-		// TODO: add interfaces
-	}
+    for (const std::string &team : teams) {
+        // TODO: add interfaces
+    }
 
     game.setMap(map);
 

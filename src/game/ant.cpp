@@ -2,30 +2,32 @@
 
 Ant::Ant(Queen *queen, fourmi_etat &&etat) : current_Node(queen->get_current_node()), queen(queen) {
     etat.result = -1;
-	this->etat = etat;
+    this->etat = etat;
     max_food = queen->get_stat(Queen::Stat::FOOD);
     max_water = queen->get_stat(Queen::Stat::WATER);
-    assert (current_Node != nullptr);
+    assert(current_Node != nullptr);
     current_Node->add_ant(this);
 }
 
 Ant::Ant(Queen *queen) : current_Node(queen->get_current_node()), queen(queen) {
-	etat = queen->default_fourmi_etat();
-	max_food = queen->get_stat(Queen::Stat::FOOD);
-	max_water = queen->get_stat(Queen::Stat::WATER);
-	assert (current_Node != nullptr);
-	current_Node->add_ant(this);
+    etat = queen->default_fourmi_etat();
+    max_food = queen->get_stat(Queen::Stat::FOOD);
+    max_water = queen->get_stat(Queen::Stat::WATER);
+    assert(current_Node != nullptr);
+    current_Node->add_ant(this);
 }
 
-Ant::Ant(const Ant &&ant) : current_Node(ant.current_Node), queen(ant.queen), max_water(ant.max_water), max_food(ant.max_food) {
+Ant::Ant(const Ant &&ant)
+    : current_Node(ant.current_Node), queen(ant.queen), max_water(ant.max_water),
+      max_food(ant.max_food) {
     etat = ant.etat;
 }
 
 Ant &Ant::operator=(const Ant &&ant) {
     queen = ant.queen;
     current_Node = ant.current_Node;
-	max_water = ant.max_water;
-	max_food = ant.max_food;
+    max_water = ant.max_water;
+    max_food = ant.max_food;
     etat = ant.etat;
     return *this;
 }
@@ -59,7 +61,7 @@ void Ant::apply_damages(uint8_t damages) {
 }
 
 void Ant::kill() {
-	etat.vie = 0;
+    etat.vie = 0;
 }
 
 void Ant::consume_water() {
@@ -87,9 +89,9 @@ void Ant::displace() {
         if (current_Node != nullptr) {
             current_Node->remove_ant(this);
         }
-		if (current_edge->can_be_crossed()) {
-        	displacement += EDGE_CROSS_SPEED;
-		}
+        if (current_edge->can_be_crossed()) {
+            displacement += EDGE_CROSS_SPEED;
+        }
     } else {
         current_Node = current_edge->get_other_node(current_Node);
         current_Node->add_ant(this);

@@ -32,8 +32,10 @@
 #define QUEEN_REDUCE_UPGRADE_TIME_COST 10U // Cost to reduce the upgrade time in wining points
 #define QUEEN_DEFAULT_SENT_ANTS 1U         // Maximum number of ant sent by the queen in one turn
 #define QUEEN_UPGRADE_NB_ANT_COST 10U // Cost to upgrade the number of produced ant in wining points
-#define QUEEN_UPGRADE_PRODUCED_ANTS_COST 10U // Cost to upgrade the number of produced ant in wining points
-#define QUEEN_UPGRADE_NB_ANT_SENDING_COST 10U // Cost to upgrade the number of ant sent in wining points
+#define QUEEN_UPGRADE_PRODUCED_ANTS_COST                                                           \
+    10U // Cost to upgrade the number of produced ant in wining points
+#define QUEEN_UPGRADE_NB_ANT_SENDING_COST                                                          \
+    10U                               // Cost to upgrade the number of ant sent in wining points
 #define QUEEN_UPGRADE_LIFE_COST 10U   // Cost to upgrade the ant life in wining points
 #define QUEEN_UPGRADE_WATER_COST 10U  // Cost to upgrade the ant water reserve in wining points
 #define QUEEN_UPGRADE_FOOD_COST 10U   // Cost to upgrade the ant food reserve in wining points

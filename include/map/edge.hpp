@@ -23,25 +23,25 @@ class Edge {
      */
     Node *get_other_node(const Node *node) const;
 
-	/**
-	 * @brief Check if the edge can be crossed
-	 * 
-	 * @return true if the edge can be crossed
-	 */
+    /**
+     * @brief Check if the edge can be crossed
+     *
+     * @return true if the edge can be crossed
+     */
     bool can_be_crossed() const;
 
-	/**
-	 * @brief Apply damages to the edge
-	 * 
-	 * @param damages the damages to apply to the edge
-	 * @return unsigned int the remaining life of the edge
-	 */
+    /**
+     * @brief Apply damages to the edge
+     *
+     * @param damages the damages to apply to the edge
+     * @return unsigned int the remaining life of the edge
+     */
     unsigned int attack(unsigned int damages);
 
-	/**
-	 * @brief Dig (Heal) the edge
-	 * 
-	 */
+    /**
+     * @brief Dig (Heal) the edge
+     *
+     */
     void dig();
 
     float get_length() const {

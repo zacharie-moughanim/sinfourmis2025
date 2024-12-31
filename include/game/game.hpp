@@ -27,20 +27,20 @@ class Game {
 
   private:
     Game() = default;
-	/**
-	 * @brief Perform the ant action and update game state accordingly
-	 * 
-	 * @param ant he ant to run
-	 */
+    /**
+     * @brief Perform the ant action and update game state accordingly
+     *
+     * @param ant he ant to run
+     */
     void fourmi_action(Ant &ant);
 
-	/**
-	 * @brief Perform the queen action and update game state accordingly
-	 * 
-	 * @param queen the queen to run
-	 * @param ants the vector of ants in the game
-	 */
-	void queen_action(Queen &queen, std::vector<Ant> &ants);
+    /**
+     * @brief Perform the queen action and update game state accordingly
+     *
+     * @param queen the queen to run
+     * @param ants the vector of ants in the game
+     */
+    void queen_action(Queen &queen, std::vector<Ant> &ants);
 
     std::mt19937_64 gen;
     Map map;
