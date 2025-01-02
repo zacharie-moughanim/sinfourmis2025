@@ -16,7 +16,7 @@ class Edge;
 class Node {
   public:
     Node() = default;
-    ~Node();
+    ~Node() = default;
 
     // for json serialization / deserialization
     NLOHMANN_DEFINE_TYPE_INTRUSIVE(Node, id, type, x, y)

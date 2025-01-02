@@ -30,13 +30,23 @@ int main(int argc, char **argv) {
         .help("The duration of the simulation in turns")
         .default_value(1000)
         .nargs(1)
-        .scan<'i', unsigned int>()
+        .scan<'i', int>()
+		.action([](const std::string &value) {
+			int duration = std::stoi(value);
+			if (duration <= 0) {
+				throw std::runtime_error("Duration must be a positive integer");
+			}
+			return duration;
+		})
         .metavar("DURATION");
     program.add_argument("-s", "--seed")
         .help("The seed to use for the random number generator, default to a random value")
-        .default_value(rd())
-        .nargs(1)
-        .scan<'i', unsigned int>()
+        .default_value((int)rd())
+		.nargs(1)
+        .scan<'i', int>()
+		.action([](const std::string &value) {
+			return std::stoi(value);
+		})
         .metavar("SEED");
 
     try {
@@ -70,17 +80,21 @@ int main(int argc, char **argv) {
 
     Game &game = Game::getInstance();
     game.set_map(map);
-
+	int team_id = 0;
     for (const std::string &team : teams) {
         if (team == "dummy") {
-			game.add_interface(new Dummy());
+			game.add_interface(team_id, new Dummy());
 		} else {
 			std::cerr << "Unknown team file : " << team << std::endl;
 			return 1;
 		}
+		team_id++;
     }
 
-    game.run(program.get<unsigned int>("duration"), program.get<unsigned int>("seed"));
+	int duration = program.get<int>("duration");
+	int seed = program.get<int>("seed");
+
+    game.run(duration, seed);
 
     return 0;
 }
