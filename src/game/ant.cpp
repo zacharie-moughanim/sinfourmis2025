@@ -87,6 +87,7 @@ void Ant::displace() {
     assert(action_state == AntActionState::MOVING);
     if (displacement < current_edge->get_length()) {
         if (current_Node != nullptr) {
+			current_edge->add_ant(this);
             current_Node->remove_ant(this);
         }
         if (current_edge->can_be_crossed()) {
@@ -94,6 +95,7 @@ void Ant::displace() {
         }
     } else {
         current_Node = current_edge->get_other_node(current_Node);
+		current_edge->remove_ant(this);
         current_Node->add_ant(this);
         action_state = AntActionState::NONE;
         displacement = 0;

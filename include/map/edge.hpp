@@ -3,8 +3,10 @@
 #include "game/constants.hpp"
 #include "map/node.hpp"
 #include <cmath>
+#include <unordered_set>
 
 class Node;
+class Ant;
 
 /**
  * @brief Represents an edge between two nodes.
@@ -55,9 +57,22 @@ class Edge {
         return node2;
     }
 
+	void add_ant(Ant *ant) {
+		ants.insert(ant);
+	}
+
+	void remove_ant(Ant *ant) {
+		ants.erase(ant);
+	}
+
+	const std::unordered_set<Ant *> &get_ants() const {
+		return ants;
+	}
+
   private:
     Node *node1 = nullptr;
     Node *node2 = nullptr;
     float length = 0;
     unsigned int life = EDGE_LIFE;
+	std::unordered_set<Ant *> ants;
 };
