@@ -1,10 +1,10 @@
 #include "game/game.hpp"
 
-void Game::setMap(const Map &map) {
+void Game::set_map(const Map &map) {
     this->map = map;
 }
 
-void Game::addInterface(Interface *interface) {
+void Game::add_interface(Interface *interface) {
     if (interfaces.size() + 1 > map.get_team_count()) {
         throw std::runtime_error("Too many interfaces");
     }
@@ -16,6 +16,12 @@ Game &Game::getInstance() {
     static Game instance;
 
     return instance;
+}
+
+Game::~Game() {
+	for (auto [_, interface]: interfaces) {
+		delete interface;
+	}
 }
 
 void Game::fourmi_action(Ant &ant) {

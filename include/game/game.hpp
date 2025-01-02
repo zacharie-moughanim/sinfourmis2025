@@ -15,10 +15,10 @@
 class Game {
   public:
     static Game &getInstance();
-    ~Game() = default;
+    ~Game();
 
-    void setMap(const Map &map);
-    void addInterface(Interface *interface);
+    void set_map(const Map &map);
+    void add_interface(Interface* interface);
 
     void run(unsigned int duration, unsigned int seed);
 

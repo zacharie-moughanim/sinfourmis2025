@@ -1,6 +1,7 @@
 #include "argparse/argparse.hpp"
 #include "game/game.hpp"
 #include "map/map.hpp"
+#include "interfaces/dummy.hpp"
 #include <iostream>
 #include <random>
 
@@ -70,10 +71,15 @@ int main(int argc, char **argv) {
     Game &game = Game::getInstance();
 
     for (const std::string &team : teams) {
-        // TODO: add interfaces
+        if (team == "dummy") {
+			game.add_interface(new Dummy());
+		} else {
+			std::cerr << "Unknown team file : " << team << std::endl;
+			return 1;
+		}
     }
 
-    game.setMap(map);
+    game.set_map(map);
 
     game.run(program.get<unsigned int>("duration"), program.get<unsigned int>("seed"));
 
