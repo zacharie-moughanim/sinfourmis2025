@@ -9,4 +9,5 @@ NLOHMANN_JSON_SERIALIZE_ENUM(salle_type, {
                                              {VIDE, "vide"},
                                              {EAU, "eau"},
                                              {NOURRITURE, "nourriture"},
+											 {REINE, "reine"}
                                          })

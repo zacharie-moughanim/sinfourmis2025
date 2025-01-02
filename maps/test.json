@@ -4,7 +4,7 @@
 			"id": 1,
 			"x": 0.5,
 			"y": 0.5,
-			"type": "empty",
+			"type": "reine",
 			"team": 1,
 			"neighbors": [
 				2, 0
@@ -27,7 +27,7 @@
 			"x": 0.5,
 			"y": 0.5,
 			"team": 2,
-			"type": "empty",
+			"type": "reine",
 			"neighbors": [
 				0, 1
 			]

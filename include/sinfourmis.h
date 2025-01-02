@@ -8,7 +8,7 @@ extern "C" {
 #include <stdlib.h>
 
 /// décrit le type d'une salle
-typedef enum salle_type { VIDE, EAU, NOURRITURE } salle_type;
+typedef enum salle_type { VIDE, EAU, NOURRITURE, REINE } salle_type;
 
 /// décrit l'action effectuée par une fourmi
 typedef enum fourmi_action {

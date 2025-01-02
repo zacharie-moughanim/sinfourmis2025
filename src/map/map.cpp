@@ -25,7 +25,7 @@ bool Map::load_nodes(const json &data) {
         std::cerr << "Failed to find nodes in JSON" << std::endl;
         return false;
     }
-    std::unordered_set<std::pair<unsigned int, unsigned int>> edges;
+    std::vector<std::pair<unsigned int, unsigned int>> edges;
     for (const auto &node : *json_nodes) {
         try {
             auto node_obj = node.get<Node>();
@@ -40,24 +40,30 @@ bool Map::load_nodes(const json &data) {
             }
             std::vector<unsigned int> neighbors = neighbors_it->get<std::vector<unsigned int>>();
             for (const auto &neighbor : neighbors) {
-                edges.insert({node_obj.get_id(), neighbor});
+				if (node_obj.get_id() < neighbor) {
+                	edges.push_back({node_obj.get_id(), neighbor});
+				} else {
+					edges.push_back({neighbor, node_obj.get_id()});
+				}
             }
 
-            auto team_it = node.find("team");
-            if (team_it != node.end()) {
-                auto team = team_it->get<unsigned int>();
-                if (std::find_if(teams.begin(), teams.end(), [team](const Team &t) {
-                        return t.get_id() == team;
-                    }) == teams.end()) {
-                    std::cerr << "Team not found: " << team << std::endl;
-                    return false;
-                }
-                auto res = starting_nodes.try_emplace(team, node_obj.get_id());
-                if (!res.second) {
-                    std::cerr << "Duplicate starting node for team: " << team << std::endl;
-                    return false;
-                }
-            }
+			if (node_obj.get_type() == salle_type::REINE) {
+				auto team_it = node.find("team");
+				if (team_it != node.end()) {
+					auto team = team_it->get<unsigned int>();
+					if (std::find_if(teams.begin(), teams.end(), [team](const Team &t) {
+							return t.get_id() == team;
+						}) == teams.end()) {
+						std::cerr << "Team not found: " << team << std::endl;
+						return false;
+					}
+					auto res = starting_nodes.try_emplace(team, node_obj.get_id());
+					if (!res.second) {
+						std::cerr << "Duplicate starting node for team: " << team << std::endl;
+						return false;
+					}
+				}
+			}
         } catch (json::exception &e) {
             std::cerr << "Failed to parse node: " << e.what() << std::endl;
             return false;
@@ -69,8 +75,10 @@ bool Map::load_nodes(const json &data) {
         return false;
     }
 
-    for (const auto &edge : edges) {
-        auto [node1, node2] = edge;
+	std::sort(edges.begin(), edges.end());
+	auto end = std::unique(edges.begin(), edges.end());
+    for (auto it = edges.begin(); it != end; it++) {
+        auto [node1, node2] = *it;
         auto node1_it = nodes.find(node1);
         if (node1_it == nodes.end()) {
             std::cerr << "Node not found: " << node1 << std::endl;
@@ -115,8 +123,6 @@ bool Map::load(const std::string_view &filename) {
     if (!load_nodes(data)) {
         return false;
     }
-
-    to_dot("graph.dot");
 
     return true;
 }

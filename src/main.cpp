@@ -69,6 +69,7 @@ int main(int argc, char **argv) {
     }
 
     Game &game = Game::getInstance();
+    game.set_map(map);
 
     for (const std::string &team : teams) {
         if (team == "dummy") {
@@ -78,8 +79,6 @@ int main(int argc, char **argv) {
 			return 1;
 		}
     }
-
-    game.set_map(map);
 
     game.run(program.get<unsigned int>("duration"), program.get<unsigned int>("seed"));
 

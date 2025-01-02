@@ -1,3 +1,8 @@
 {
-	"sonarlint.pathToCompileCommands": "${workspaceFolder}/build/compile_commands.json"
+	"sonarlint.pathToCompileCommands": "${workspaceFolder}/build/compile_commands.json",
+	"cmake.debugConfig": {
+		"args": [
+			"../maps/test.json", "-t", "dummy", "-t", "dummy"
+		]
+	}
 }
