@@ -7,6 +7,7 @@
 #include "sinfourmis.h"
 #include <memory>
 #include <unordered_set>
+#include <iostream>
 
 using json = nlohmann::json;
 
@@ -60,7 +61,7 @@ class Node {
      * @param node the node to get the edge to
      * @return Edge* the edge to the given node
      */
-    unsigned int get_id_to(Node *node) const;
+    unsigned int get_id_to(const Node *node) const;
 
     /**
      * @brief remove `max_food` food from the node

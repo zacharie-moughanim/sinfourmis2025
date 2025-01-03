@@ -17,7 +17,7 @@ class Game {
     static Game &getInstance();
     ~Game();
 
-    void set_map(const Map &map);
+    void set_map(Map &&map);
     void add_interface(unsigned int team, Interface* interface);
 
     void run(unsigned int duration, unsigned int seed);

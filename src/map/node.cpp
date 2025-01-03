@@ -1,4 +1,5 @@
 #include "map/node.hpp"
+#include <iostream>
 
 void Node::add_edge(Node &other) {
     auto edge = std::make_shared<Edge>(this, &other);
@@ -30,7 +31,7 @@ Edge *Node::get_edge(unsigned int id) const {
     return edges[id].get();
 }
 
-unsigned int Node::get_id_to(Node *node) const {
+unsigned int Node::get_id_to(const Node *node) const {
     for (unsigned int i = 0; i < edges.size(); i++) {
         if (edges[i]->get_other_node(this) == node) {
             return i;

@@ -18,6 +18,10 @@
 class Map {
   public:
     Map() = default;
+	Map(Map &&other);
+	Map &operator=(Map &&other);
+	Map(const Map &other) = delete;
+	Map &operator=(const Map &other) = delete;
 
     /**
      * @brief Load the map from a file

@@ -2,6 +2,19 @@
 #include <fstream>
 #include <iostream>
 
+Map::Map(Map &&other)
+    : teams(std::move(other.teams)), nodes(std::move(other.nodes)),
+      starting_nodes(std::move(other.starting_nodes)) {}
+
+Map &Map::operator=(Map &&other) {
+	if (this != &other) {
+		nodes = std::move(other.nodes);
+		teams = std::move(other.teams);
+		starting_nodes = std::move(other.starting_nodes);
+	}
+	return *this;
+}
+
 bool Map::load_teams(const json &data) {
     auto json_teams = data.find("teams");
     if (json_teams == data.end()) {
@@ -26,6 +39,7 @@ bool Map::load_nodes(const json &data) {
         return false;
     }
     std::vector<std::pair<unsigned int, unsigned int>> edges;
+	std::unordered_set<std::pair<unsigned int, unsigned int>> edges_set;
     for (const auto &node : *json_nodes) {
         try {
             auto node_obj = node.get<Node>();
@@ -40,10 +54,16 @@ bool Map::load_nodes(const json &data) {
             }
             std::vector<unsigned int> neighbors = neighbors_it->get<std::vector<unsigned int>>();
             for (const auto &neighbor : neighbors) {
+				edges.push_back({node_obj.get_id(), neighbor});
+				bool inserted = true;
 				if (node_obj.get_id() < neighbor) {
-                	edges.push_back({node_obj.get_id(), neighbor});
+					inserted = edges_set.emplace(node_obj.get_id(), neighbor).second;
 				} else {
-					edges.push_back({neighbor, node_obj.get_id()});
+					inserted = edges_set.emplace(neighbor, node_obj.get_id()).second;
+				}
+				if (!inserted) {
+					std::cerr << "Duplicate edge: " << node_obj.get_id() << " " << neighbor << std::endl;
+					return false;
 				}
             }
 
@@ -75,10 +95,7 @@ bool Map::load_nodes(const json &data) {
         return false;
     }
 
-	std::sort(edges.begin(), edges.end());
-	auto end = std::unique(edges.begin(), edges.end());
-    for (auto it = edges.begin(); it != end; it++) {
-        auto [node1, node2] = *it;
+    for (auto &[node1, node2] : edges) {
         auto node1_it = nodes.find(node1);
         if (node1_it == nodes.end()) {
             std::cerr << "Node not found: " << node1 << std::endl;
@@ -89,7 +106,7 @@ bool Map::load_nodes(const json &data) {
             std::cerr << "Node not found: " << node2 << std::endl;
             return false;
         }
-        nodes[node1].add_edge(nodes[node2]);
+        node1_it->second.add_edge(node2_it->second);
     }
     return true;
 }
@@ -157,5 +174,5 @@ Node *Map::get_starting_node(unsigned int team_id) {
     if (it == starting_nodes.end()) {
         throw std::runtime_error("Team not found in starting nodes");
     }
-    return &nodes.at(it->second);
+    return &nodes[it->second];
 }

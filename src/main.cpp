@@ -79,7 +79,7 @@ int main(int argc, char **argv) {
     }
 
     Game &game = Game::getInstance();
-    game.set_map(map);
+    game.set_map(std::move(map));
 	int team_id = 0;
     for (const std::string &team : teams) {
         if (team == "dummy") {

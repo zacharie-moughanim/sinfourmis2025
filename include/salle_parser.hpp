@@ -6,8 +6,8 @@
 using json = nlohmann::json;
 
 NLOHMANN_JSON_SERIALIZE_ENUM(salle_type, {
-                                             {VIDE, "vide"},
-                                             {EAU, "eau"},
-                                             {NOURRITURE, "nourriture"},
-											 {REINE, "reine"}
+                                             {VIDE, "VIDE"},
+                                             {EAU, "EAU"},
+                                             {NOURRITURE, "NOURRITURE"},
+											 {REINE, "REINE"}
                                          })

@@ -7,7 +7,7 @@
 // =======================
 #define EDGE_LIFE 10U       // edge base life
 #define EDGE_MIN_LIFE 3U    // edge minimum life to be crossed
-#define EDGE_CROSS_SPEED 1U // edge crossing speed in unit/turn
+#define EDGE_CROSS_SPEED 5U // edge crossing speed in unit/turn
 
 // =======================
 // Node constants

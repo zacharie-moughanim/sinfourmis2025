@@ -2,9 +2,9 @@
 	"nodes": [
 		{
 			"id": 1,
-			"x": 0.5,
-			"y": 0.5,
-			"type": "reine",
+			"x": -5,
+			"y": 0,
+			"type": "REINE",
 			"team": 1,
 			"neighbors": [
 				2, 0
@@ -12,24 +12,27 @@
 		},
 		{
 			"id": 2,
-			"x": 0.5,
-			"y": 0.5,
-			"type": "water"
+			"x": 0,
+			"y": -10,
+			"type": "EAU",
+			"neighbors": [
+				0
+			]
 		},
 		{
 			"id": 0,
-			"x": 20,
-			"y": 20,
-			"type": "food"
+			"x": 0,
+			"y": 10,
+			"type": "NOURRITURE"
 		},
 		{
 			"id": 3,
-			"x": 0.5,
-			"y": 0.5,
+			"x": 5,
+			"y": 0,
 			"team": 2,
-			"type": "reine",
+			"type": "REINE",
 			"neighbors": [
-				0, 1
+				2,0
 			]
 		}
 	],

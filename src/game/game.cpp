@@ -1,7 +1,7 @@
 #include "game/game.hpp"
 
-void Game::set_map(const Map &map) {
-    this->map = map;
+void Game::set_map(Map &&map) {
+    this->map = std::move(map);
 }
 
 void Game::add_interface(unsigned int team, Interface *interface) {
@@ -49,7 +49,7 @@ void Game::fourmi_action(std::unique_ptr<Ant> &ant) {
                 ant->set_result(-1);
             } else if (ant->get_action_state() != AntActionState::NONE) {
                 ant->set_result(-1);
-            } else if (ant->get_current_node()->get_edge(result.arg)->can_be_crossed()) {
+            } else if (!ant->get_current_node()->get_edge(result.arg)->can_be_crossed()) {
                 ant->set_result(-2);
             } else {
                 auto edge = ant->get_current_node()->get_edge(result.arg);
