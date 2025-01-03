@@ -86,7 +86,7 @@ class Queen {
         return current_node;
     }
 
-    std::vector<fourmi_etat> get_states() const {
+    std::vector<fourmi_etat> &get_states() {
         return ants_memory;
     }
 

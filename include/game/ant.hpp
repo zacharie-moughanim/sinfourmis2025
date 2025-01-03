@@ -87,7 +87,7 @@ class Ant {
      */
     unsigned int gather_food();
 
-    fourmi_etat as_fourmi_etat() const {
+    fourmi_etat &as_fourmi_etat() {
         return etat;
     }
 

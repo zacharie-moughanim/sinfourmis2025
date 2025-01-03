@@ -82,7 +82,7 @@ fourmi_etat Queen::default_fourmi_etat() const {
     fourmi_etat etat;
     etat.result = -1;
 
-    etat.vie = std::max((unsigned int)UINT8_MAX, get_stat(Stat::LIFE));
+    etat.vie = std::min((uint8_t)(UINT8_MAX - 1), (uint8_t)get_stat(Stat::LIFE));
 
     etat.eau = get_stat(Stat::WATER);
     etat.nouriture = 0;
@@ -114,6 +114,6 @@ std::optional<fourmi_etat> Queen::pop_ant() {
     ants_memory.pop_back();
     ant.nouriture = 0;
     ant.eau = get_stat(Stat::WATER);
-    ant.vie = std::max((uint32_t)UINT8_MAX, get_stat(Stat::LIFE));
+    ant.vie = std::min((uint8_t)(UINT8_MAX - 1), (uint8_t)get_stat(Stat::LIFE));
     return ant;
 }

@@ -35,9 +35,9 @@ void Game::fourmi_action(std::unique_ptr<Ant> &ant) {
     }
     if (ant->get_action_state() == AntActionState::DIGGING) {
         ant->dig();
-        return;
+		// we can still perform other actions while digging
     }
-    auto etat = ant->as_fourmi_etat();
+    auto &etat = ant->as_fourmi_etat();
     auto room = ant->get_current_node()->as_salle();
     auto result = interfaces[ant->get_team_id()]->fourmi_activation(&etat, &room);
     switch (result.action) {
@@ -143,7 +143,7 @@ void Game::queen_action(Queen &queen, std::vector<std::unique_ptr<Ant>> &ants) {
     if (!queen.can_perform_action()) {
         return;
     }
-    auto memories = queen.get_states();
+    auto &memories = queen.get_states();
     auto etat = queen.as_reine_etat();
     auto salle = queen.get_current_node()->as_salle();
     auto result = interfaces[queen.get_team_id()]->reine_activation(memories.data(),
@@ -251,8 +251,7 @@ void Game::run(unsigned int duration, unsigned int seed) {
 
         // === Ants turn ===
 		if (ants.size() > 0) {
-			ants.erase(
-				std::remove_if(ants.begin(), ants.end(), [](auto &ant) { return !ant->alive(); }));
+			std::erase_if(ants, [](auto &ant) { return !ant->alive(); });
 			std::shuffle(ants.begin(), ants.end(), gen);
 		}
         for (auto &ant : ants) {

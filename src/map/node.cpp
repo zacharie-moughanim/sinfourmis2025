@@ -11,11 +11,11 @@ void Node::remove_edge(const std::shared_ptr<Edge> &edge) {
 }
 
 salle Node::as_salle() const {
-    salle salle;
-    salle.degre = edges.size();
-    salle.type = type;
-    salle.pheromone = pheromone;
-    return salle;
+    return {
+		.type = type,
+		.pheromone = pheromone,
+		.degre = (int32_t)edges.size()
+	};
 }
 
 void Node::add_ant(Ant *ant) {
