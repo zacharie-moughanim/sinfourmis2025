@@ -11,7 +11,7 @@ est donné à titre indicatif) :
 ```ocaml
 open Sinfourmis
 val fourmi_activation : fourmi_etat -> salle -> fourmi_retour
-val reine_activation  : fourmi_etat array -> salle -> reine_retour
+val reine_activation  : fourmi_etat array -> reine_etat -> salle -> reine_retour
 ```
 
 Puis il faudra indiquer à l'interface l'existence de ces fonctions avec le code suivant
