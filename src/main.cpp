@@ -112,18 +112,19 @@ int main(int argc, char **argv) {
     game.set_map(std::move(map));
     int team_id = 0;
     for (const std::string &team : teams) {
+		Interface *interface;
         if (team == "dummy") {
-            game.add_interface(team_id, new Dummy());
+			interface = new Dummy();
         } else if (team.compare(team.length() - 4, 3, ".so")) {
             // the team file is a shared object, we use the corresponding interface
             std::cout << "Loading " << team << " usint the shared object interface" << std::endl;
-            SharedInterface *interface = new SharedInterface();
-            interface->load(team);
-            game.add_interface(team_id, interface);
+            interface = new SharedInterface();
         } else {
             std::cerr << "Unknown team file : " << team << std::endl;
             return 1;
         }
+		interface->load(team);
+		game.add_interface(team_id, interface);
         team_id++;
     }
 
