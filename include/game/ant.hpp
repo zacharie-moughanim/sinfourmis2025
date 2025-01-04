@@ -99,6 +99,10 @@ class Ant {
         return queen->get_stat(Queen::Stat::ATTACK);
     }
 
+	float get_progress() const {
+		return progress;
+	}
+
     void set_result(int32_t result) {
         this->etat.result = result;
     }
@@ -115,6 +119,6 @@ class Ant {
     unsigned int max_food = 0;
 
     AntActionState action_state = AntActionState::NONE;
-    float displacement = 0;
+    float progress = 0;
     Edge *current_edge = nullptr;
 };

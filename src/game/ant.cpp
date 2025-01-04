@@ -85,20 +85,20 @@ void Ant::move_along(Edge *edge) {
 }
 void Ant::displace() {
     assert(action_state == AntActionState::MOVING);
-    if (displacement < current_edge->get_length()) {
-        if (current_Node != nullptr && displacement == 0) {
+    if (progress < current_edge->get_length()) {
+        if (current_Node != nullptr && progress == 0) {
 			current_edge->add_ant(this);
             current_Node->remove_ant(this);
         }
         if (current_edge->can_be_crossed()) {
-            displacement += EDGE_CROSS_SPEED;
+            progress += EDGE_CROSS_SPEED;
         }
     } else {
         current_Node = current_edge->get_other_node(current_Node);
 		current_edge->remove_ant(this);
         current_Node->add_ant(this);
         action_state = AntActionState::NONE;
-        displacement = 0;
+        progress = 0;
     }
 }
 
