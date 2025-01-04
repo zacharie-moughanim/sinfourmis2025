@@ -18,7 +18,7 @@ using json = nlohmann::json;
 class Edge {
   public:
     Edge() = default;
-    Edge(Node *n1, Node *n2);
+    Edge(Node *n1, Node *n2, unsigned int life);
 
     /**
      * @brief Get the other side node of the edge.

@@ -7,7 +7,8 @@
 			"type": "REINE",
 			"team": 1,
 			"neighbors": [
-				2, 0
+				{"to": 2, "life": 1}, 
+				{"to": 0, "life": 1}
 			]
 		},
 		{
@@ -16,7 +17,7 @@
 			"y": -10,
 			"type": "EAU",
 			"neighbors": [
-				0
+				{"to": 0, "life": 1}
 			]
 		},
 		{
@@ -32,7 +33,8 @@
 			"team": 2,
 			"type": "REINE",
 			"neighbors": [
-				2,0
+				{"to": 2, "life": 1}, 
+				{"to": 0, "life": 1}
 			]
 		}
 	],

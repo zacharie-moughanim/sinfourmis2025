@@ -34,8 +34,9 @@ class Node {
      * also have an edge to this node.
      *
      * @param other the node to add an edge to
+	 * @param life the life of the edge
      */
-    void add_edge(Node &other);
+    void add_edge(Node &other, unsigned int life);
 
     /**
      * @brief Add an ant to the node as a visitor

@@ -1,7 +1,7 @@
 #include "map/edge.hpp"
 #include <iostream>
 
-Edge::Edge(Node *n1, Node *n2) : node1(n1), node2(n2) {
+Edge::Edge(Node *n1, Node *n2, unsigned int life) : node1(n1), node2(n2), life(life) {
     auto [x1, y1] = n1->get_position();
     auto [x2, y2] = n2->get_position();
     length = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));

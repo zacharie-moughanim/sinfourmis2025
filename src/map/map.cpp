@@ -38,7 +38,7 @@ bool Map::load_nodes(const json &data) {
         std::cerr << "Failed to find nodes in JSON" << std::endl;
         return false;
     }
-    std::vector<std::pair<unsigned int, unsigned int>> edges;
+    std::vector<std::pair<unsigned int, NeighborData>> edges;
 	std::unordered_set<std::pair<unsigned int, unsigned int>> edges_set;
     for (const auto &node : *json_nodes) {
         try {
@@ -52,17 +52,21 @@ bool Map::load_nodes(const json &data) {
             if (neighbors_it == node.end()) {
                 continue;
             }
-            std::vector<unsigned int> neighbors = neighbors_it->get<std::vector<unsigned int>>();
+            auto neighbors = neighbors_it->get<std::vector<NeighborData>>();
             for (const auto &neighbor : neighbors) {
+				if (neighbor.life <= 0 || neighbor.life > 1) {
+					std::cerr << "Invalid life value: " << neighbor.life << " in node " << node_obj.get_id() << std::endl;
+					return false;
+				}
 				edges.push_back({node_obj.get_id(), neighbor});
 				bool inserted = true;
-				if (node_obj.get_id() < neighbor) {
-					inserted = edges_set.emplace(node_obj.get_id(), neighbor).second;
+				if (node_obj.get_id() < neighbor.to) {
+					inserted = edges_set.emplace(node_obj.get_id(), neighbor.to).second;
 				} else {
-					inserted = edges_set.emplace(neighbor, node_obj.get_id()).second;
+					inserted = edges_set.emplace(neighbor.to, node_obj.get_id()).second;
 				}
 				if (!inserted) {
-					std::cerr << "Duplicate edge: " << node_obj.get_id() << " " << neighbor << std::endl;
+					std::cerr << "Duplicate edge: " << node_obj.get_id() << " " << neighbor.to << std::endl;
 					return false;
 				}
             }
@@ -95,18 +99,18 @@ bool Map::load_nodes(const json &data) {
         return false;
     }
 
-    for (auto &[node1, node2] : edges) {
+    for (auto &[node1, neighbor] : edges) {
         auto node1_it = nodes.find(node1);
         if (node1_it == nodes.end()) {
             std::cerr << "Node not found: " << node1 << std::endl;
             return false;
         }
-        auto node2_it = nodes.find(node2);
+        auto node2_it = nodes.find(neighbor.to);
         if (node2_it == nodes.end()) {
-            std::cerr << "Node not found: " << node2 << std::endl;
+            std::cerr << "Node not found: " << neighbor.to << std::endl;
             return false;
         }
-        node1_it->second.add_edge(node2_it->second);
+        node1_it->second.add_edge(node2_it->second, neighbor.life * EDGE_LIFE);
     }
     return true;
 }

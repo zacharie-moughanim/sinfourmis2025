@@ -1,8 +1,8 @@
 #include "map/node.hpp"
 #include <iostream>
 
-void Node::add_edge(Node &other) {
-    auto edge = std::make_shared<Edge>(this, &other);
+void Node::add_edge(Node &other, unsigned int life) {
+    auto edge = std::make_shared<Edge>(this, &other, life);
     edges.push_back(edge);
     other.edges.push_back(edge);
 }

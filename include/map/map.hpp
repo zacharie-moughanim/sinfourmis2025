@@ -4,6 +4,7 @@
 #include "map/node.hpp"
 #include "pair_hash.hpp"
 #include "salle_parser.hpp"
+#include "map/neighbor_data.hpp"
 #include "sinfourmis.h"
 #include <string_view>
 #include <tuple>
