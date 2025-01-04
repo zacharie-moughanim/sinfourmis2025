@@ -36,6 +36,9 @@ Ant::~Ant() {
     if (current_Node != nullptr) {
         current_Node->remove_ant(this);
     }
+	if (current_edge != nullptr) {
+		current_edge->remove_ant(this);
+	}
 }
 
 Node *Ant::get_current_node() const {
@@ -82,7 +85,9 @@ bool Ant::alive() {
 void Ant::move_along(Edge *edge) {
     action_state = AntActionState::MOVING;
     current_edge = edge;
+	progress = 0;
 }
+
 void Ant::displace() {
     assert(action_state == AntActionState::MOVING);
     if (progress < current_edge->get_length()) {
