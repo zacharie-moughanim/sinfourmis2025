@@ -2,6 +2,7 @@ type salle_type =
   | VIDE
   | EAU
   | NOURRITURE
+  | REINE
 
 type fourmi_action =
   | DEPLACEMENT
@@ -10,15 +11,18 @@ type fourmi_action =
   | COMMENCE_CONSTRUCTION
   | TERMINE_CONSTRUCTION
   | ATTAQUE
+  | ATTAQUE_TUNNEL
   | FOURMI_PASSE
 
 type reine_action =
   | CREER_FOURMI
   | ENVOYER_FOURMI
   | RECUPERER_FOURMI
-  | AMELIORE_REINE
+  | AMELIORE_STOCKAGE
+  | AMELIORE_PRODUCTION
   | AMELIORE_ENVOI
-  | AMELIORE_RAMMASSAGE
+  | AMELIORE_VITESSE_AMELIORATION
+  | AMELIORE_RAMASSAGE
   | AMELIORE_VIE
   | AMELIORE_EAU
   | AMELIORE_DEGATS
@@ -26,14 +30,16 @@ type reine_action =
 
 type salle = {
   salle_type : salle_type;
-  degre : int;
-  pheromone : int
+  pheromone : int;
+  degre : int
 }
 
 type fourmi_etat = {
   vie : int;
   memoire : char array;
-  result : int
+  result : int;
+  eau : int;
+  nourriture : int
 }
 
 type fourmi_retour = {
@@ -41,16 +47,27 @@ type fourmi_retour = {
   arg : int
 }
 
+type reine_etat = {
+  nourriture : int;
+  result : int;
+  max_nourriture : int;
+  max_eau : int;
+  max_vie : int;
+  max_degats : int;
+  duree_amelioration : int;
+  max_stockage : int;
+  max_production : int;
+  max_envoi : int
+}
+
 type reine_retour = {
   action : reine_action;
-  memoire : char array
+  arg : int
 }
 
 let register_functions
   (fourmi_activation : fourmi_etat -> salle -> fourmi_retour)
-  (reine_activation  : fourmi_etat array -> salle -> reine_retour)
+  (reine_activation  : fourmi_etat array -> reine_etat -> salle -> reine_retour)
   =
   Callback.register "fourmi_activation" fourmi_activation;
   Callback.register "reine_activation" reine_activation
-
-

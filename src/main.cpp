@@ -1,6 +1,7 @@
 #include "argparse/argparse.hpp"
 #include "game/game.hpp"
 #include "interfaces/dummy.hpp"
+#include "interfaces/shared.hpp"
 #include "map/map.hpp"
 #include <filesystem>
 #include <iostream>
@@ -113,6 +114,12 @@ int main(int argc, char **argv) {
     for (const std::string &team : teams) {
         if (team == "dummy") {
             game.add_interface(team_id, new Dummy());
+        } else if (team.compare(team.length() - 4, 3, ".so")) {
+            // the team file is a shared object, we use the corresponding interface
+            std::cout << "Loading " << team << " usint the shared object interface" << std::endl;
+            SharedInterface *interface = new SharedInterface();
+            interface->load(team);
+            game.add_interface(team_id, interface);
         } else {
             std::cerr << "Unknown team file : " << team << std::endl;
             return 1;

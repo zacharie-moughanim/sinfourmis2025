@@ -11,6 +11,7 @@ add_executable(Sinfourmis
 	src/game/queen.cpp
 	src/animation/animation.cpp
 	src/interfaces/dummy.cpp
+  src/interfaces/shared.cpp
 	src/main.cpp
 )
 
