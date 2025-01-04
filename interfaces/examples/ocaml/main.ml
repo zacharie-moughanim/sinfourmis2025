@@ -30,7 +30,8 @@ let fourmi_activation (etat : Sinfourmis.fourmi_etat) (salle : Sinfourmis.salle)
     end
   | _ -> failwith "unreachable"
 
-let reine_activation _ _ _ = failwith "Not implmented"
+let reine_activation (fourmis : Sinfourmis.fourmi_etat array) (reine : Sinfourmis.reine_etat) (salle : Sinfourmis.salle) : Sinfourmis.reine_retour =
+  {action = REINE_PASSE; arg = 42}
 
 let _ = Sinfourmis.register_functions fourmi_activation reine_activation
 

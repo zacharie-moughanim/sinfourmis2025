@@ -1,7 +1,8 @@
 #include "argparse/argparse.hpp"
 #include "game/game.hpp"
-#include "map/map.hpp"
 #include "interfaces/dummy.hpp"
+#include "interfaces/shared.hpp"
+#include "map/map.hpp"
 #include <iostream>
 #include <random>
 
@@ -31,22 +32,20 @@ int main(int argc, char **argv) {
         .default_value(1000)
         .nargs(1)
         .scan<'i', int>()
-		.action([](const std::string &value) {
-			int duration = std::stoi(value);
-			if (duration <= 0) {
-				throw std::runtime_error("Duration must be a positive integer");
-			}
-			return duration;
-		})
+        .action([](const std::string &value) {
+            int duration = std::stoi(value);
+            if (duration <= 0) {
+                throw std::runtime_error("Duration must be a positive integer");
+            }
+            return duration;
+        })
         .metavar("DURATION");
     program.add_argument("-s", "--seed")
         .help("The seed to use for the random number generator, default to a random value")
         .default_value((int)rd())
-		.nargs(1)
+        .nargs(1)
         .scan<'i', int>()
-		.action([](const std::string &value) {
-			return std::stoi(value);
-		})
+        .action([](const std::string &value) { return std::stoi(value); })
         .metavar("SEED");
 
     try {
@@ -80,19 +79,25 @@ int main(int argc, char **argv) {
 
     Game &game = Game::getInstance();
     game.set_map(std::move(map));
-	int team_id = 0;
+    int team_id = 0;
     for (const std::string &team : teams) {
         if (team == "dummy") {
-			game.add_interface(team_id, new Dummy());
-		} else {
-			std::cerr << "Unknown team file : " << team << std::endl;
-			return 1;
-		}
-		team_id++;
+            game.add_interface(team_id, new Dummy());
+        } else if (team.compare(team.length() - 4, 3, ".so")) {
+            // the team file is a shared object, we use the corresponding interface
+            std::cout << "Loading " << team << " usint the shared object interface" << std::endl;
+            SharedInterface *interface = new SharedInterface();
+            interface->load(team);
+            game.add_interface(team_id, interface);
+        } else {
+            std::cerr << "Unknown team file : " << team << std::endl;
+            return 1;
+        }
+        team_id++;
     }
 
-	int duration = program.get<int>("duration");
-	int seed = program.get<int>("seed");
+    int duration = program.get<int>("duration");
+    int seed = program.get<int>("seed");
 
     game.run(duration, seed);
 

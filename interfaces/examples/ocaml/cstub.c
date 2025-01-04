@@ -119,6 +119,7 @@ value reine_etat_to_val(const reine_etat *etat) {
     CAMLlocal5(res, nourriture, result, max_nourriture, max_eau);
     CAMLlocal5(max_vie, max_degats, duree_amelioration, max_stockage, max_production);
     CAMLlocal1(max_envoi);
+    res = caml_alloc(10, 0);
 
     nourriture = Val_int(etat->nourriture);
     Store_field(res, 0, nourriture);
