@@ -91,9 +91,21 @@ class Node {
         return edges;
     }
 
+	const std::unordered_set<Ant *> &get_ants() const {
+		return ants;
+	}
+
     salle_type get_type() const {
         return type;
     }
+
+	unsigned int get_food() const {
+		if (type == salle_type::NOURRITURE) {
+			return food;
+		}
+		throw std::runtime_error("Node is not a food node");
+		return food;
+	}
 
     size_t degree() const {
         return edges.size();

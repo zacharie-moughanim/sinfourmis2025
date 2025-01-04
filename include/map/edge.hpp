@@ -2,11 +2,14 @@
 
 #include "game/constants.hpp"
 #include "map/node.hpp"
+#include "nlohmann/json.hpp"
 #include <cmath>
 #include <unordered_set>
 
 class Node;
 class Ant;
+
+using json = nlohmann::json;
 
 /**
  * @brief Represents an edge between two nodes.
@@ -63,6 +66,10 @@ class Edge {
 
 	void remove_ant(Ant *ant) {
 		ants.erase(ant);
+	}
+
+	unsigned int get_life() const {
+		return life;
 	}
 
 	const std::unordered_set<Ant *> &get_ants() const {

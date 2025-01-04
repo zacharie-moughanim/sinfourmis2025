@@ -61,13 +61,25 @@ class Map {
         return teams.size();
     }
 
-    const std::vector<Team> &get_teams() const {
+    std::vector<Team> &get_teams() {
         return teams;
     }
+
+	const std::vector<Team> &get_teams() const {
+		return teams;
+	}
+
+	const std::unordered_map<unsigned int, Node> &get_nodes() const {
+		return nodes;
+	}
 
     const Team &get_team(unsigned int id) const {
         return teams.at(id);
     }
+
+	const Node &get_node(unsigned int id) const {
+		return nodes.at(id);
+	}
 
   private:
     bool load_teams(const json &data);
