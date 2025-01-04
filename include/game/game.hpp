@@ -3,10 +3,12 @@
 #include "game/ant.hpp"
 #include "game/queen.hpp"
 #include "interfaces/interface.hpp"
+#include "animation/animation.hpp"
 #include "map/map.hpp"
 #include <algorithm>
 #include <iostream>
 #include <random>
+
 
 /**
  * @brief Game object. It is a singleton that holds the game state and runs the game
@@ -20,7 +22,7 @@ class Game {
     void set_map(Map &&map);
     void add_interface(unsigned int team, Interface* interface);
 
-    void run(unsigned int duration, unsigned int seed);
+    void run(unsigned int duration, unsigned int seed, std::filesystem::path path);
 
     Game(const Game &) = delete;
     Game &operator=(const Game &) = delete;

@@ -9,6 +9,7 @@ add_executable(Sinfourmis
 	src/game/game.cpp
 	src/game/ant.cpp
 	src/game/queen.cpp
+	src/animation/animation.cpp
 	src/interfaces/dummy.cpp
 	src/main.cpp
 )

@@ -227,7 +227,7 @@ void Game::queen_action(Queen &queen, std::vector<std::unique_ptr<Ant>> &ants) {
     }
 }
 
-void Game::run(unsigned int duration, unsigned int seed) {
+void Game::run(unsigned int duration, unsigned int seed, std::filesystem::path path) {
     if (interfaces.size() != map.get_team_count()) {
 		std::cerr << interfaces.size() << " " << map.get_team_count() << std::endl;
         throw std::runtime_error("Not enough interfaces");
@@ -235,8 +235,8 @@ void Game::run(unsigned int duration, unsigned int seed) {
 
     std::cout << "Running game with seed " << seed << std::endl;
 
-    bool game_ended = false;
-    unsigned int turn = 0;
+	Animation animation(&map, path);
+
     gen.seed(seed);
 
     std::unordered_map<unsigned int, Queen> queens;
@@ -245,8 +245,8 @@ void Game::run(unsigned int duration, unsigned int seed) {
     }
     std::vector<std::unique_ptr<Ant>> ants;
 
-    while (!game_ended && turn < duration) {
-        turn++;
+    while (animation.game_turn() < duration) {
+		animation.start_frame();
         map.regen_food();
 
         // === Ants turn ===
@@ -262,5 +262,6 @@ void Game::run(unsigned int duration, unsigned int seed) {
         for (auto &queen : queens) {
             queen_action(queen.second, ants);
         }
+		animation.end_frame();
     }
 }

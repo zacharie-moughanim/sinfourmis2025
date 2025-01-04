@@ -1,7 +1,8 @@
 #include "argparse/argparse.hpp"
 #include "game/game.hpp"
-#include "map/map.hpp"
 #include "interfaces/dummy.hpp"
+#include "map/map.hpp"
+#include <filesystem>
 #include <iostream>
 #include <random>
 
@@ -22,7 +23,34 @@ int main(int argc, char **argv) {
     group.add_argument("-t", "--team").help("Team files to use").nargs(1).append().metavar("TEAM");
 
     program.add_argument("-o", "--output")
-        .help("The combat output file used to store the results")
+        .help("The combat output folder used to store the results")
+        .default_value("output")
+        .action([](const std::string &value) {
+            if (value.empty()) {
+                throw std::runtime_error("Output folder cannot be empty");
+            }
+            std::filesystem::path path(value);
+            if (!std::filesystem::exists(path)) {
+				std::filesystem::create_directory(path);
+				return path;
+			}
+			if (value == "output") {
+				int i = 0;
+				while (std::filesystem::exists(path)) {
+					path = std::filesystem::path(value + std::to_string(i));
+					i++;
+				}
+				std::filesystem::create_directory(path);
+				return path;
+			}
+			if (!std::filesystem::is_directory(path)) {
+				throw std::runtime_error("Output folder must be a directory");
+			}
+			if (!std::filesystem::is_empty(path)) {
+				throw std::runtime_error("Output folder must be empty");
+			}
+            return path;
+        })
         .metavar("OUTPUT");
 
     program.add_group("Simulation options:");
@@ -31,22 +59,20 @@ int main(int argc, char **argv) {
         .default_value(1000)
         .nargs(1)
         .scan<'i', int>()
-		.action([](const std::string &value) {
-			int duration = std::stoi(value);
-			if (duration <= 0) {
-				throw std::runtime_error("Duration must be a positive integer");
-			}
-			return duration;
-		})
+        .action([](const std::string &value) {
+            int duration = std::stoi(value);
+            if (duration <= 0) {
+                throw std::runtime_error("Duration must be a positive integer");
+            }
+            return duration;
+        })
         .metavar("DURATION");
     program.add_argument("-s", "--seed")
         .help("The seed to use for the random number generator, default to a random value")
         .default_value((int)rd())
-		.nargs(1)
+        .nargs(1)
         .scan<'i', int>()
-		.action([](const std::string &value) {
-			return std::stoi(value);
-		})
+        .action([](const std::string &value) { return std::stoi(value); })
         .metavar("SEED");
 
     try {
@@ -80,21 +106,22 @@ int main(int argc, char **argv) {
 
     Game &game = Game::getInstance();
     game.set_map(std::move(map));
-	int team_id = 0;
+    int team_id = 0;
     for (const std::string &team : teams) {
         if (team == "dummy") {
-			game.add_interface(team_id, new Dummy());
-		} else {
-			std::cerr << "Unknown team file : " << team << std::endl;
-			return 1;
-		}
-		team_id++;
+            game.add_interface(team_id, new Dummy());
+        } else {
+            std::cerr << "Unknown team file : " << team << std::endl;
+            return 1;
+        }
+        team_id++;
     }
 
-	int duration = program.get<int>("duration");
-	int seed = program.get<int>("seed");
+    int duration = program.get<int>("duration");
+    int seed = program.get<int>("seed");
+	auto path = program.get<std::filesystem::path>("output");
 
-    game.run(duration, seed);
+    game.run(duration, seed, path);
 
     return 0;
 }
