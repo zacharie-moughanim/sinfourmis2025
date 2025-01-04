@@ -6,6 +6,35 @@
 #include <iostream>
 #include <random>
 
+std::filesystem::path check_path(const std::string &value) {
+    if (value.empty()) {
+        throw std::runtime_error("Output folder cannot be empty");
+    }
+    std::filesystem::path path(value);
+    if (!std::filesystem::exists(path)) {
+        std::filesystem::create_directory(path);
+        return path;
+    }
+    if (value == "output") {
+        int i = 0;
+        while (std::filesystem::exists(path)) {
+            path = std::filesystem::path(value + std::to_string(i));
+            i++;
+        }
+        std::filesystem::create_directory(path);
+        return path;
+    }
+    if (!std::filesystem::is_directory(path)) {
+        std::cerr << "Output folder must be a directory" << std::endl;
+		exit(1);
+    }
+    if (!std::filesystem::is_empty(path)) {
+        std::cerr << "Output folder must be empty" << std::endl;
+		exit(1);
+    }
+    return path;
+}
+
 int main(int argc, char **argv) {
     argparse::ArgumentParser program("sinfourmis");
     program.add_description("The 2025 sinfourmis simulator");
@@ -25,32 +54,6 @@ int main(int argc, char **argv) {
     program.add_argument("-o", "--output")
         .help("The combat output folder used to store the results")
         .default_value("output")
-        .action([](const std::string &value) {
-            if (value.empty()) {
-                throw std::runtime_error("Output folder cannot be empty");
-            }
-            std::filesystem::path path(value);
-            if (!std::filesystem::exists(path)) {
-				std::filesystem::create_directory(path);
-				return path;
-			}
-			if (value == "output") {
-				int i = 0;
-				while (std::filesystem::exists(path)) {
-					path = std::filesystem::path(value + std::to_string(i));
-					i++;
-				}
-				std::filesystem::create_directory(path);
-				return path;
-			}
-			if (!std::filesystem::is_directory(path)) {
-				throw std::runtime_error("Output folder must be a directory");
-			}
-			if (!std::filesystem::is_empty(path)) {
-				throw std::runtime_error("Output folder must be empty");
-			}
-            return path;
-        })
         .metavar("OUTPUT");
 
     program.add_group("Simulation options:");
@@ -119,7 +122,7 @@ int main(int argc, char **argv) {
 
     int duration = program.get<int>("duration");
     int seed = program.get<int>("seed");
-	auto path = program.get<std::filesystem::path>("output");
+	auto path = check_path(program.get<std::string>("output"));
 
     game.run(duration, seed, path);
 
