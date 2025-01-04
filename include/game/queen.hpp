@@ -1,6 +1,7 @@
 #pragma once
 
 #include "game/constants.hpp"
+#include "game/team.hpp"
 #include "sinfourmis.h"
 #include <array>
 #include <cstring>
@@ -11,7 +12,7 @@ class Node;
 
 class Queen {
   public:
-    Queen(unsigned int team_id, Node *node) : team_id(team_id), current_node(node) {}
+    Queen(Team *team, Node *node) : team(team), current_node(node) {}
 
     enum class Stat : uint32_t { LIFE, WATER, FOOD, ATTACK, STORED_ANT };
     enum class QueenStat : uint32_t { STORED_ANTS, PRODUCED_ANTS, UPGRADE_DURATION, ANTS_SENDING };
@@ -75,11 +76,11 @@ class Queen {
     std::optional<fourmi_etat> pop_ant();
 
     unsigned int get_victory_points() const {
-        return food;
+        return team->get_food();
     }
 
     unsigned int get_team_id() const {
-        return team_id;
+        return team->get_id();
     }
 
     Node *get_current_node() const {
@@ -95,10 +96,9 @@ class Queen {
     }
 
   private:
-    unsigned int team_id = 0;
+    Team *team;
     Node *current_node = nullptr;
     unsigned int waiting_upgrade = 0;
-    unsigned int food = 0;
     int32_t result = 0;
 
     std::array<uint32_t, 5> stats{DEFAULT_MAX_LIFE, DEFAULT_MAX_WATER, DEFAULT_MAX_FOOD,

@@ -241,7 +241,7 @@ void Game::run(unsigned int duration, unsigned int seed, std::filesystem::path p
 
     std::unordered_map<unsigned int, Queen> queens;
     for (auto &team : map.get_teams()) {
-        queens.emplace(team.get_id(), Queen(team.get_id(), map.get_starting_node(team.get_id())));
+        queens.emplace(team.get_id(), Queen(&team, map.get_starting_node(team.get_id())));
     }
     std::vector<std::unique_ptr<Ant>> ants;
 

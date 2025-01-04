@@ -22,11 +22,10 @@ bool Queen::upgrade(Stat type) {
     if (waiting_upgrade > 0) {
         return false;
     }
-    if (food < upgrade_costs[(unsigned int)type]) {
+    if (!team->try_remove_food(upgrade_costs[(unsigned int)type])) {
         return false;
     }
     stats[(unsigned int)type]++;
-    food -= upgrade_costs[(unsigned int)type];
     waiting_upgrade = get_queen_stat(QueenStat::UPGRADE_DURATION);
     return true;
 }
@@ -35,7 +34,7 @@ bool Queen::upgrade_queen(QueenStat type) {
     if (waiting_upgrade > 0) {
         return false;
     }
-    if (food < queen_upgrade_costs[(uint32_t)type]) {
+    if (!team->try_remove_food(queen_upgrade_costs[(uint32_t)type])) {
         return false;
     }
     switch (type) {
@@ -66,7 +65,7 @@ uint32_t Queen::get_queen_stat(QueenStat type) const {
 reine_etat Queen::as_reine_etat() const {
     reine_etat etat;
     etat.result = result;
-    etat.nourriture = food;
+    etat.nourriture = team->get_food();
     etat.max_nourriture = get_stat(Stat::FOOD);
     etat.max_eau = get_stat(Stat::WATER);
     etat.max_vie = get_stat(Stat::LIFE);
@@ -101,7 +100,7 @@ bool Queen::push_ant(fourmi_etat ant) {
     if (ants_memory.size() >= get_queen_stat(QueenStat::STORED_ANTS)) {
         return false;
     }
-    this->food += ant.nouriture;
+	team->add_food(ant.nouriture);
     ants_memory.push_back(ant);
     return true;
 }
