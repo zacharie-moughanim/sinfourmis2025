@@ -10,12 +10,6 @@
 #define EDGE_CROSS_SPEED 5U // edge crossing speed in unit/turn
 
 // =======================
-// Node constants
-// =======================
-#define NODE_MAX_FOOD 100U // node maximum food quantity
-#define NODE_FOOD_REGEN 5U // node food regeneration quantity in unit/turn
-
-// =======================
 // Ant constants
 // =======================
 #define DEFAULT_MAX_LIFE 10U  // ant default maximum life

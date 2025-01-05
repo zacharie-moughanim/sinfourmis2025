@@ -49,6 +49,37 @@ unsigned int Node::gather_food(unsigned int max_food) {
 
 void Node::regen_food() {
     if (this->type == salle_type::NOURRITURE) {
-        this->food = std::min(this->food + NODE_FOOD_REGEN, NODE_MAX_FOOD);
+		if (total_available != -1) {
+        	unsigned int added = std::min(this->regen, std::min((unsigned int)total_available, this->max_food - this->food));
+			this->food += added;
+			total_available -= added;
+		} else {
+			this->food += std::min(this->regen, this->max_food - this->food);
+		}
     }
+}
+
+void to_json(json &j, const Node &node) {
+	j = json{
+		{"id", node.id},
+		{"type", node.type},
+		{"x", node.x},
+		{"y", node.y},
+	};
+	if (node.type == salle_type::NOURRITURE) {
+		j["food"] = node.food;
+	}
+}
+
+void from_json(const json &j, Node &node) {
+	j.at("id").get_to(node.id);
+	j.at("type").get_to(node.type);
+	j.at("x").get_to(node.x);
+	j.at("y").get_to(node.y);
+	if (node.type == salle_type::NOURRITURE) {
+		j.at("initial_food").get_to(node.food);
+		j.at("regen").get_to(node.regen);
+		j.at("max_food").get_to(node.max_food);
+		j.at("total_available").get_to(node.total_available);
+	}
 }

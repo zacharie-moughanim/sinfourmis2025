@@ -116,7 +116,6 @@ void Animation::start_frame() {
     }
     started = true;
     data = json::object();
-    data["maxfood"] = NODE_MAX_FOOD;
 
     // save teams
     auto teams = json::array();
@@ -129,20 +128,19 @@ void Animation::start_frame() {
     // save nodes and edges
     auto nodes = json::array();
     auto edges = json::array();
+	unsigned int max_food = 0;
 
-    for (auto node : map->get_nodes()) {
-        nodes.push_back(node.second);
-        if (node.second.get_type() == salle_type::NOURRITURE) {
-            nodes.back()["food"] = node.second.get_food();
-        }
-        nodes.back()["ants"] = node_groups(node.second);
-        for (auto edge : node.second.get_edges()) {
-            if (edge->get_node1()->get_id() == node.second.get_id()) {
+    for (auto [_ , node] : map->get_nodes()) {
+		max_food = std::max(max_food, node.get_max_food());
+        nodes.push_back(node);
+        nodes.back()["ants"] = node_groups(node);
+        for (auto edge : node.get_edges()) {
+            if (edge->get_node1()->get_id() == node.get_id()) {
                 edges.push_back(*edge);
             }
         }
     }
-
+	data["max_food"] = max_food;
     data["nodes"] = nodes;
     data["edges"] = edges;
 }

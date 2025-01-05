@@ -20,7 +20,8 @@ class Node {
     ~Node() = default;
 
     // for json serialization / deserialization
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE(Node, id, type, x, y)
+    friend void to_json(json &j, const Node &node);
+	friend void from_json(const json &j, Node &node);
 
     /**
      * @brief Convert the node to a salle that can be sent to the ants simulation
@@ -101,11 +102,17 @@ class Node {
     }
 
 	unsigned int get_food() const {
-		if (type == salle_type::NOURRITURE) {
-			return food;
+		if (type != salle_type::NOURRITURE) {
+			throw std::runtime_error("Node is not a food node");
 		}
-		throw std::runtime_error("Node is not a food node");
 		return food;
+	}
+
+	unsigned int get_max_food() const {
+		if (type != salle_type::NOURRITURE) {
+			throw std::runtime_error("Node is not a food node");
+		}
+		return max_food;
 	}
 
     size_t degree() const {
@@ -128,7 +135,12 @@ class Node {
     float x = 0;
     float y = 0;
     uint8_t pheromone = 0;
+
+
     unsigned int food = 0;
+	unsigned int regen = 0;
+	unsigned int max_food = 0;
+	int total_available = 0;
 
     std::vector<std::shared_ptr<Edge>> edges;
     std::unordered_set<Ant *> ants;
