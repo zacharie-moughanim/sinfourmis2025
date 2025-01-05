@@ -4,5 +4,8 @@
 		"args": [
 			"../maps/test.json", "-t", "dummy", "-t", "dummy"
 		]
+	},
+	"files.associations": {
+		"stdexcept": "cpp"
 	}
 }

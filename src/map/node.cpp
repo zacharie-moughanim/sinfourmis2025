@@ -69,6 +69,9 @@ void to_json(json &j, const Node &node) {
 	if (node.type == salle_type::NOURRITURE) {
 		j["food"] = node.food;
 	}
+	if (node.type == salle_type::REINE) {
+		j["team"] = node.team;
+	}
 }
 
 void from_json(const json &j, Node &node) {
@@ -81,5 +84,8 @@ void from_json(const json &j, Node &node) {
 		j.at("regen").get_to(node.regen);
 		j.at("max_food").get_to(node.max_food);
 		j.at("total_available").get_to(node.total_available);
+	}
+	if (node.type == salle_type::REINE) {
+		j.at("team").get_to(node.team);
 	}
 }
