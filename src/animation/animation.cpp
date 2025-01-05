@@ -131,7 +131,9 @@ void Animation::start_frame() {
 	unsigned int max_food = 0;
 
     for (auto [_ , node] : map->get_nodes()) {
-		max_food = std::max(max_food, node.get_max_food());
+		if (node.get_type() == salle_type::NOURRITURE) {
+			max_food = std::max(max_food, node.get_max_food());
+		}
         nodes.push_back(node);
         nodes.back()["ants"] = node_groups(node);
         for (auto edge : node.get_edges()) {
