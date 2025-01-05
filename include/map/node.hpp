@@ -5,9 +5,9 @@
 #include "nlohmann/json.hpp"
 #include "salle_parser.hpp"
 #include "sinfourmis.h"
+#include <iostream>
 #include <memory>
 #include <unordered_set>
-#include <iostream>
 
 using json = nlohmann::json;
 
@@ -21,7 +21,7 @@ class Node {
 
     // for json serialization / deserialization
     friend void to_json(json &j, const Node &node);
-	friend void from_json(const json &j, Node &node);
+    friend void from_json(const json &j, Node &node);
 
     /**
      * @brief Convert the node to a salle that can be sent to the ants simulation
@@ -35,7 +35,7 @@ class Node {
      * also have an edge to this node.
      *
      * @param other the node to add an edge to
-	 * @param life the life of the edge
+     * @param life the life of the edge
      */
     void add_edge(Node &other, unsigned int life);
 
@@ -93,27 +93,27 @@ class Node {
         return edges;
     }
 
-	const std::unordered_set<Ant *> &get_ants() const {
-		return ants;
-	}
+    const std::unordered_set<Ant *> &get_ants() const {
+        return ants;
+    }
 
     salle_type get_type() const {
         return type;
     }
 
-	unsigned int get_food() const {
-		if (type != salle_type::NOURRITURE) {
-			throw std::runtime_error("Node is not a food node");
-		}
-		return food;
-	}
+    unsigned int get_food() const {
+        if (type != salle_type::NOURRITURE) {
+            throw std::runtime_error("Node is not a food node");
+        }
+        return food;
+    }
 
-	unsigned int get_max_food() const {
-		if (type != salle_type::NOURRITURE) {
-			throw std::runtime_error("Node is not a food node");
-		}
-		return max_food;
-	}
+    unsigned int get_max_food() const {
+        if (type != salle_type::NOURRITURE) {
+            return 0;
+        }
+        return max_food;
+    }
 
     size_t degree() const {
         return edges.size();
@@ -136,11 +136,10 @@ class Node {
     float y = 0;
     uint8_t pheromone = 0;
 
-
     unsigned int food = 0;
-	unsigned int regen = 0;
-	unsigned int max_food = 0;
-	int total_available = 0;
+    unsigned int regen = 0;
+    unsigned int max_food = 0;
+    int total_available = 0;
 
     std::vector<std::shared_ptr<Edge>> edges;
     std::unordered_set<Ant *> ants;
