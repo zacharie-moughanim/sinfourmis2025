@@ -1,6 +1,8 @@
 #include "argparse/argparse.hpp"
 #include "game/game.hpp"
 #include "interfaces/dummy.hpp"
+// #include "interfaces/python.hpp"
+#include "interfaces/python.hpp"
 #include "interfaces/shared.hpp"
 #include "map/map.hpp"
 #include <filesystem>
@@ -27,11 +29,11 @@ std::filesystem::path check_path(const std::string &value) {
     }
     if (!std::filesystem::is_directory(path)) {
         std::cerr << "Output folder must be a directory" << std::endl;
-		exit(1);
+        exit(1);
     }
     if (!std::filesystem::is_empty(path)) {
         std::cerr << "Output folder must be empty" << std::endl;
-		exit(1);
+        exit(1);
     }
     return path;
 }
@@ -112,25 +114,26 @@ int main(int argc, char **argv) {
     game.set_map(std::move(map));
     int team_id = 0;
     for (const std::string &team : teams) {
-		Interface *interface;
+        Interface *interface;
         if (team == "dummy") {
-			interface = new Dummy();
-        } else if (team.compare(team.length() - 4, 3, ".so")) {
+            interface = new Dummy();
+        } else if (!team.compare(team.length() - 3, 3, ".so")) {
             // the team file is a shared object, we use the corresponding interface
-            std::cout << "Loading " << team << " usint the shared object interface" << std::endl;
+            std::cout << "Loading " << team << " using the shared object interface" << std::endl;
             interface = new SharedInterface();
         } else {
-            std::cerr << "Unknown team file : " << team << std::endl;
-            return 1;
+            // We assume the team file is a python package
+            std::cout << "Loading " << team << " using the python interface" << std::endl;
+            interface = new PythonInterface();
         }
-		interface->load(team);
-		game.add_interface(team_id, interface);
+        interface->load(team);
+        game.add_interface(team_id, interface);
         team_id++;
     }
 
     int duration = program.get<int>("duration");
     int seed = program.get<int>("seed");
-	auto path = check_path(program.get<std::string>("output"));
+    auto path = check_path(program.get<std::string>("output"));
 
     game.run(duration, seed, path);
 
