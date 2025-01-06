@@ -40,6 +40,9 @@ void Game::fourmi_action(std::unique_ptr<Ant> &ant) {
     auto &etat = ant->as_fourmi_etat();
     auto room = ant->get_current_node()->as_salle();
     auto result = interfaces[ant->get_team_id()]->fourmi_activation(&etat, &room);
+	if (result.depose_pheromone) {
+        ant->get_current_node()->set_pheromone(result.pheromone);
+    }
     switch (result.action) {
         case FOURMI_PASSE:
             ant->set_result(0);
@@ -57,14 +60,6 @@ void Game::fourmi_action(std::unique_ptr<Ant> &ant) {
                 ant->move_along(edge);
                 ant->set_result(edge->get_other_node(curr_node)->get_id_to(curr_node));
             }
-            break;
-        case fourmi_action::DEPOSE_PHEROMONE:
-            if (result.arg >> 8 != 0) {
-                std::cout << "Warning: the pheromone is too big, it will be truncated" << std::endl;
-                std::cout << "Perhaps it is a bug of your interface but else, nice try cheater ;)"
-                          << std::endl;
-            }
-            ant->get_current_node()->set_pheromone(result.arg & 0xFF);
             break;
         case fourmi_action::RAMASSE_NOURRITURE:
             if (ant->get_current_node()->get_type() != salle_type::NOURRITURE ||
