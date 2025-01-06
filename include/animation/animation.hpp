@@ -31,7 +31,7 @@ class Animation {
 	 *
 	 * @param node the node to write the groups from
 	 */
-    void write_edges_departure_groups(const Node &node);
+    void write_edges_departure_groups(const Node &node, const Edge *edge, json &json_edge);
 
     /**
      * @brief Build the json data for the groups of ants on a node

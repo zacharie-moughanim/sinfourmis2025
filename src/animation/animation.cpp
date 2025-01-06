@@ -40,30 +40,31 @@ void to_json(json &j, const Edge &edge) {
     }
 }
 
-void Animation::write_edges_departure_groups(const Node &node) {
-    int i = 0;
-    for (auto edge : node.get_edges()) {
-        if (edge->get_node1()->get_id() == node.get_id()) {
-            std::map<unsigned int, unsigned int> departures;
-            for (auto ant : node.get_ants()) {
-                if (ant->get_action_state() == AntActionState::MOVING && ant->get_progress() == 0) {
-                    auto it = departures.find(ant->get_team_id());
-                    if (it == departures.end()) {
-                        departures[ant->get_team_id()] = 1;
-                    } else {
-                        departures[ant->get_team_id()]++;
-                    }
-                }
-            }
-			if (!data["edges"][i].contains("groups") && !departures.empty()) {
-				data["edges"][i]["groups"] = json::array();
+void Animation::write_edges_departure_groups(const Node &node, const Edge *edge, json &json_edge) {
+	std::map<unsigned int, unsigned int> departures;
+	for (auto ant : node.get_ants()) {
+		if (ant->get_action_state() == AntActionState::MOVING && ant->get_progress() == 0 && ant->get_current_edge() == edge) {
+			auto it = departures.find(ant->get_team_id());
+			if (it == departures.end()) {
+				departures[ant->get_team_id()] = 1;
+			} else {
+				departures[ant->get_team_id()]++;
 			}
-            for (auto [team, qt] : departures) {
-                data["edges"][i]["groups"].push_back(AntGroupData{team, qt, 0});
-                data["edges"][i]["groups"].back()["anim"] = json{{"progress", EDGE_CROSS_SPEED}};
-            }
-        }
-    }
+		}
+	}
+	if (!departures.empty()) {
+		if (!json_edge.contains("groups")) {
+			json_edge["groups"] = json::array();
+		}
+		for (auto [team, qt] : departures) {
+			json_edge["groups"].push_back(AntGroupData{team, qt, 0});
+			float length = EDGE_CROSS_SPEED / edge->get_length();
+			if (edge->get_node1()->get_id() == node.get_id())
+				length = 1. - EDGE_CROSS_SPEED / edge->get_length();
+			
+			json_edge["groups"].back()["anim"] = json{{"progress", length}};	
+		}
+	}
 }
 
 std::unordered_map<unsigned int, unsigned int> node_groups_map(const Node &node) {
@@ -142,6 +143,16 @@ void Animation::start_frame() {
             }
         }
     }
+	for (auto [_, node]: map->get_nodes()) {
+		for (auto edge : node.get_edges()) {
+			int i = 0;
+			while (edge->get_node1()->get_id() != edges[i].at("ids").at(0).template get<unsigned int>() ||
+			       edge->get_node2()->get_id() != edges[i].at("ids").at(1).template get<unsigned int>()) {
+					i++;
+				   }
+        	write_edges_departure_groups(node, edge.get(), edges[i]);
+        }
+	}
 	data["max_food"] = max_food;
     data["nodes"] = nodes;
     data["edges"] = edges;
@@ -175,7 +186,6 @@ void Animation::end_frame() {
             node_json["anim"]["food"] = node.get_food();
         }
         node_json["anim"]["ants"] = write_groups_animation(node, node_json["ants"]);
-        write_edges_departure_groups(node);
     }
 
     // write data to file

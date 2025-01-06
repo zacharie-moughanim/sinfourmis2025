@@ -111,6 +111,10 @@ class Ant {
         return action_state;
     }
 
+	Edge *get_current_edge() const {
+		return current_edge;
+	}
+
   private:
     Node *current_Node = nullptr;
     Queen *queen = nullptr;
