@@ -19,7 +19,8 @@ edge_groups(const Edge &edge) {
 
 void to_json(json &j, const Edge &edge) {
     j = json{
-        {"ids", {edge.get_node1()->get_id(), edge.get_node2()->get_id()}},
+        {"id_1", edge.get_node1()->get_id()},
+		{"id_2", edge.get_node2()->get_id()},
         {"life_ratio", (float)edge.get_life() / (float)EDGE_LIFE},
     };
     auto groups = edge_groups(edge);
@@ -146,8 +147,8 @@ void Animation::start_frame() {
 	for (auto [_, node]: map->get_nodes()) {
 		for (auto edge : node.get_edges()) {
 			int i = 0;
-			while (edge->get_node1()->get_id() != edges[i].at("ids").at(0).template get<unsigned int>() ||
-			       edge->get_node2()->get_id() != edges[i].at("ids").at(1).template get<unsigned int>()) {
+			while (edge->get_node1()->get_id() != edges[i].at("id_1").template get<unsigned int>() ||
+			       edge->get_node2()->get_id() != edges[i].at("id_2").template get<unsigned int>()) {
 					i++;
 				   }
         	write_edges_departure_groups(node, edge.get(), edges[i]);
@@ -186,6 +187,9 @@ void Animation::end_frame() {
             node_json["anim"]["food"] = node.get_food();
         }
         node_json["anim"]["ants"] = write_groups_animation(node, node_json["ants"]);
+		if (node_json["anim"]["ants"].size() == 0) {
+			node_json["anim"].erase("ants");
+		}
     }
 
     // write data to file
