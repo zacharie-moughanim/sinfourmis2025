@@ -24,7 +24,7 @@ Game::~Game() {
 	}
 }
 
-void Game::fourmi_action(std::unique_ptr<Ant> &ant) {
+void Game::fourmi_action(const std::unique_ptr<Ant> &ant) {
     ant->consume_water();
     if (!ant->alive()) {
         return;
@@ -222,7 +222,7 @@ void Game::queen_action(Queen &queen, std::vector<std::unique_ptr<Ant>> &ants) {
     }
 }
 
-void Game::run(unsigned int duration, unsigned int seed, std::filesystem::path path) {
+void Game::run(unsigned int duration, unsigned int seed, std::filesystem::path &&path) {
     if (interfaces.size() != map.get_team_count()) {
 		std::cerr << interfaces.size() << " " << map.get_team_count() << std::endl;
         throw std::runtime_error("Not enough interfaces");
@@ -234,9 +234,9 @@ void Game::run(unsigned int duration, unsigned int seed, std::filesystem::path p
 
     gen.seed(seed);
 
-    std::unordered_map<unsigned int, Queen> queens;
+    std::vector<Queen> queens;
     for (auto &team : map.get_teams()) {
-        queens.emplace(team.get_id(), Queen(&team, map.get_starting_node(team.get_id())));
+        queens.emplace_back(&team, map.get_starting_node(team.get_id()));
     }
     std::vector<std::unique_ptr<Ant>> ants;
 
@@ -245,17 +245,18 @@ void Game::run(unsigned int duration, unsigned int seed, std::filesystem::path p
         map.regen_food();
 
         // === Ants turn ===
-		if (ants.size() > 0) {
+		if (!ants.empty()) {
 			std::erase_if(ants, [](auto &ant) { return !ant->alive(); });
-			std::shuffle(ants.begin(), ants.end(), gen);
+			std::ranges::shuffle(ants, gen);
 		}
         for (auto &ant : ants) {
             fourmi_action(ant);
         }
 
         // === Queen turn ===
+		std::ranges::shuffle(queens, gen);
         for (auto &queen : queens) {
-            queen_action(queen.second, ants);
+            queen_action(queen, ants);
         }
 		animation.end_frame();
     }

@@ -17,13 +17,13 @@ Ant::Ant(Queen *queen) : current_Node(queen->get_current_node()), queen(queen) {
     current_Node->add_ant(this);
 }
 
-Ant::Ant(const Ant &&ant)
+Ant::Ant(const Ant &&ant) noexcept
     : current_Node(ant.current_Node), queen(ant.queen), max_water(ant.max_water),
       max_food(ant.max_food) {
     etat = ant.etat;
 }
 
-Ant &Ant::operator=(const Ant &&ant) {
+Ant &Ant::operator=(const Ant &&ant) noexcept {
     queen = ant.queen;
     current_Node = ant.current_Node;
     max_water = ant.max_water;

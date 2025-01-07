@@ -22,7 +22,7 @@ class Game {
     void set_map(Map &&map);
     void add_interface(unsigned int team, Interface* interface);
 
-    void run(unsigned int duration, unsigned int seed, std::filesystem::path path);
+    void run(unsigned int duration, unsigned int seed, std::filesystem::path &&path);
 
     Game(const Game &) = delete;
     Game &operator=(const Game &) = delete;
@@ -34,7 +34,7 @@ class Game {
      *
      * @param ant he ant to run
      */
-    void fourmi_action(std::unique_ptr<Ant> &ant);
+    void fourmi_action(const std::unique_ptr<Ant> &ant);
 
     /**
      * @brief Perform the queen action and update game state accordingly

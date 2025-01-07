@@ -65,6 +65,7 @@ void to_json(json &j, const Node &node) {
 		{"type", node.type},
 		{"x", node.x},
 		{"y", node.y},
+		{"pheromone", node.pheromone},
 	};
 	if (node.type == salle_type::NOURRITURE) {
 		j["food"] = node.food;

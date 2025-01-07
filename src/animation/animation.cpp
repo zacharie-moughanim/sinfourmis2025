@@ -31,8 +31,8 @@ void to_json(json &j, const Edge &edge) {
             progress /= edge.get_length();
             progress_anim /= edge.get_length();
         } else {
-            progress = 1. - (progress / edge.get_length());
-            progress_anim = 1. - (progress_anim / edge.get_length());
+            progress = 1.f - (progress / edge.get_length());
+            progress_anim = 1.f - (progress_anim / edge.get_length());
         }
         progress = std::max(0.f, std::min(1.f, progress));
         progress_anim = std::max(0.f, std::min(1.f, progress_anim));
@@ -41,7 +41,7 @@ void to_json(json &j, const Edge &edge) {
     }
 }
 
-void Animation::write_edges_departure_groups(const Node &node, const Edge *edge, json &json_edge) {
+void Animation::write_edges_departure_groups(const Node &node, const Edge *edge, json &json_edge) const {
 	std::map<unsigned int, unsigned int> departures;
 	for (auto ant : node.get_ants()) {
 		if (ant->get_action_state() == AntActionState::MOVING && ant->get_progress() == 0 && ant->get_current_edge() == edge) {
@@ -61,7 +61,7 @@ void Animation::write_edges_departure_groups(const Node &node, const Edge *edge,
 			json_edge["groups"].push_back(AntGroupData{team, qt, 0});
 			float length = EDGE_CROSS_SPEED / edge->get_length();
 			if (edge->get_node1()->get_id() == node.get_id())
-				length = 1. - EDGE_CROSS_SPEED / edge->get_length();
+				length = 1.f - EDGE_CROSS_SPEED / edge->get_length();
 			
 			json_edge["groups"].back()["anim"] = json{{"progress", length}};	
 		}
@@ -81,7 +81,7 @@ std::unordered_map<unsigned int, unsigned int> node_groups_map(const Node &node)
     return groups;
 }
 
-json Animation::node_groups(const Node &node) {
+json Animation::node_groups(const Node &node) const {
     auto groups = node_groups_map(node);
     auto res = json::array();
     for (auto [team, qt] : groups) {
@@ -90,7 +90,7 @@ json Animation::node_groups(const Node &node) {
     return res;
 }
 
-json Animation::write_groups_animation(const Node &node, json &groups) {
+json Animation::write_groups_animation(const Node &node, json &groups) const {
     auto groups_map = node_groups_map(node);
     auto res = json::array();
     for (auto group : groups) {
@@ -164,9 +164,10 @@ void Animation::end_frame() {
         throw std::runtime_error("Start / end frame must be called in pairs");
     }
     started = false;
-    file.open(path / (std::to_string(turn) + ".json"));
+	auto file_path = path / std::format("{}.json", turn);
+    file.open(file_path);
     if (!file.is_open()) {
-        std::cerr << "Failed to open file " << path / (std::to_string(turn) + ".json") << std::endl;
+        std::cerr << "Failed to open file " << file_path << std::endl;
         exit(1);
     }
 

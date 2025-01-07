@@ -15,9 +15,9 @@ enum class AntActionState {
 class Ant {
   public:
     Ant(Queen *queen, fourmi_etat &&etat);
-    Ant(Queen *queen);
-    Ant(const Ant &&ant);
-    Ant &operator=(const Ant &&ant);
+    explicit Ant(Queen *queen);
+    explicit Ant(const Ant &&ant) noexcept;
+    Ant &operator=(const Ant &&ant) noexcept;
     ~Ant();
 
     Node *get_current_node() const;

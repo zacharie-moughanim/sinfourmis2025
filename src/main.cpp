@@ -117,7 +117,7 @@ int main(int argc, char **argv) {
 			interface = new Dummy();
         } else if (team.compare(team.length() - 4, 3, ".so")) {
             // the team file is a shared object, we use the corresponding interface
-            std::cout << "Loading " << team << " usint the shared object interface" << std::endl;
+            std::cout << "Loading " << team << " using the shared object interface" << std::endl;
             interface = new SharedInterface();
         } else {
             std::cerr << "Unknown team file : " << team << std::endl;
@@ -132,7 +132,7 @@ int main(int argc, char **argv) {
     int seed = program.get<int>("seed");
 	auto path = check_path(program.get<std::string>("output"));
 
-    game.run(duration, seed, path);
+    game.run(duration, seed, std::move(path));
 
     return 0;
 }

@@ -58,3 +58,4 @@ build
 
 # Built Visual Studio Code Extensions
 *.vsix
+include/interfaces/macros.h

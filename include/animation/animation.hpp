@@ -9,6 +9,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <format>
 
 using json = nlohmann::json;
 
@@ -31,7 +32,7 @@ class Animation {
 	 *
 	 * @param node the node to write the groups from
 	 */
-    void write_edges_departure_groups(const Node &node, const Edge *edge, json &json_edge);
+    void write_edges_departure_groups(const Node &node, const Edge *edge, json &json_edge) const;
 
     /**
      * @brief Build the json data for the groups of ants on a node
@@ -39,7 +40,7 @@ class Animation {
      * @param node the node to build the groups from
      * @return json the groups of ants on the node as json
      */
-    json node_groups(const Node &node);
+    json node_groups(const Node &node) const;
 
     /**
      * @brief Check the difference between the groups of ants on a node and the previous frame
@@ -50,7 +51,7 @@ class Animation {
      * @param node the node to build the groups from
      * @param groups the groups of ants on the node as json
      */
-    json write_groups_animation(const Node &node, json &groups);
+    json write_groups_animation(const Node &node, json &groups) const;
 
     unsigned int turn = 0;
     bool started = false;
