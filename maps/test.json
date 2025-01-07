@@ -14,21 +14,28 @@
 		{
 			"id": 2,
 			"x": 0,
-			"y": -10,
+			"y": -5,
 			"type": "EAU",
 			"neighbors": [
-				{"to": 0, "life": 1}
+				{"to": 0, "life": 1},
+				{"to": 4, "life": 1}
 			]
+		},
+		{
+			"id": 4,
+			"x": -2,
+			"y": -6,
+			"type": "NOURRITURE",
+			"initial_food": 0,
+			"max_food": 150,
+			"regen": 15,
+			"total_available": 1500
 		},
 		{
 			"id": 0,
 			"x": 0,
 			"y": 10,
-			"type": "NOURRITURE",
-			"initial_food": 0,
-			"max_food": 100,
-			"regen": 10,
-			"total_available": 1000
+			"type": "NORMAL"
 		},
 		{
 			"id": 3,

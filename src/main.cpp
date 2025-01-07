@@ -67,8 +67,8 @@ int main(int argc, char **argv) {
         .help("The seed to use for the random number generator, default to a random value")
         .default_value((int)rd())
         .nargs(1)
-        .scan<'i', int>()
-        .action([](const std::string &value) { return std::stoi(value); })
+        .scan<'i', unsigned int>()
+        .action([](const std::string &value) { return (unsigned int)std::stoul(value); })
         .metavar("SEED");
 	program.add_argument("-f", "--flush")
 		   .help("Flush the animation at each turn")
@@ -125,7 +125,7 @@ int main(int argc, char **argv) {
     }
 
     int duration = program.get<int>("duration");
-    int seed = program.get<int>("seed");
+    int seed = program.get<unsigned int>("seed");
 	auto path = check_path(program.get<std::string>("output"));
 	bool flush = program.get<bool>("flush");
 

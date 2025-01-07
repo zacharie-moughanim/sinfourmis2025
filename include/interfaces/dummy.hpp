@@ -1,6 +1,7 @@
 #pragma once
 
 #include "interface.hpp"
+#include <unordered_map>
 
 class Dummy : public Interface {
 public:
@@ -12,7 +13,6 @@ public:
     fourmi_retour fourmi_activation(fourmi_etat *fourmi, const salle *salle) override;
 private:
 	uint32_t fourmis_count = 0;
-  	enum { PRODUCE, SEND, GATHER, FOUND_FOOD, END } state = PRODUCE;
-	bool found_food = false;
-	char path[250];
+	std::unordered_map<int, int> levels;
+	char hold_state = 0;
 };

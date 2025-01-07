@@ -123,7 +123,7 @@ void Animation::start_frame() {
     auto teams = json::array();
     for (auto team : map->get_teams()) {
         teams.push_back(team);
-        teams.back()["score"] = team.get_food();
+        teams.back()["score"] = team.get_score();
     }
     frame["teams"] = teams;
 
@@ -169,8 +169,8 @@ void Animation::end_frame() {
     auto teams = map->get_teams();
     for (uint i = 0; i < teams.size(); i++) {
         frame["teams"][i]["next"] = json::object();
-        if (frame["teams"][i]["score"] != teams[i].get_food()) {
-            frame["teams"][i]["next"]["score"] = teams[i].get_food();
+        if (frame["teams"][i]["score"] != teams[i].get_score()) {
+            frame["teams"][i]["next"]["score"] = teams[i].get_score();
         }
     }
 
