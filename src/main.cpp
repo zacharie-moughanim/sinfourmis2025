@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <iostream>
 #include <random>
+#include <format>
 
 std::filesystem::path check_path(const std::string &value) {
     if (value.empty()) {
@@ -13,26 +14,17 @@ std::filesystem::path check_path(const std::string &value) {
     }
     std::filesystem::path path(value);
     if (!std::filesystem::exists(path)) {
-        std::filesystem::create_directory(path);
         return path;
-    }
-    if (value == "output") {
+    } else if (value == "output.json") {
         int i = 0;
         while (std::filesystem::exists(path)) {
-            path = std::filesystem::path(value + std::to_string(i));
+            path = std::filesystem::path(std::format("output{}.json", i));
             i++;
         }
-        std::filesystem::create_directory(path);
         return path;
     }
-    if (!std::filesystem::is_directory(path)) {
-        std::cerr << "Output folder must be a directory" << std::endl;
-		exit(1);
-    }
-    if (!std::filesystem::is_empty(path)) {
-        std::cerr << "Output folder must be empty" << std::endl;
-		exit(1);
-    }
+	std::cerr << "Ouput file already exists" << std::endl;
+    exit(1);
     return path;
 }
 
@@ -53,8 +45,8 @@ int main(int argc, char **argv) {
     group.add_argument("-t", "--team").help("Team files to use").nargs(1).append().metavar("TEAM");
 
     program.add_argument("-o", "--output")
-        .help("The combat output folder used to store the results")
-        .default_value("output")
+        .help("The combat output file used to store the results")
+        .default_value("output.json")
         .metavar("OUTPUT");
 
     program.add_group("Simulation options:");
@@ -78,6 +70,10 @@ int main(int argc, char **argv) {
         .scan<'i', int>()
         .action([](const std::string &value) { return std::stoi(value); })
         .metavar("SEED");
+	program.add_argument("-f", "--flush")
+		   .help("Flush the animation at each turn")
+		   .default_value(false)
+		   .flag();
 
     try {
         program.parse_args(argc, argv);
@@ -131,8 +127,9 @@ int main(int argc, char **argv) {
     int duration = program.get<int>("duration");
     int seed = program.get<int>("seed");
 	auto path = check_path(program.get<std::string>("output"));
+	bool flush = program.get<bool>("flush");
 
-    game.run(duration, seed, std::move(path));
+    game.run(duration, seed, flush, std::move(path));
 
     return 0;
 }

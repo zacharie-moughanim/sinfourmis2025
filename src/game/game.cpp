@@ -39,23 +39,23 @@ void Game::fourmi_action(Ant *ant) {
     }
     auto &etat = ant->as_fourmi_etat();
     auto room = ant->get_current_node()->as_salle();
-    auto result = interfaces[ant->get_team_id()]->fourmi_activation(&etat, &room);
-	if (result.depose_pheromone) {
-        ant->get_current_node()->set_pheromone(result.pheromone);
+    auto ant_result = interfaces[ant->get_team_id()]->fourmi_activation(&etat, &room);
+	if (ant_result.depose_pheromone) {
+        ant->get_current_node()->set_pheromone(ant_result.pheromone);
     }
-    switch (result.action) {
+    switch (ant_result.action) {
         case FOURMI_PASSE:
             ant->set_result(0);
             break;
         case fourmi_action::DEPLACEMENT:
-            if (ant->get_current_node()->degree() < (uint32_t)result.arg) {
+            if (ant->get_current_node()->degree() < (uint32_t)ant_result.arg) {
                 ant->set_result(-1);
             } else if (ant->get_action_state() != AntActionState::NONE) {
                 ant->set_result(-1);
-            } else if (!ant->get_current_node()->get_edge(result.arg)->can_be_crossed()) {
+            } else if (!ant->get_current_node()->get_edge(ant_result.arg)->can_be_crossed()) {
                 ant->set_result(-2);
             } else {
-                auto edge = ant->get_current_node()->get_edge(result.arg);
+                auto edge = ant->get_current_node()->get_edge(ant_result.arg);
                 auto curr_node = ant->get_current_node();
                 ant->move_along(edge);
                 ant->set_result(edge->get_other_node(curr_node)->get_id_to(curr_node));
@@ -75,22 +75,22 @@ void Game::fourmi_action(Ant *ant) {
                     ant->set_result(-1);
                     break;
                 }
-                if (result.arg >> 8 != 0) {
+                if (ant_result.arg >> 8 != 0) {
                     std::cout << "Warning: the attack is too big, it will be truncated"
                               << std::endl;
                     std::cout
                         << "Perhaps it is a bug of your interface but else, nice try cheater ;)"
                         << std::endl;
                 }
-                unsigned int team_id_attacked = result.arg & 0xFF;
+                unsigned int team_id_attacked = ant_result.arg & 0xFF;
                 if (ant->get_team_id() == team_id_attacked) {
                     std::cout << "Warning: self-attack on team" << ant->get_team_id() << std::endl;
                 }
                 int32_t result = 0;
-                for (auto &ant : ant->get_current_node()->get_ants()) {
-                    if (ant->get_team_id() == team_id_attacked) {
+                for (auto &node_ant : ant->get_current_node()->get_ants()) {
+                    if (node_ant->get_team_id() == team_id_attacked) {
                         result++;
-                        ant->apply_damages((uint8_t)ant->get_attack());
+                        node_ant->apply_damages((uint8_t)node_ant->get_attack());
                     }
                 }
                 ant->set_result(result);
@@ -101,11 +101,11 @@ void Game::fourmi_action(Ant *ant) {
                 ant->set_result(-1);
                 break;
             }
-            if (ant->get_current_node()->degree() < (uint32_t)result.arg) {
+            if (ant->get_current_node()->degree() < (uint32_t)ant_result.arg) {
                 ant->set_result(-1);
                 break;
             }
-            ant->begin_digging(ant->get_current_node()->get_edge(result.arg));
+            ant->begin_digging(ant->get_current_node()->get_edge(ant_result.arg));
             ant->set_result(0);
             break;
         case fourmi_action::TERMINE_CONSTRUCTION:
@@ -121,11 +121,11 @@ void Game::fourmi_action(Ant *ant) {
                 ant->set_result(-1);
                 break;
             }
-            if (ant->get_current_node()->degree() < (uint32_t)result.arg) {
+            if (ant->get_current_node()->degree() < (uint32_t)ant_result.arg) {
                 ant->set_result(-1);
                 break;
             }
-            ant->set_result(ant->get_current_node()->get_edge(result.arg)->attack(ant->get_attack()));
+            ant->set_result(ant->get_current_node()->get_edge(ant_result.arg)->attack(ant->get_attack()));
             break;
         default:
             throw std::runtime_error("Invalid action");
@@ -198,22 +198,26 @@ void Game::queen_action(Queen &queen, std::vector<std::unique_ptr<Ant>> &ants) {
             break;
         case reine_action::RECUPERER_FOURMI:
             {
-                unsigned int received = 0;
+                uint32_t gathered = 0;
                 Node *node = queen.get_current_node();
-                auto ants = node->get_ants();
-                for (auto it = ants.begin();
-                     it != ants.end() && (int32_t)received < result.arg &&
-                     received < queen.get_queen_stat(Queen::QueenStat::STORED_ANTS);
+                auto node_ants = node->get_ants();
+				if (result.arg < 0) {
+					queen.set_result(-1);
+					break;
+				}
+				auto max_gathered = std::min((uint32_t)result.arg, queen.get_queen_stat(Queen::QueenStat::STORED_ANTS));
+                for (auto it = node_ants.begin();
+                     it != node_ants.end() && gathered < max_gathered;
                      it++) {
                     if ((*it)->get_team_id() != queen.get_team_id() || !(*it)->alive()) {
                         continue;
                     }
                     if (queen.push_ant((*it)->as_fourmi_etat())) {
-                        received++;
+                        gathered++;
                         (*it)->kill(); // Kill the ant, it will be removed at the end of the turn
                     }
                 }
-                queen.set_result(received);
+                queen.set_result(gathered);
             }
             break;
         default:
@@ -222,7 +226,7 @@ void Game::queen_action(Queen &queen, std::vector<std::unique_ptr<Ant>> &ants) {
     }
 }
 
-void Game::run(unsigned int duration, unsigned int seed, std::filesystem::path &&path) {
+void Game::run(unsigned int duration, unsigned int seed, bool flush, std::filesystem::path &&path) {
     if (interfaces.size() != map.get_team_count()) {
 		std::cerr << interfaces.size() << " " << map.get_team_count() << std::endl;
         throw std::runtime_error("Not enough interfaces");
@@ -259,5 +263,9 @@ void Game::run(unsigned int duration, unsigned int seed, std::filesystem::path &
             queen_action(queen, ants);
         }
 		animation.end_frame();
+		if (flush) {
+			animation.flush();
+		}
     }
+	animation.flush();
 }

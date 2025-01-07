@@ -92,8 +92,8 @@ class Queen {
         return ants_memory;
     }
 
-    void set_result(int32_t result) {
-        this->result = result;
+    void set_result(int32_t new_result) {
+        this->result = new_result;
     }
 
   private:

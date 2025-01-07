@@ -22,7 +22,15 @@ class Game {
     void set_map(Map &&map);
     void add_interface(unsigned int team, Interface* interface);
 
-    void run(unsigned int duration, unsigned int seed, std::filesystem::path &&path);
+	/**
+	 * @brief Run the game for a given duration and seed
+	 * 
+	 * @param duration the game duration in ticks
+	 * @param seed The game seed
+	 * @param flush if true, the animation will be flushed at each turn
+	 * @param path the path to the animation file
+	 */
+    void run(unsigned int duration, unsigned int seed, bool flush, std::filesystem::path &&path);
 
     Game(const Game &) = delete;
     Game &operator=(const Game &) = delete;

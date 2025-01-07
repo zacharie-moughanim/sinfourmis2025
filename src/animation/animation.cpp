@@ -117,7 +117,7 @@ void Animation::start_frame() {
         throw std::runtime_error("Start / end frame must be called in pairs");
     }
     started = true;
-    data = json::object();
+    frame = json::object();
 
     // save teams
     auto teams = json::array();
@@ -125,7 +125,7 @@ void Animation::start_frame() {
         teams.push_back(team);
         teams.back()["score"] = team.get_food();
     }
-    data["teams"] = teams;
+    frame["teams"] = teams;
 
     // save nodes and edges
     auto nodes = json::array();
@@ -154,9 +154,9 @@ void Animation::start_frame() {
         	write_edges_departure_groups(node, edge.get(), edges[i]);
         }
 	}
-	data["max_food"] = max_food;
-    data["nodes"] = nodes;
-    data["edges"] = edges;
+	frame["max_food"] = max_food;
+    frame["nodes"] = nodes;
+    frame["edges"] = edges;
 }
 
 void Animation::end_frame() {
@@ -164,24 +164,18 @@ void Animation::end_frame() {
         throw std::runtime_error("Start / end frame must be called in pairs");
     }
     started = false;
-	auto file_path = path / std::format("{}.json", turn);
-    file.open(file_path);
-    if (!file.is_open()) {
-        std::cerr << "Failed to open file " << file_path << std::endl;
-        exit(1);
-    }
 
     // teams animation
     auto teams = map->get_teams();
     for (uint i = 0; i < teams.size(); i++) {
-        data["teams"][i]["next"] = json::object();
-        if (data["teams"][i]["score"] != teams[i].get_food()) {
-            data["teams"][i]["next"]["score"] = teams[i].get_food();
+        frame["teams"][i]["next"] = json::object();
+        if (frame["teams"][i]["score"] != teams[i].get_food()) {
+            frame["teams"][i]["next"]["score"] = teams[i].get_food();
         }
     }
 
     // nodes animation
-    for (auto &node_json : data["nodes"]) {
+    for (auto &node_json : frame["nodes"]) {
         node_json["anim"] = json::object();
         auto node = map->get_node(node_json["id"]);
         if (node.get_type() == salle_type::NOURRITURE && node_json["food"] != node.get_food()) {
@@ -192,8 +186,15 @@ void Animation::end_frame() {
 			node_json["anim"].erase("ants");
 		}
     }
+	data[std::to_string(turn)] = frame;
+}
 
-    // write data to file
-    file << data.dump(4);
-    file.close();
+void Animation::flush(){
+    file.open(path);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file " << path << std::endl;
+        exit(1);
+    }
+	file << data;
+	file.close();
 }

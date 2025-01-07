@@ -20,15 +20,15 @@ salle Node::as_salle() const {
 }
 
 void Node::add_ant(Ant *ant) {
-    ants.insert(ant);
+    ants.push_back(ant);
 }
 
 void Node::remove_ant(Ant *ant) {
-    ants.erase(ant);
+    std::erase(ants, ant);
 }
 
 Edge *Node::get_edge(unsigned int edge_id) const {
-    return edges[edge_id].get();
+	return edges.at(edge_id).get();
 }
 
 unsigned int Node::get_id_to(const Node *node) const {

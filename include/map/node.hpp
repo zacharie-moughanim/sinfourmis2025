@@ -93,7 +93,11 @@ class Node {
         return edges;
     }
 
-    const std::unordered_set<Ant *> &get_ants() const {
+    const std::vector<Ant *> &get_ants() const {
+        return ants;
+    }
+
+    std::vector<Ant *> &get_ants() {
         return ants;
     }
 
@@ -123,10 +127,6 @@ class Node {
         return {x, y};
     }
 
-    std::unordered_set<Ant *> &get_ants() {
-        return ants;
-    }
-
   private:
     void remove_edge(const std::shared_ptr<Edge> &edge);
 
@@ -144,5 +144,5 @@ class Node {
 	unsigned int team = 0;
 
     std::vector<std::shared_ptr<Edge>> edges;
-    std::unordered_set<Ant *> ants;
+    std::vector<Ant *> ants;
 };
