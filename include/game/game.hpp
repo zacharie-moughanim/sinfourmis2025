@@ -34,7 +34,7 @@ class Game {
      *
      * @param ant he ant to run
      */
-    void fourmi_action(const std::unique_ptr<Ant> &ant);
+    void fourmi_action(Ant *ant);
 
     /**
      * @brief Perform the queen action and update game state accordingly

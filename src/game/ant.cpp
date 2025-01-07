@@ -125,7 +125,7 @@ void Ant::stop_digging() {
 
 unsigned int Ant::gather_food() {
     assert(current_Node->get_type() == salle_type::NOURRITURE);
-    unsigned int available_food = current_Node->gather_food(max_food - etat.nouriture);
-    etat.nouriture += available_food;
+    unsigned int available_food = current_Node->gather_food(max_food - etat.nourriture);
+    etat.nourriture += available_food;
     return available_food;
 }

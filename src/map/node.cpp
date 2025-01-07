@@ -27,8 +27,8 @@ void Node::remove_ant(Ant *ant) {
     ants.erase(ant);
 }
 
-Edge *Node::get_edge(unsigned int id) const {
-    return edges[id].get();
+Edge *Node::get_edge(unsigned int edge_id) const {
+    return edges[edge_id].get();
 }
 
 unsigned int Node::get_id_to(const Node *node) const {
@@ -40,11 +40,11 @@ unsigned int Node::get_id_to(const Node *node) const {
     return -1;
 }
 
-unsigned int Node::gather_food(unsigned int max_food) {
+unsigned int Node::gather_food(unsigned int max_food_storage) {
     assert(this->type == salle_type::NOURRITURE);
-    unsigned int food = std::min(max_food, this->food);
-    this->food -= food;
-    return food;
+    unsigned int gathered_food = std::min(max_food_storage, this->food);
+    this->food -= gathered_food;
+    return gathered_food;
 }
 
 void Node::regen_food() {

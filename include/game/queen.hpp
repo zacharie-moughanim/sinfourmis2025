@@ -7,6 +7,7 @@
 #include <cstring>
 #include <optional>
 #include <vector>
+#include <iostream>
 
 class Node;
 
@@ -14,7 +15,7 @@ class Queen {
   public:
     Queen(Team *team, Node *node) : team(team), current_node(node) {}
 
-    enum class Stat : uint32_t { LIFE, WATER, FOOD, ATTACK, STORED_ANT };
+    enum class Stat : uint32_t { LIFE, WATER, FOOD, ATTACK };
     enum class QueenStat : uint32_t { STORED_ANTS, PRODUCED_ANTS, UPGRADE_DURATION, ANTS_SENDING };
 
     /**
@@ -101,14 +102,17 @@ class Queen {
     unsigned int waiting_upgrade = 0;
     int32_t result = 0;
 
-    std::array<uint32_t, 5> stats{DEFAULT_MAX_LIFE, DEFAULT_MAX_WATER, DEFAULT_MAX_FOOD,
-                                  DEFAULT_ATTACK, QUEEN_DEFAULT_MAX_STORED_ANT};
+    std::array<uint32_t, 4> stats{DEFAULT_MAX_LIFE, DEFAULT_MAX_WATER, DEFAULT_MAX_FOOD,
+                                  DEFAULT_ATTACK};
 
     std::array<uint32_t, 4> queen_stats{QUEEN_DEFAULT_MAX_STORED_ANT, QUEEN_DEFAULT_PRODUCED_ANTS,
                                         QUEEN_DEFAULT_UPGRADE_DURATION, QUEEN_DEFAULT_SENT_ANTS};
 
-    const static std::array<uint32_t, 5> upgrade_costs;
+    const static std::array<uint32_t, 4> upgrade_costs;
     const static std::array<uint32_t, 4> queen_upgrade_costs;
 
     std::vector<fourmi_etat> ants_memory;
 };
+
+std::ostream &operator<<(std::ostream &os, const Queen::Stat &stat);
+std::ostream &operator<<(std::ostream &os, const Queen::QueenStat &stat);

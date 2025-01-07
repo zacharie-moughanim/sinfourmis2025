@@ -24,7 +24,7 @@ Game::~Game() {
 	}
 }
 
-void Game::fourmi_action(const std::unique_ptr<Ant> &ant) {
+void Game::fourmi_action(Ant *ant) {
     ant->consume_water();
     if (!ant->alive()) {
         return;
@@ -90,7 +90,7 @@ void Game::fourmi_action(const std::unique_ptr<Ant> &ant) {
                 for (auto &ant : ant->get_current_node()->get_ants()) {
                     if (ant->get_team_id() == team_id_attacked) {
                         result++;
-                        ant->apply_damages(ant->get_attack());
+                        ant->apply_damages((uint8_t)ant->get_attack());
                     }
                 }
                 ant->set_result(result);
@@ -250,7 +250,7 @@ void Game::run(unsigned int duration, unsigned int seed, std::filesystem::path &
 			std::ranges::shuffle(ants, gen);
 		}
         for (auto &ant : ants) {
-            fourmi_action(ant);
+            fourmi_action(ant.get());
         }
 
         // === Queen turn ===
