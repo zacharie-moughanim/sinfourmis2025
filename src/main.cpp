@@ -1,6 +1,8 @@
 #include "argparse/argparse.hpp"
 #include "game/game.hpp"
 #include "interfaces/dummy.hpp"
+// #include "interfaces/python.hpp"
+#include "interfaces/python.hpp"
 #include "interfaces/shared.hpp"
 #include "map/map.hpp"
 #include <filesystem>
@@ -108,26 +110,26 @@ int main(int argc, char **argv) {
     game.set_map(std::move(map));
     int team_id = 0;
     for (const std::string &team : teams) {
-		Interface *interface;
+        Interface *interface;
         if (team == "dummy") {
-			interface = new Dummy();
-        } else if (team.compare(team.length() - 4, 3, ".so")) {
+            interface = new Dummy();
+        } else if (!team.compare(team.length() - 3, 3, ".so")) {
             // the team file is a shared object, we use the corresponding interface
             std::cout << "Loading " << team << " using the shared object interface" << std::endl;
             interface = new SharedInterface();
         } else {
-            std::cerr << "Unknown team file : " << team << std::endl;
-            return 1;
+            // We assume the team file is a python package
+            std::cout << "Loading " << team << " using the python interface" << std::endl;
+            interface = new PythonInterface();
         }
-		interface->load(team);
-		game.add_interface(team_id, interface);
+        interface->load(team);
+        game.add_interface(team_id, interface);
         team_id++;
     }
 
     int duration = program.get<int>("duration");
-    int seed = program.get<unsigned int>("seed");
+    int seed = program.get<int>("seed");
 	auto path = check_path(program.get<std::string>("output"));
-	bool flush = program.get<bool>("flush");
 
     game.run(duration, seed, flush, std::move(path));
 
