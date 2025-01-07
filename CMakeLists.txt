@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.28)
 
+set(USING_PYTHON ON)
+
 project(Sinfourmis)
 
-add_executable(Sinfourmis 
+set(sources
 	src/map/map.cpp
 	src/map/node.cpp
 	src/map/edge.cpp
@@ -11,36 +13,45 @@ add_executable(Sinfourmis
 	src/game/queen.cpp
 	src/animation/animation.cpp
 	src/interfaces/dummy.cpp
-  src/interfaces/shared.cpp
-  src/interfaces/python.cpp
+	src/interfaces/shared.cpp
 	src/main.cpp
 )
+
+if (USING_PYTHON)
+	list(APPEND sources src/interfaces/python.cpp)
+endif()
+
+add_executable(Sinfourmis ${sources})
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-find_package(Python COMPONENTS Interpreter Development)
+string(APPEND CMAKE_CXX_FLAGS "-std=c++20 -Wall -Wextra -Werror -pedantic -Wpointer-arith -Wchar-subscripts -Wcomment -Wformat -Wwrite-strings -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function")
 
 include_directories(include)
-include_directories(${Python_INCLUDE_DIRS})
 
-execute_process(
-  COMMAND bash -c "python-config --cflags"
-  OUTPUT_VARIABLE PY_CFLAGS
-)
-execute_process(
-  COMMAND bash -c "python3-config --ldflags --embed"
-  OUTPUT_VARIABLE PYTHON_LDFLAGS
-)
+if (USING_PYTHON)
+	add_compile_definitions(USING_PYTHON)
+	find_package(Python COMPONENTS Interpreter Development)
+	include_directories(${Python_INCLUDE_DIRS})
 
-# does not work, I don't know why
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -Wall -Wextra -Werror -pedantic -Wpointer-arith -Wchar-subscripts -Wcomment -Wformat -Wwrite-strings -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function ${PY_CFLAGS}")
-# set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${PYTHON_LDFLAGS}")
+	execute_process(
+	COMMAND sh -c "python-config --cflags | tr -d '\n'"
+	OUTPUT_VARIABLE PY_CFLAGS
+	)
+	execute_process(
+	COMMAND sh -c "python3-config --ldflags --embed | tr -d '\n'"
+	OUTPUT_VARIABLE PYTHON_LDFLAGS
+	)
+	execute_process(
+	COMMAND sh -c "python3 --version | cut -d' ' -f2 | cut -d'.' -f1,2"
+	OUTPUT_VARIABLE PYTHON_VERSION
+	)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -Wall -Wextra -Werror -pedantic -Wpointer-arith -Wchar-subscripts -Wcomment -Wformat -Wwrite-strings -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -L/usr/lib64 -lpython3.12 -ldl -lm")
-
+	string(APPEND CMAKE_CXX_FLAGS ${PY_CFLAGS})
+	string(APPEND CMAKE_EXE_LINKER_FLAGS ${PYTHON_LDFLAGS})
+endif()
 
 # json library
 include(FetchContent)

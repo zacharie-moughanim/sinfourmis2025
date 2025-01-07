@@ -42,7 +42,7 @@ PyObject *fourmi_etat_to_po(const fourmi_etat *etat) {
     PyDict_SetItemString(py_etat, "vie", PyLong_FromLong(etat->vie));
     PyDict_SetItemString(py_etat, "eau", PyLong_FromLong(etat->eau));
     PyDict_SetItemString(py_etat, "result", PyLong_FromLong(etat->result));
-    PyDict_SetItemString(py_etat, "nourriture", PyLong_FromLong(etat->nouriture));
+    PyDict_SetItemString(py_etat, "nourriture", PyLong_FromLong(etat->nourriture));
 
     PyObject *py_mem = PyList_New(256);
     for (int i = 0; i < 256; i++) {
@@ -69,9 +69,12 @@ fourmi_retour po_to_fourmi_retour(PyObject *po) {
     PyObject *py_action = PyDict_GetItemString(po, "action");
     PyObject *py_arg = PyDict_GetItemString(po, "arg");
 
+	// TODO: Complete api
     return {
         .action = (fourmi_action)PyLong_AsLong(py_action),
         .arg = (int32_t)PyLong_AsLong(py_arg),
+		.depose_pheromone = false,
+		.pheromone = 0
     };
 }
 

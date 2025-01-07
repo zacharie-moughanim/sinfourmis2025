@@ -1,8 +1,9 @@
 #include "argparse/argparse.hpp"
 #include "game/game.hpp"
 #include "interfaces/dummy.hpp"
-// #include "interfaces/python.hpp"
-#include "interfaces/python.hpp"
+#ifdef USING_PYTHON
+	#include "interfaces/python.hpp"
+#endif
 #include "interfaces/shared.hpp"
 #include "map/map.hpp"
 #include <filesystem>
@@ -118,9 +119,14 @@ int main(int argc, char **argv) {
             std::cout << "Loading " << team << " using the shared object interface" << std::endl;
             interface = new SharedInterface();
         } else {
+#ifdef USING_PYTHON
             // We assume the team file is a python package
             std::cout << "Loading " << team << " using the python interface" << std::endl;
             interface = new PythonInterface();
+#else
+			std::cerr << "Unknown team file format" << std::endl;
+			return 1;
+#endif
         }
         interface->load(team);
         game.add_interface(team_id, interface);
@@ -128,8 +134,9 @@ int main(int argc, char **argv) {
     }
 
     int duration = program.get<int>("duration");
-    int seed = program.get<int>("seed");
+    int seed = program.get<unsigned int>("seed");
 	auto path = check_path(program.get<std::string>("output"));
+	auto flush = program.get<bool>("flush");
 
     game.run(duration, seed, flush, std::move(path));
 
