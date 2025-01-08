@@ -19,7 +19,8 @@ Ant::Ant(Queen *queen) : current_Node(queen->get_current_node()), queen(queen) {
 
 Ant::Ant(const Ant &&ant) noexcept
     : current_Node(ant.current_Node), queen(ant.queen), etat(ant.etat), max_water(ant.max_water),
-      max_food(ant.max_food), action_state(ant.action_state), progress(ant.progress), current_edge(ant.current_edge) {}
+      max_food(ant.max_food), action_state(ant.action_state), progress(ant.progress),
+      current_edge(ant.current_edge) {}
 
 Ant &Ant::operator=(const Ant &&ant) noexcept {
     queen = ant.queen;
@@ -27,9 +28,9 @@ Ant &Ant::operator=(const Ant &&ant) noexcept {
     max_water = ant.max_water;
     max_food = ant.max_food;
     etat = ant.etat;
-	action_state = ant.action_state;
-	progress = ant.progress;
-	current_edge = ant.current_edge;
+    action_state = ant.action_state;
+    progress = ant.progress;
+    current_edge = ant.current_edge;
     return *this;
 }
 
@@ -37,9 +38,9 @@ Ant::~Ant() {
     if (current_Node != nullptr) {
         current_Node->remove_ant(this);
     }
-	if (current_edge != nullptr) {
-		current_edge->remove_ant(this);
-	}
+    if (current_edge != nullptr) {
+        current_edge->remove_ant(this);
+    }
 }
 
 Node *Ant::get_current_node() const {
@@ -86,26 +87,26 @@ bool Ant::alive() {
 void Ant::move_along(Edge *edge) {
     action_state = AntActionState::MOVING;
     current_edge = edge;
-	progress = 0;
+    progress = 0;
 }
 
 void Ant::displace() {
     assert(action_state == AntActionState::MOVING);
     if (progress + EDGE_CROSS_SPEED < current_edge->get_length()) {
         if (current_Node != nullptr && progress == 0) {
-			current_edge->add_ant(this);
+            current_edge->add_ant(this);
             current_Node->remove_ant(this);
         }
         if (current_edge->can_be_crossed()) {
             progress += EDGE_CROSS_SPEED;
         }
     } else if (progress >= current_edge->get_length()) {
-		current_edge->remove_ant(this);
+        current_edge->remove_ant(this);
         action_state = AntActionState::NONE;
-	} else {
+    } else {
         current_Node = current_edge->get_other_node(current_Node);
         current_Node->add_ant(this);
-		progress = current_edge->get_length();
+        progress = current_edge->get_length();
     }
 }
 

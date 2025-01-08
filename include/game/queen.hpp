@@ -5,9 +5,9 @@
 #include "sinfourmis.h"
 #include <array>
 #include <cstring>
+#include <iostream>
 #include <optional>
 #include <vector>
-#include <iostream>
 
 class Node;
 

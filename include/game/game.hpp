@@ -1,14 +1,13 @@
 #pragma once
 
+#include "animation/animation.hpp"
 #include "game/ant.hpp"
 #include "game/queen.hpp"
 #include "interfaces/interface.hpp"
-#include "animation/animation.hpp"
 #include "map/map.hpp"
 #include <algorithm>
 #include <iostream>
 #include <random>
-
 
 /**
  * @brief Game object. It is a singleton that holds the game state and runs the game
@@ -20,16 +19,16 @@ class Game {
     ~Game();
 
     void set_map(Map &&map);
-    void add_interface(unsigned int team, Interface* interface);
+    void add_interface(unsigned int team, Interface *interface);
 
-	/**
-	 * @brief Run the game for a given duration and seed
-	 * 
-	 * @param duration the game duration in ticks
-	 * @param seed The game seed
-	 * @param flush if true, the animation will be flushed at each turn
-	 * @param path the path to the animation file
-	 */
+    /**
+     * @brief Run the game for a given duration and seed
+     *
+     * @param duration the game duration in ticks
+     * @param seed The game seed
+     * @param flush if true, the animation will be flushed at each turn
+     * @param path the path to the animation file
+     */
     void run(unsigned int duration, unsigned int seed, bool flush, std::filesystem::path &&path);
 
     Game(const Game &) = delete;

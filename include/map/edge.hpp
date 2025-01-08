@@ -60,26 +60,26 @@ class Edge {
         return node2;
     }
 
-	void add_ant(Ant *ant) {
-		ants.insert(ant);
-	}
+    void add_ant(Ant *ant) {
+        ants.insert(ant);
+    }
 
-	void remove_ant(Ant *ant) {
-		ants.erase(ant);
-	}
+    void remove_ant(Ant *ant) {
+        ants.erase(ant);
+    }
 
-	unsigned int get_life() const {
-		return life;
-	}
+    unsigned int get_life() const {
+        return life;
+    }
 
-	const std::unordered_set<Ant *> &get_ants() const {
-		return ants;
-	}
+    const std::unordered_set<Ant *> &get_ants() const {
+        return ants;
+    }
 
   private:
     Node *node1 = nullptr;
     Node *node2 = nullptr;
     float length = 0;
     unsigned int life = EDGE_LIFE;
-	std::unordered_set<Ant *> ants;
+    std::unordered_set<Ant *> ants;
 };

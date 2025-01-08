@@ -69,13 +69,11 @@ fourmi_retour po_to_fourmi_retour(PyObject *po) {
     PyObject *py_action = PyDict_GetItemString(po, "action");
     PyObject *py_arg = PyDict_GetItemString(po, "arg");
 
-	// TODO: Complete api
-    return {
-        .action = (fourmi_action)PyLong_AsLong(py_action),
-        .arg = (int32_t)PyLong_AsLong(py_arg),
-		.depose_pheromone = false,
-		.pheromone = 0
-    };
+    // TODO: Complete api
+    return {.action = (fourmi_action)PyLong_AsLong(py_action),
+            .arg = (int32_t)PyLong_AsLong(py_arg),
+            .depose_pheromone = false,
+            .pheromone = 0};
 }
 
 void PythonInterface::load(std::string_view path) {

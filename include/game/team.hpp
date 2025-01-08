@@ -12,19 +12,20 @@ using json = nlohmann::json;
 class Team {
   public:
     Team() = default;
-    Team(int id, const std::string_view &name, const std::string_view &color) : id(id), name(name) {}
+    Team(int id, const std::string_view &name, const std::string_view &color)
+        : id(id), name(name) {}
 
-	void add_food(unsigned int amount) {
-		food += amount;
-	}
+    void add_food(unsigned int amount) {
+        food += amount;
+    }
 
-	bool try_remove_food(unsigned int amount) {
-		if (food < amount) {
-			return false;
-		}
-		food -= amount;
-		return true;
-	}
+    bool try_remove_food(unsigned int amount) {
+        if (food < amount) {
+            return false;
+        }
+        food -= amount;
+        return true;
+    }
 
     std::string get_name() const {
         return name;
@@ -33,13 +34,13 @@ class Team {
         return id;
     }
 
-	unsigned int get_food() const {
-		return food;
-	}
+    unsigned int get_food() const {
+        return food;
+    }
 
-	unsigned int get_score() const {
-		return food;
-	}
+    unsigned int get_score() const {
+        return food;
+    }
 
     // for json serialization / deserialization
     NLOHMANN_DEFINE_TYPE_INTRUSIVE(Team, id, name, color)
@@ -47,6 +48,6 @@ class Team {
   private:
     unsigned int id = -1;
     std::string name = "";
-	std::string color = "#000000";
-	unsigned int food = 0;
+    std::string color = "#000000";
+    unsigned int food = 0;
 };

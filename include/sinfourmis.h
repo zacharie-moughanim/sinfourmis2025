@@ -66,8 +66,8 @@ typedef struct fourmi_etat {
 typedef struct fourmi_retour {
     fourmi_action action;
     int32_t arg; // utilisé en argument d'action, type pas gravé dans le marbre pour l'instant
-	bool depose_pheromone;
-	uint8_t pheromone;
+    bool depose_pheromone;
+    uint8_t pheromone;
 } fourmi_retour;
 
 /// structure représentant l'état d'une reine

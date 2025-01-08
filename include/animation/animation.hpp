@@ -7,9 +7,9 @@
 #include "map/map.hpp"
 #include "nlohmann/json.hpp"
 #include <filesystem>
+#include <format>
 #include <fstream>
 #include <iostream>
-#include <format>
 
 using json = nlohmann::json;
 
@@ -17,24 +17,23 @@ class Animation {
   public:
     Animation(const Map *map, const std::filesystem::path &path) : map(map), path(path) {}
 
-	/**
-	 * @brief start a new animation frame
-	 * 
-	 */
+    /**
+     * @brief start a new animation frame
+     *
+     */
     void start_frame();
 
-	/**
-	 * @brief End the animation frame
-	 * 
-	 */
+    /**
+     * @brief End the animation frame
+     *
+     */
     void end_frame();
 
-	/**
-	 * @brief Write the json data to the file
-	 * 
-	 */
-	void flush();
-
+    /**
+     * @brief Write the json data to the file
+     *
+     */
+    void flush();
 
     unsigned int game_turn() const {
         return turn;
@@ -42,11 +41,11 @@ class Animation {
 
   private:
     /**
-	 * @brief Write the groups of ants that are leaving a node to the json data,
-	 *        it adds the animation from start of the edge to the next crossing step
-	 *
-	 * @param node the node to write the groups from
-	 */
+     * @brief Write the groups of ants that are leaving a node to the json data,
+     *        it adds the animation from start of the edge to the next crossing step
+     *
+     * @param node the node to write the groups from
+     */
     void write_edges_departure_groups(const Node &node, const Edge *edge, json &json_edge) const;
 
     /**
@@ -71,7 +70,7 @@ class Animation {
     unsigned int turn = 0;
     bool started = false;
     json frame;
-	json data;
+    json data;
 
     const Map *map;
     std::filesystem::path path;

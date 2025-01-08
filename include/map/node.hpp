@@ -141,7 +141,7 @@ class Node {
     unsigned int max_food = 0;
     int total_available = 0;
 
-	unsigned int team = 0;
+    unsigned int team = 0;
 
     std::vector<std::shared_ptr<Edge>> edges;
     std::vector<Ant *> ants;

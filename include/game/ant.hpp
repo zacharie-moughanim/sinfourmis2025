@@ -99,9 +99,9 @@ class Ant {
         return queen->get_stat(Queen::Stat::ATTACK);
     }
 
-	float get_progress() const {
-		return progress;
-	}
+    float get_progress() const {
+        return progress;
+    }
 
     void set_result(int32_t result) {
         this->etat.result = result;
@@ -111,9 +111,9 @@ class Ant {
         return action_state;
     }
 
-	Edge *get_current_edge() const {
-		return current_edge;
-	}
+    Edge *get_current_edge() const {
+        return current_edge;
+    }
 
   private:
     Node *current_Node = nullptr;

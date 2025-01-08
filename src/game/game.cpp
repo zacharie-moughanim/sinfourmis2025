@@ -19,9 +19,9 @@ Game &Game::getInstance() {
 }
 
 Game::~Game() {
-	for (auto [_, interface]: interfaces) {
-		delete interface;
-	}
+    for (auto [_, interface] : interfaces) {
+        delete interface;
+    }
 }
 
 void Game::fourmi_action(Ant *ant) {
@@ -35,12 +35,12 @@ void Game::fourmi_action(Ant *ant) {
     }
     if (ant->get_action_state() == AntActionState::DIGGING) {
         ant->dig();
-		// we can still perform other actions while digging
+        // we can still perform other actions while digging
     }
     auto &etat = ant->as_fourmi_etat();
     auto room = ant->get_current_node()->as_salle();
     auto ant_result = interfaces[ant->get_team_id()]->fourmi_activation(&etat, &room);
-	if (ant_result.depose_pheromone) {
+    if (ant_result.depose_pheromone) {
         ant->get_current_node()->set_pheromone(ant_result.pheromone);
     }
     switch (ant_result.action) {
@@ -125,7 +125,8 @@ void Game::fourmi_action(Ant *ant) {
                 ant->set_result(-1);
                 break;
             }
-            ant->set_result(ant->get_current_node()->get_edge(ant_result.arg)->attack(ant->get_attack()));
+            ant->set_result(
+                ant->get_current_node()->get_edge(ant_result.arg)->attack(ant->get_attack()));
             break;
         default:
             throw std::runtime_error("Invalid action");
@@ -141,8 +142,8 @@ void Game::queen_action(Queen *queen, std::vector<std::unique_ptr<Ant>> &ants) {
     auto &memories = queen->get_states();
     auto etat = queen->as_reine_etat();
     auto salle = queen->get_current_node()->as_salle();
-    auto result = interfaces[queen->get_team_id()]->reine_activation(memories.data(),
-                                                                    memories.size(), &etat, &salle);
+    auto result = interfaces[queen->get_team_id()]->reine_activation(
+        memories.data(), memories.size(), &etat, &salle);
     switch (result.action) {
         case reine_action::REINE_PASSE:
             break;
@@ -188,7 +189,8 @@ void Game::queen_action(Queen *queen, std::vector<std::unique_ptr<Ant>> &ants) {
                     auto ant_state = queen->pop_ant();
                     if (ant_state.has_value()) {
                         sent++;
-                        ants.emplace_back(std::make_unique<Ant>(queen, std::move(ant_state.value())));
+                        ants.emplace_back(
+                            std::make_unique<Ant>(queen, std::move(ant_state.value())));
                     } else {
                         break;
                     }
@@ -201,13 +203,13 @@ void Game::queen_action(Queen *queen, std::vector<std::unique_ptr<Ant>> &ants) {
                 uint32_t gathered = 0;
                 Node *node = queen->get_current_node();
                 auto node_ants = node->get_ants();
-				if (result.arg < 0) {
-					queen->set_result(-1);
-					break;
-				}
-				auto max_gathered = std::min((uint32_t)result.arg, queen->get_queen_stat(Queen::QueenStat::STORED_ANTS));
-                for (auto it = node_ants.begin();
-                     it != node_ants.end() && gathered < max_gathered;
+                if (result.arg < 0) {
+                    queen->set_result(-1);
+                    break;
+                }
+                auto max_gathered = std::min((uint32_t)result.arg,
+                                             queen->get_queen_stat(Queen::QueenStat::STORED_ANTS));
+                for (auto it = node_ants.begin(); it != node_ants.end() && gathered < max_gathered;
                      it++) {
                     if ((*it)->get_team_id() != queen->get_team_id() || !(*it)->alive()) {
                         continue;
@@ -228,13 +230,13 @@ void Game::queen_action(Queen *queen, std::vector<std::unique_ptr<Ant>> &ants) {
 
 void Game::run(unsigned int duration, unsigned int seed, bool flush, std::filesystem::path &&path) {
     if (interfaces.size() != map.get_team_count()) {
-		std::cerr << interfaces.size() << " " << map.get_team_count() << std::endl;
+        std::cerr << interfaces.size() << " " << map.get_team_count() << std::endl;
         throw std::runtime_error("Not enough interfaces");
     }
 
     std::cout << "Running game with seed " << seed << std::endl;
 
-	Animation animation(&map, path);
+    Animation animation(&map, path);
 
     gen.seed(seed);
 
@@ -245,30 +247,30 @@ void Game::run(unsigned int duration, unsigned int seed, bool flush, std::filesy
     std::vector<std::unique_ptr<Ant>> ants;
 
     while (animation.game_turn() < duration) {
-		animation.start_frame();
+        animation.start_frame();
         map.regen_food();
 
         // === Ants turn ===
-		if (!ants.empty()) {
-			std::erase_if(ants, [](auto &ant) { return !ant->alive(); });
-			std::ranges::shuffle(ants, gen);
-		}
+        if (!ants.empty()) {
+            std::erase_if(ants, [](auto &ant) { return !ant->alive(); });
+            std::ranges::shuffle(ants, gen);
+        }
         for (auto &ant : ants) {
             fourmi_action(ant.get());
         }
 
         // === Queen turn ===
-		std::ranges::shuffle(queens, gen);
+        std::ranges::shuffle(queens, gen);
         for (auto &queen : queens) {
             queen_action(queen.get(), ants);
         }
-		animation.end_frame();
-		if (flush) {
-			animation.flush();
-		}
+        animation.end_frame();
+        if (flush) {
+            animation.flush();
+        }
     }
-	for (auto &team: map.get_teams()) {
-		std::cout << "Team " << team.get_id() << " score: " << team.get_score() << std::endl;
-	}
-	animation.flush();
+    for (auto &team : map.get_teams()) {
+        std::cout << "Team " << team.get_id() << " score: " << team.get_score() << std::endl;
+    }
+    animation.flush();
 }

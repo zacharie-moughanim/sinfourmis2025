@@ -7,12 +7,12 @@ Map::Map(Map &&other)
       starting_nodes(std::move(other.starting_nodes)) {}
 
 Map &Map::operator=(Map &&other) {
-	if (this != &other) {
-		nodes = std::move(other.nodes);
-		teams = std::move(other.teams);
-		starting_nodes = std::move(other.starting_nodes);
-	}
-	return *this;
+    if (this != &other) {
+        nodes = std::move(other.nodes);
+        teams = std::move(other.teams);
+        starting_nodes = std::move(other.starting_nodes);
+    }
+    return *this;
 }
 
 bool Map::load_teams(const json &data) {
@@ -39,7 +39,7 @@ bool Map::load_nodes(const json &data) {
         return false;
     }
     std::vector<std::pair<unsigned int, NeighborData>> edges;
-	std::unordered_set<std::pair<unsigned int, unsigned int>> edges_set;
+    std::unordered_set<std::pair<unsigned int, unsigned int>> edges_set;
     for (const auto &node : *json_nodes) {
         try {
             auto node_obj = node.get<Node>();
@@ -54,40 +54,42 @@ bool Map::load_nodes(const json &data) {
             }
             auto neighbors = neighbors_it->get<std::vector<NeighborData>>();
             for (const auto &neighbor : neighbors) {
-				if (neighbor.life <= 0 || neighbor.life > 1) {
-					std::cerr << "Invalid life value: " << neighbor.life << " in node " << node_obj.get_id() << std::endl;
-					return false;
-				}
-				edges.push_back({node_obj.get_id(), neighbor});
-				bool inserted = true;
-				if (node_obj.get_id() < neighbor.to) {
-					inserted = edges_set.emplace(node_obj.get_id(), neighbor.to).second;
-				} else {
-					inserted = edges_set.emplace(neighbor.to, node_obj.get_id()).second;
-				}
-				if (!inserted) {
-					std::cerr << "Duplicate edge: " << node_obj.get_id() << " " << neighbor.to << std::endl;
-					return false;
-				}
+                if (neighbor.life <= 0 || neighbor.life > 1) {
+                    std::cerr << "Invalid life value: " << neighbor.life << " in node "
+                              << node_obj.get_id() << std::endl;
+                    return false;
+                }
+                edges.push_back({node_obj.get_id(), neighbor});
+                bool inserted = true;
+                if (node_obj.get_id() < neighbor.to) {
+                    inserted = edges_set.emplace(node_obj.get_id(), neighbor.to).second;
+                } else {
+                    inserted = edges_set.emplace(neighbor.to, node_obj.get_id()).second;
+                }
+                if (!inserted) {
+                    std::cerr << "Duplicate edge: " << node_obj.get_id() << " " << neighbor.to
+                              << std::endl;
+                    return false;
+                }
             }
 
-			if (node_obj.get_type() == salle_type::REINE) {
-				auto team_it = node.find("team");
-				if (team_it != node.end()) {
-					auto team = team_it->get<unsigned int>();
-					if (std::find_if(teams.begin(), teams.end(), [team](const Team &t) {
-							return t.get_id() == team;
-						}) == teams.end()) {
-						std::cerr << "Team not found: " << team << std::endl;
-						return false;
-					}
-					auto res = starting_nodes.try_emplace(team, node_obj.get_id());
-					if (!res.second) {
-						std::cerr << "Duplicate starting node for team: " << team << std::endl;
-						return false;
-					}
-				}
-			}
+            if (node_obj.get_type() == salle_type::REINE) {
+                auto team_it = node.find("team");
+                if (team_it != node.end()) {
+                    auto team = team_it->get<unsigned int>();
+                    if (std::find_if(teams.begin(), teams.end(), [team](const Team &t) {
+                            return t.get_id() == team;
+                        }) == teams.end()) {
+                        std::cerr << "Team not found: " << team << std::endl;
+                        return false;
+                    }
+                    auto res = starting_nodes.try_emplace(team, node_obj.get_id());
+                    if (!res.second) {
+                        std::cerr << "Duplicate starting node for team: " << team << std::endl;
+                        return false;
+                    }
+                }
+            }
         } catch (json::exception &e) {
             std::cerr << "Failed to parse node: " << e.what() << std::endl;
             return false;

@@ -20,52 +20,54 @@ edge_groups(const Edge &edge) {
 void to_json(json &j, const Edge &edge) {
     j = json{
         {"id_1", edge.get_node1()->get_id()},
-		{"id_2", edge.get_node2()->get_id()},
+        {"id_2", edge.get_node2()->get_id()},
         {"life_ratio", (float)edge.get_life() / (float)EDGE_LIFE},
     };
     auto groups = edge_groups(edge);
     for (auto [key, qt] : groups) {
         float progress = std::get<2>(key);
         float progress_anim = progress + EDGE_CROSS_SPEED;
-		progress /= edge.get_length();
-		progress_anim /= edge.get_length();
+        progress /= edge.get_length();
+        progress_anim /= edge.get_length();
         if (std::get<0>(key) == edge.get_node2()->get_id()) {
             progress = 1.f - progress;
             progress_anim = 1.f - progress_anim;
         }
-		progress = std::max(0.f, std::min(1.f, progress));
-		progress_anim = std::max(0.f, std::min(1.f, progress_anim));
-		if (progress_anim == progress && (progress == 0.f || progress == 1.f)) {
-			continue;
-		}
-		j["groups"].push_back(AntGroupData{std::get<1>(key), qt, progress, progress_anim});
-	}
+        progress = std::max(0.f, std::min(1.f, progress));
+        progress_anim = std::max(0.f, std::min(1.f, progress_anim));
+        if (progress_anim == progress && (progress == 0.f || progress == 1.f)) {
+            continue;
+        }
+        j["groups"].push_back(AntGroupData{std::get<1>(key), qt, progress, progress_anim});
+    }
 }
 
-void Animation::write_edges_departure_groups(const Node &node, const Edge *edge, json &json_edge) const {
-	std::map<unsigned int, unsigned int> departures;
-	for (auto ant : node.get_ants()) {
-		if (ant->get_action_state() == AntActionState::MOVING && ant->get_progress() == 0 && ant->get_current_edge() == edge) {
-			auto it = departures.find(ant->get_team_id());
-			if (it == departures.end()) {
-				departures[ant->get_team_id()] = 1;
-			} else {
-				departures[ant->get_team_id()]++;
-			}
-		}
-	}
-	if (!departures.empty()) {
-		if (!json_edge.contains("groups")) {
-			json_edge["groups"] = json::array();
-		}
-		for (auto [team, qt] : departures) {
-			float length = EDGE_CROSS_SPEED / edge->get_length();
-			if (edge->get_node2()->get_id() == node.get_id()) {
-				length = 1.f - EDGE_CROSS_SPEED / edge->get_length();
-			}
-			json_edge["groups"].push_back(AntGroupData{team, qt, 0, length});
-		}
-	}
+void Animation::write_edges_departure_groups(const Node &node, const Edge *edge,
+                                             json &json_edge) const {
+    std::map<unsigned int, unsigned int> departures;
+    for (auto ant : node.get_ants()) {
+        if (ant->get_action_state() == AntActionState::MOVING && ant->get_progress() == 0 &&
+            ant->get_current_edge() == edge) {
+            auto it = departures.find(ant->get_team_id());
+            if (it == departures.end()) {
+                departures[ant->get_team_id()] = 1;
+            } else {
+                departures[ant->get_team_id()]++;
+            }
+        }
+    }
+    if (!departures.empty()) {
+        if (!json_edge.contains("groups")) {
+            json_edge["groups"] = json::array();
+        }
+        for (auto [team, qt] : departures) {
+            float length = EDGE_CROSS_SPEED / edge->get_length();
+            if (edge->get_node2()->get_id() == node.get_id()) {
+                length = 1.f - EDGE_CROSS_SPEED / edge->get_length();
+            }
+            json_edge["groups"].push_back(AntGroupData{team, qt, 0, length});
+        }
+    }
 }
 
 std::unordered_map<unsigned int, unsigned int> node_groups_map(const Node &node) {
@@ -130,12 +132,12 @@ void Animation::start_frame() {
     // save nodes and edges
     auto nodes = json::array();
     auto edges = json::array();
-	unsigned int max_food = 0;
+    unsigned int max_food = 0;
 
-    for (auto [_ , node] : map->get_nodes()) {
-		if (node.get_type() == salle_type::NOURRITURE) {
-			max_food = std::max(max_food, node.get_max_food());
-		}
+    for (auto [_, node] : map->get_nodes()) {
+        if (node.get_type() == salle_type::NOURRITURE) {
+            max_food = std::max(max_food, node.get_max_food());
+        }
         nodes.push_back(node);
         nodes.back()["ants"] = node_groups(node);
         for (auto edge : node.get_edges()) {
@@ -148,20 +150,19 @@ void Animation::start_frame() {
     for (auto [_, node] : map->get_nodes()) {
         for (auto edge : node.get_edges()) {
             int i = 0;
-            while (edge->get_node1()->get_id() !=
-                       edges[i].at("id_1").template get<unsigned int>() ||
-                   edge->get_node2()->get_id() !=
-                       edges[i].at("id_2").template get<unsigned int>()) {
+            while (
+                edge->get_node1()->get_id() != edges[i].at("id_1").template get<unsigned int>() ||
+                edge->get_node2()->get_id() != edges[i].at("id_2").template get<unsigned int>()) {
                 i++;
             }
             write_edges_departure_groups(node, edge.get(), edges[i]);
         }
-	}
-
-	frame["max_food"] = max_food;
-	frame["nodes"] = nodes;
-	frame["edges"] = edges;
     }
+
+    frame["max_food"] = max_food;
+    frame["nodes"] = nodes;
+    frame["edges"] = edges;
+}
 
 void Animation::end_frame() {
     if (!started) {
@@ -186,19 +187,19 @@ void Animation::end_frame() {
             node_json["anim"]["food"] = node.get_food();
         }
         node_json["anim"]["ants"] = write_groups_animation(node, node_json["ants"]);
-		if (node_json["anim"]["ants"].size() == 0) {
-			node_json["anim"].erase("ants");
-		}
+        if (node_json["anim"]["ants"].size() == 0) {
+            node_json["anim"].erase("ants");
+        }
     }
-	data[std::to_string(turn)] = frame;
+    data[std::to_string(turn)] = frame;
 }
 
-void Animation::flush(){
+void Animation::flush() {
     file.open(path);
     if (!file.is_open()) {
         std::cerr << "Failed to open file " << path << std::endl;
         exit(1);
     }
-	file << data;
-	file.close();
+    file << data;
+    file.close();
 }

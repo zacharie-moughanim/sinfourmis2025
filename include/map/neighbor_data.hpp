@@ -5,8 +5,8 @@
 using json = nlohmann::json;
 
 struct NeighborData {
-	unsigned int to;
-	float life;
+    unsigned int to;
+    float life;
 
-	NLOHMANN_DEFINE_TYPE_INTRUSIVE(NeighborData, to, life)
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE(NeighborData, to, life)
 };

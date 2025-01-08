@@ -1,10 +1,10 @@
 #pragma once
 
 #include "game/team.hpp"
+#include "map/neighbor_data.hpp"
 #include "map/node.hpp"
 #include "pair_hash.hpp"
 #include "salle_parser.hpp"
-#include "map/neighbor_data.hpp"
 #include "sinfourmis.h"
 #include <string_view>
 #include <tuple>
@@ -19,10 +19,10 @@
 class Map {
   public:
     Map() = default;
-	Map(Map &&other);
-	Map &operator=(Map &&other);
-	Map(const Map &other) = delete;
-	Map &operator=(const Map &other) = delete;
+    Map(Map &&other);
+    Map &operator=(Map &&other);
+    Map(const Map &other) = delete;
+    Map &operator=(const Map &other) = delete;
 
     /**
      * @brief Load the map from a file
@@ -66,21 +66,21 @@ class Map {
         return teams;
     }
 
-	const std::vector<Team> &get_teams() const {
-		return teams;
-	}
+    const std::vector<Team> &get_teams() const {
+        return teams;
+    }
 
-	const std::unordered_map<unsigned int, Node> &get_nodes() const {
-		return nodes;
-	}
+    const std::unordered_map<unsigned int, Node> &get_nodes() const {
+        return nodes;
+    }
 
     const Team &get_team(unsigned int id) const {
         return teams.at(id);
     }
 
-	const Node &get_node(unsigned int id) const {
-		return nodes.at(id);
-	}
+    const Node &get_node(unsigned int id) const {
+        return nodes.at(id);
+    }
 
   private:
     bool load_teams(const json &data);
