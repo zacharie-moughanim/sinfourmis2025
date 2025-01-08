@@ -27,6 +27,15 @@ Edge *Node::get_edge(unsigned int edge_id) const {
     return edges.at(edge_id).get();
 }
 
+Edge *Node::get_edge_to_id(unsigned int id) const {
+	for (const auto &edge : edges) {
+		if (edge->get_other_node(this)->id == id) {
+			return edge.get();
+		}
+	}
+    return nullptr;
+}
+
 unsigned int Node::get_id_to(const Node *node) const {
     for (unsigned int i = 0; i < edges.size(); i++) {
         if (edges[i]->get_other_node(this) == node) {
@@ -83,4 +92,23 @@ void from_json(const json &j, Node &node) {
     if (node.type == salle_type::REINE) {
         j.at("team").get_to(node.team);
     }
+}
+
+std::ostream &operator<<(std::ostream &os, const salle_type &type) {
+    switch (type) {
+	case salle_type::VIDE:
+		os << "VIDE";
+		break;
+	case salle_type::NOURRITURE:
+		os << "NOURRITURE";
+		break;
+	case salle_type::REINE:
+		os << "REINE";
+		break;
+	case salle_type::EAU:
+		os << "EAU";
+		break;
+	}
+
+	return os;
 }

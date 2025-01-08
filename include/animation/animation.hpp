@@ -5,6 +5,7 @@
 #include "game/constants.hpp"
 #include "map/edge.hpp"
 #include "map/map.hpp"
+#include "utils/groups.hpp"
 #include "nlohmann/json.hpp"
 #include <filesystem>
 #include <format>
@@ -15,7 +16,7 @@ using json = nlohmann::json;
 
 class Animation {
   public:
-    Animation(const Map *map, const std::filesystem::path &path) : map(map), path(path) {}
+    Animation(const Map *map, const std::filesystem::path &path);
 
     /**
      * @brief start a new animation frame
@@ -54,7 +55,7 @@ class Animation {
      * @param node the node to build the groups from
      * @return json the groups of ants on the node as json
      */
-    json node_groups(const Node &node) const;
+    json node_groups_json(const Node &node) const;
 
     /**
      * @brief Check the difference between the groups of ants on a node and the previous frame

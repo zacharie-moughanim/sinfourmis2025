@@ -1,21 +1,10 @@
 #include "animation/animation.hpp"
 
-// <start node id, team id, progress>
-std::map<std::tuple<unsigned int, unsigned int, float>, unsigned int>
-edge_groups(const Edge &edge) {
-    std::map<std::tuple<unsigned int, unsigned int, float>, unsigned int> groups;
-    for (auto ant : edge.get_ants()) {
-        auto key = std::make_tuple(ant->get_current_node()->get_id(), ant->get_team_id(),
-                                   ant->get_progress());
-        auto it = groups.find(key);
-        if (it == groups.end()) {
-            groups[key] = 1;
-        } else {
-            groups[key]++;
-        }
-    }
-    return groups;
+Animation::Animation(const Map *map, const std::filesystem::path &path) : map(map), path(path) {
+	data["data"] = json::object();
 }
+
+
 
 void to_json(json &j, const Edge &edge) {
     j = json{
@@ -70,21 +59,8 @@ void Animation::write_edges_departure_groups(const Node &node, const Edge *edge,
     }
 }
 
-std::unordered_map<unsigned int, unsigned int> node_groups_map(const Node &node) {
-    std::unordered_map<unsigned int, unsigned int> groups;
-    for (auto ant : node.get_ants()) {
-        auto it = groups.find(ant->get_team_id());
-        if (it == groups.end()) {
-            groups[ant->get_team_id()] = 1;
-        } else {
-            groups[ant->get_team_id()]++;
-        }
-    }
-    return groups;
-}
-
-json Animation::node_groups(const Node &node) const {
-    auto groups = node_groups_map(node);
+json Animation::node_groups_json(const Node &node) const {
+    auto groups = node_groups(node);
     auto res = json::array();
     for (auto [team, qt] : groups) {
         res.push_back(AntGroupData{team, qt});
@@ -93,7 +69,7 @@ json Animation::node_groups(const Node &node) const {
 }
 
 json Animation::write_groups_animation(const Node &node, json &groups) const {
-    auto groups_map = node_groups_map(node);
+    auto groups_map = node_groups(node);
     auto res = json::array();
     for (auto group : groups) {
         auto it = groups_map.find(group["team"]);
@@ -139,7 +115,7 @@ void Animation::start_frame() {
             max_food = std::max(max_food, node.get_max_food());
         }
         nodes.push_back(node);
-        nodes.back()["ants"] = node_groups(node);
+        nodes.back()["ants"] = node_groups_json(node);
         for (auto edge : node.get_edges()) {
             if (edge->get_node1()->get_id() == node.get_id()) {
                 edges.push_back(*edge);
@@ -191,7 +167,7 @@ void Animation::end_frame() {
             node_json["anim"].erase("ants");
         }
     }
-    data[std::to_string(turn)] = frame;
+    data["data"][std::to_string(turn)] = frame;
 }
 
 void Animation::flush() {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "animation/animation.hpp"
+#include "debugger/debugger.hpp"
 #include "game/ant.hpp"
 #include "game/queen.hpp"
 #include "interfaces/interface.hpp"
@@ -27,9 +28,10 @@ class Game {
      * @param duration the game duration in ticks
      * @param seed The game seed
      * @param flush if true, the animation will be flushed at each turn
+	 * @param debug if true, the game will run step by step to debug
      * @param path the path to the animation file
      */
-    void run(unsigned int duration, unsigned int seed, bool flush, std::filesystem::path &&path);
+    void run(unsigned int duration, unsigned int seed, bool flush, bool debug, std::filesystem::path &&path);
 
     Game(const Game &) = delete;
     Game &operator=(const Game &) = delete;

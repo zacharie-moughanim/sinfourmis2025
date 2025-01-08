@@ -163,7 +163,7 @@ void Game::queen_action(Queen *queen, std::vector<std::unique_ptr<Ant>> &ants) {
             queen->set_result(!queen->upgrade_queen(Queen::QueenStat::UPGRADE_DURATION));
             break;
         case reine_action::AMELIORE_STOCKAGE:
-            queen->set_result(!queen->upgrade_queen(Queen::QueenStat::STORED_ANTS));
+            queen->set_result(!queen->upgrade_queen(Queen::QueenStat::MAX_STORED_ANTS));
             break;
         case reine_action::AMELIORE_ENVOI:
             queen->set_result(!queen->upgrade_queen(Queen::QueenStat::ANTS_SENDING));
@@ -208,7 +208,7 @@ void Game::queen_action(Queen *queen, std::vector<std::unique_ptr<Ant>> &ants) {
                     break;
                 }
                 auto max_gathered = std::min((uint32_t)result.arg,
-                                             queen->get_queen_stat(Queen::QueenStat::STORED_ANTS));
+                                             queen->get_queen_stat(Queen::QueenStat::MAX_STORED_ANTS));
                 for (auto it = node_ants.begin(); it != node_ants.end() && gathered < max_gathered;
                      it++) {
                     if ((*it)->get_team_id() != queen->get_team_id() || !(*it)->alive()) {
@@ -228,7 +228,7 @@ void Game::queen_action(Queen *queen, std::vector<std::unique_ptr<Ant>> &ants) {
     }
 }
 
-void Game::run(unsigned int duration, unsigned int seed, bool flush, std::filesystem::path &&path) {
+void Game::run(unsigned int duration, unsigned int seed, bool flush, bool debug, std::filesystem::path &&path) {
     if (interfaces.size() != map.get_team_count()) {
         std::cerr << interfaces.size() << " " << map.get_team_count() << std::endl;
         throw std::runtime_error("Not enough interfaces");
@@ -237,6 +237,7 @@ void Game::run(unsigned int duration, unsigned int seed, bool flush, std::filesy
     std::cout << "Running game with seed " << seed << std::endl;
 
     Animation animation(&map, path);
+	Debugger debugger(debug);
 
     gen.seed(seed);
 
@@ -246,7 +247,9 @@ void Game::run(unsigned int duration, unsigned int seed, bool flush, std::filesy
     }
     std::vector<std::unique_ptr<Ant>> ants;
 
-    while (animation.game_turn() < duration) {
+    while (animation.game_turn() < duration && !debugger.exit()) {
+		debugger.debug(map, ants, queens);
+		
         animation.start_frame();
         map.regen_food();
 

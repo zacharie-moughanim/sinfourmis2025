@@ -28,8 +28,8 @@ std::ostream &operator<<(std::ostream &os, const Queen::Stat &stat) {
 
 std::ostream &operator<<(std::ostream &os, const Queen::QueenStat &stat) {
     switch (stat) {
-        case Queen::QueenStat::STORED_ANTS:
-            os << "STORED_ANTS";
+        case Queen::QueenStat::MAX_STORED_ANTS:
+            os << "MAX_STORED_ANTS";
             break;
         case Queen::QueenStat::PRODUCED_ANTS:
             os << "PRODUCED_ANTS";
@@ -42,6 +42,25 @@ std::ostream &operator<<(std::ostream &os, const Queen::QueenStat &stat) {
             break;
     }
     return os;
+}
+
+std::ostream &operator<<(std::ostream &os, const Queen &queen) {
+    os << "===== Queen =====" << std::endl;
+	os << "Team: " << queen.team->get_id() << std::endl;
+	os << "Stats:" << std::endl;
+	for (uint32_t i = 0; i < 4; i++) {
+		os << "\t" << Queen::Stat(i) << ": " << queen.stats[i] << std::endl;
+	}
+	os << "Queen Stats:" << std::endl;
+	for (uint32_t i = 0; i < 4; i++) {
+		os << "\t" << Queen::QueenStat(i) << ": " << queen.queen_stats[i] << std::endl;
+	}
+	os << "Food: " << queen.team->get_food() << std::endl;
+	os << "Stored ants: " << queen.ants_memory.size() << std::endl;
+	if (queen.waiting_upgrade > 0) {
+		os << "Waiting remaining: " << queen.waiting_upgrade << std::endl;
+	}
+	return os;
 }
 
 void Queen::game_turn() {
@@ -109,7 +128,7 @@ reine_etat Queen::as_reine_etat() const {
     etat.max_vie = get_stat(Stat::LIFE);
     etat.max_degats = get_stat(Stat::ATTACK);
     etat.duree_amelioration = get_queen_stat(QueenStat::UPGRADE_DURATION);
-    etat.max_stockage = get_queen_stat(QueenStat::STORED_ANTS);
+    etat.max_stockage = get_queen_stat(QueenStat::MAX_STORED_ANTS);
     etat.max_production = get_queen_stat(QueenStat::PRODUCED_ANTS);
     etat.max_envoi = get_queen_stat(QueenStat::ANTS_SENDING);
     return etat;
@@ -127,7 +146,7 @@ fourmi_etat Queen::default_fourmi_etat() const {
     return etat;
 }
 bool Queen::create_ant() {
-    if (ants_memory.size() >= get_queen_stat(QueenStat::STORED_ANTS)) {
+    if (ants_memory.size() >= get_queen_stat(QueenStat::MAX_STORED_ANTS)) {
         return false;
     }
     ants_memory.push_back(default_fourmi_etat());
@@ -135,7 +154,7 @@ bool Queen::create_ant() {
 }
 
 bool Queen::push_ant(fourmi_etat ant) {
-    if (ants_memory.size() >= get_queen_stat(QueenStat::STORED_ANTS)) {
+    if (ants_memory.size() >= get_queen_stat(QueenStat::MAX_STORED_ANTS)) {
         return false;
     }
     team->add_food(ant.nourriture);

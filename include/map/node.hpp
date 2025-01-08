@@ -3,7 +3,7 @@
 #include "game/constants.hpp"
 #include "map/edge.hpp"
 #include "nlohmann/json.hpp"
-#include "salle_parser.hpp"
+#include "utils/salle_parser.hpp"
 #include "sinfourmis.h"
 #include <iostream>
 #include <memory>
@@ -58,6 +58,12 @@ class Node {
      * @return Edge* the edge with the given id
      */
     Edge *get_edge(unsigned int id) const;
+
+	/**
+	 * @param id the id of the node to get the edge to
+	 * @return Edge* the edge to the given node id
+	 */
+	Edge *get_edge_to_id(unsigned int id) const;
 
     /**
      * @param node the node to get the edge to
@@ -119,6 +125,17 @@ class Node {
         return max_food;
     }
 
+	unsigned int get_remaining() const {
+		if (type != salle_type::NOURRITURE) {
+			return 0;
+		}
+		return total_available;
+	}
+
+	unsigned int get_team() const {
+		return team;
+	}
+
     size_t degree() const {
         return edges.size();
     }
@@ -126,6 +143,18 @@ class Node {
     std::pair<float, float> get_position() const {
         return {x, y};
     }
+
+	float get_x() const {
+		return x;
+	}
+
+	float get_y() const {
+		return y;
+	}
+
+	uint8_t get_pheromones() const {
+		return pheromone;
+	}
 
   private:
     void remove_edge(const std::shared_ptr<Edge> &edge);
@@ -146,3 +175,5 @@ class Node {
     std::vector<std::shared_ptr<Edge>> edges;
     std::vector<Ant *> ants;
 };
+
+std::ostream &operator<<(std::ostream &os, const salle_type &type);

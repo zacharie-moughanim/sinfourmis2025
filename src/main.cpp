@@ -77,6 +77,10 @@ int main(int argc, char **argv) {
         .help("Flush the animation at each turn")
         .default_value(false)
         .flag();
+	program.add_argument("--debug")
+	    .help("Do the animation step by step to debug")
+		.default_value(false)
+		.flag();
 
     try {
         program.parse_args(argc, argv);
@@ -137,8 +141,9 @@ int main(int argc, char **argv) {
     int seed = program.get<unsigned int>("seed");
     auto path = check_path(program.get<std::string>("output"));
     auto flush = program.get<bool>("flush");
+	auto debug = program.get<bool>("debug");
 
-    game.run(duration, seed, flush, std::move(path));
+    game.run(duration, seed, flush, debug, std::move(path));
 
     return 0;
 }
