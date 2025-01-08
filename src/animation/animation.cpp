@@ -1,10 +1,8 @@
 #include "animation/animation.hpp"
 
 Animation::Animation(const Map *map, const std::filesystem::path &path) : map(map), path(path) {
-	data["data"] = json::object();
+    data["data"] = json::object();
 }
-
-
 
 void to_json(json &j, const Edge &edge) {
     j = json{

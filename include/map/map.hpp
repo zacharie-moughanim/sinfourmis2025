@@ -3,9 +3,9 @@
 #include "game/team.hpp"
 #include "map/neighbor_data.hpp"
 #include "map/node.hpp"
+#include "sinfourmis.h"
 #include "utils/pair_hash.hpp"
 #include "utils/salle_parser.hpp"
-#include "sinfourmis.h"
 #include <string_view>
 #include <tuple>
 #include <unordered_map>
@@ -54,14 +54,14 @@ class Map {
      */
     Node *get_starting_node(unsigned int team_id);
 
-	/**
-	 * @brief Get the edge between two nodes
-	 * 
-	 * @param id1 the id of the first node
-	 * @param id2 the id of the second node
-	 * @return Edge* the edge between the two nodes
-	 */
-	Edge *get_edge(unsigned int id1, unsigned int id2) const;
+    /**
+     * @brief Get the edge between two nodes
+     *
+     * @param id1 the id of the first node
+     * @param id2 the id of the second node
+     * @return Edge* the edge between the two nodes
+     */
+    Edge *get_edge(unsigned int id1, unsigned int id2) const;
 
     size_t get_node_count() const {
         return nodes.size();

@@ -28,11 +28,11 @@ Edge *Node::get_edge(unsigned int edge_id) const {
 }
 
 Edge *Node::get_edge_to_id(unsigned int id) const {
-	for (const auto &edge : edges) {
-		if (edge->get_other_node(this)->id == id) {
-			return edge.get();
-		}
-	}
+    for (const auto &edge : edges) {
+        if (edge->get_other_node(this)->id == id) {
+            return edge.get();
+        }
+    }
     return nullptr;
 }
 
@@ -96,19 +96,19 @@ void from_json(const json &j, Node &node) {
 
 std::ostream &operator<<(std::ostream &os, const salle_type &type) {
     switch (type) {
-	case salle_type::VIDE:
-		os << "VIDE";
-		break;
-	case salle_type::NOURRITURE:
-		os << "NOURRITURE";
-		break;
-	case salle_type::REINE:
-		os << "REINE";
-		break;
-	case salle_type::EAU:
-		os << "EAU";
-		break;
-	}
+        case salle_type::VIDE:
+            os << "VIDE";
+            break;
+        case salle_type::NOURRITURE:
+            os << "NOURRITURE";
+            break;
+        case salle_type::REINE:
+            os << "REINE";
+            break;
+        case salle_type::EAU:
+            os << "EAU";
+            break;
+    }
 
-	return os;
+    return os;
 }

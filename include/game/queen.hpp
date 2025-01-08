@@ -16,7 +16,12 @@ class Queen {
     Queen(Team *team, Node *node) : team(team), current_node(node) {}
 
     enum class Stat : uint32_t { LIFE, WATER, FOOD, ATTACK };
-    enum class QueenStat : uint32_t { MAX_STORED_ANTS, PRODUCED_ANTS, UPGRADE_DURATION, ANTS_SENDING };
+    enum class QueenStat : uint32_t {
+        MAX_STORED_ANTS,
+        PRODUCED_ANTS,
+        UPGRADE_DURATION,
+        ANTS_SENDING
+    };
 
     /**
      * @brief Signal the queen that a game turn passed
@@ -96,7 +101,7 @@ class Queen {
         this->result = new_result;
     }
 
-	friend std::ostream &operator<<(std::ostream &os, const Queen &queen);
+    friend std::ostream &operator<<(std::ostream &os, const Queen &queen);
 
   private:
     Team *team;

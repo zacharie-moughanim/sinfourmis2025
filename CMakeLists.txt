@@ -11,9 +11,11 @@ set(sources
 	src/game/game.cpp
 	src/game/ant.cpp
 	src/game/queen.cpp
+	src/utils/groups.cpp
 	src/animation/animation.cpp
 	src/interfaces/dummy.cpp
 	src/interfaces/shared.cpp
+	src/debugger/debugger.cpp
 	src/main.cpp
 )
 
@@ -79,7 +81,6 @@ if(CLANG_FORMAT_EXE)
 			${PROJECT_SOURCE_DIR}/src/*.cpp 
 			${PROJECT_SOURCE_DIR}/src/*/*.cpp 
 			${PROJECT_SOURCE_DIR}/include/*.h
-			${PROJECT_SOURCE_DIR}/include/*.hpp
 			${PROJECT_SOURCE_DIR}/include/*/*.hpp
 		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
 	)

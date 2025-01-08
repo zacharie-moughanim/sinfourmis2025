@@ -207,8 +207,8 @@ void Game::queen_action(Queen *queen, std::vector<std::unique_ptr<Ant>> &ants) {
                     queen->set_result(-1);
                     break;
                 }
-                auto max_gathered = std::min((uint32_t)result.arg,
-                                             queen->get_queen_stat(Queen::QueenStat::MAX_STORED_ANTS));
+                auto max_gathered = std::min(
+                    (uint32_t)result.arg, queen->get_queen_stat(Queen::QueenStat::MAX_STORED_ANTS));
                 for (auto it = node_ants.begin(); it != node_ants.end() && gathered < max_gathered;
                      it++) {
                     if ((*it)->get_team_id() != queen->get_team_id() || !(*it)->alive()) {
@@ -228,7 +228,8 @@ void Game::queen_action(Queen *queen, std::vector<std::unique_ptr<Ant>> &ants) {
     }
 }
 
-void Game::run(unsigned int duration, unsigned int seed, bool flush, bool debug, std::filesystem::path &&path) {
+void Game::run(unsigned int duration, unsigned int seed, bool flush, bool debug,
+               std::filesystem::path &&path) {
     if (interfaces.size() != map.get_team_count()) {
         std::cerr << interfaces.size() << " " << map.get_team_count() << std::endl;
         throw std::runtime_error("Not enough interfaces");
@@ -237,7 +238,7 @@ void Game::run(unsigned int duration, unsigned int seed, bool flush, bool debug,
     std::cout << "Running game with seed " << seed << std::endl;
 
     Animation animation(&map, path);
-	Debugger debugger(debug);
+    Debugger debugger(debug);
 
     gen.seed(seed);
 
@@ -248,8 +249,8 @@ void Game::run(unsigned int duration, unsigned int seed, bool flush, bool debug,
     std::vector<std::unique_ptr<Ant>> ants;
 
     while (animation.game_turn() < duration && !debugger.exit()) {
-		debugger.debug(map, ants, queens);
-		
+        debugger.debug(map, ants, queens);
+
         animation.start_frame();
         map.regen_food();
 

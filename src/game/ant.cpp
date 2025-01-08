@@ -9,7 +9,7 @@ Ant::Ant(Queen *queen, fourmi_etat &&etat) : current_Node(queen->get_current_nod
     max_water = queen->get_stat(Queen::Stat::WATER);
     assert(current_Node != nullptr);
     current_Node->add_ant(this);
-	id = next_id++;
+    id = next_id++;
 }
 
 Ant::Ant(Queen *queen) : current_Node(queen->get_current_node()), queen(queen) {
@@ -18,7 +18,7 @@ Ant::Ant(Queen *queen) : current_Node(queen->get_current_node()), queen(queen) {
     max_water = queen->get_stat(Queen::Stat::WATER);
     assert(current_Node != nullptr);
     current_Node->add_ant(this);
-	id = next_id++;
+    id = next_id++;
 }
 
 Ant::Ant(const Ant &&ant) noexcept
@@ -139,11 +139,11 @@ unsigned int Ant::gather_food() {
 
 std::ostream &operator<<(std::ostream &os, const Ant &ant) {
     os << "======= Ant (" << ant.id << ") =======\n";
-	os << "Team: " << ant.get_team_id() << "\n";
+    os << "Team: " << ant.get_team_id() << "\n";
     os << "Status: ";
     switch (ant.get_action_state()) {
         case AntActionState::NONE:
-			os << "Normal\n";
+            os << "Normal\n";
             break;
         case AntActionState::MOVING:
             os << "Moving along an edge\n";
@@ -153,24 +153,25 @@ std::ostream &operator<<(std::ostream &os, const Ant &ant) {
             break;
     }
     if (ant.current_Node != nullptr) {
-		os << "Current node: " << ant.current_Node->get_id() << "\n";
-	}
-	if (ant.current_edge != nullptr) {
-		os << "Current edge: " << ant.current_edge->get_node1()->get_id() << " -- " << ant.current_edge->get_node2()->get_id() << "\n";
-		os << "Progress: " << ant.get_progress() << "\n";
-	}
-	os << "== Stats: \n";
-	os << "Health: " << ant.etat.vie << "/" << ant.queen->get_stat(Queen::Stat::LIFE) << "\n";
-	os << "Food: " << ant.etat.nourriture << "/" << ant.max_food << "\n";
-	os << "Water: " << ant.etat.eau << "/" << ant.max_water << "\n";
-	os << "Attack: " << ant.get_attack() << "/" << ant.queen->get_stat(Queen::Stat::ATTACK) << "\n";
-	os << "== Memory: \n";
-	for (unsigned int i = 0; i < sizeof(ant.etat.memoire) / sizeof(ant.etat.memoire[0]); i++) {
-		os << std::setfill('0') << std::setw(3) << (int)ant.etat.memoire[i];
-		os << " ";
-		if (i % 16 == 0) {
-			os << "\n";
-		}
-	}
-	return os;
+        os << "Current node: " << ant.current_Node->get_id() << "\n";
+    }
+    if (ant.current_edge != nullptr) {
+        os << "Current edge: " << ant.current_edge->get_node1()->get_id() << " -- "
+           << ant.current_edge->get_node2()->get_id() << "\n";
+        os << "Progress: " << ant.get_progress() << "\n";
+    }
+    os << "== Stats: \n";
+    os << "Health: " << ant.etat.vie << "/" << ant.queen->get_stat(Queen::Stat::LIFE) << "\n";
+    os << "Food: " << ant.etat.nourriture << "/" << ant.max_food << "\n";
+    os << "Water: " << ant.etat.eau << "/" << ant.max_water << "\n";
+    os << "Attack: " << ant.get_attack() << "/" << ant.queen->get_stat(Queen::Stat::ATTACK) << "\n";
+    os << "== Memory: \n";
+    for (unsigned int i = 0; i < sizeof(ant.etat.memoire) / sizeof(ant.etat.memoire[0]); i++) {
+        os << std::setfill('0') << std::setw(3) << (int)ant.etat.memoire[i];
+        os << " ";
+        if (i % 16 == 0) {
+            os << "\n";
+        }
+    }
+    return os;
 }

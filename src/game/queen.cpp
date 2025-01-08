@@ -46,21 +46,21 @@ std::ostream &operator<<(std::ostream &os, const Queen::QueenStat &stat) {
 
 std::ostream &operator<<(std::ostream &os, const Queen &queen) {
     os << "===== Queen =====" << std::endl;
-	os << "Team: " << queen.team->get_id() << std::endl;
-	os << "Stats:" << std::endl;
-	for (uint32_t i = 0; i < 4; i++) {
-		os << "\t" << Queen::Stat(i) << ": " << queen.stats[i] << std::endl;
-	}
-	os << "Queen Stats:" << std::endl;
-	for (uint32_t i = 0; i < 4; i++) {
-		os << "\t" << Queen::QueenStat(i) << ": " << queen.queen_stats[i] << std::endl;
-	}
-	os << "Food: " << queen.team->get_food() << std::endl;
-	os << "Stored ants: " << queen.ants_memory.size() << std::endl;
-	if (queen.waiting_upgrade > 0) {
-		os << "Waiting remaining: " << queen.waiting_upgrade << std::endl;
-	}
-	return os;
+    os << "Team: " << queen.team->get_id() << std::endl;
+    os << "Stats:" << std::endl;
+    for (uint32_t i = 0; i < 4; i++) {
+        os << "\t" << Queen::Stat(i) << ": " << queen.stats[i] << std::endl;
+    }
+    os << "Queen Stats:" << std::endl;
+    for (uint32_t i = 0; i < 4; i++) {
+        os << "\t" << Queen::QueenStat(i) << ": " << queen.queen_stats[i] << std::endl;
+    }
+    os << "Food: " << queen.team->get_food() << std::endl;
+    os << "Stored ants: " << queen.ants_memory.size() << std::endl;
+    if (queen.waiting_upgrade > 0) {
+        os << "Waiting remaining: " << queen.waiting_upgrade << std::endl;
+    }
+    return os;
 }
 
 void Queen::game_turn() {

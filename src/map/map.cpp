@@ -185,8 +185,8 @@ Node *Map::get_starting_node(unsigned int team_id) {
 
 Edge *Map::get_edge(unsigned int id1, unsigned int id2) const {
     auto node1 = nodes.find(id1);
-	if (node1 == nodes.end()) {
-		return nullptr;
-	}
-	return node1->second.get_edge_to_id(id2);
+    if (node1 == nodes.end()) {
+        return nullptr;
+    }
+    return node1->second.get_edge_to_id(id2);
 }

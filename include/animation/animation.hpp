@@ -5,8 +5,8 @@
 #include "game/constants.hpp"
 #include "map/edge.hpp"
 #include "map/map.hpp"
-#include "utils/groups.hpp"
 #include "nlohmann/json.hpp"
+#include "utils/groups.hpp"
 #include <filesystem>
 #include <format>
 #include <fstream>

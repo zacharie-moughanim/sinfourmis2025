@@ -87,7 +87,7 @@ class Ant {
      */
     unsigned int gather_food();
 
-	friend std::ostream &operator<<(std::ostream &os, const Ant &ant);
+    friend std::ostream &operator<<(std::ostream &os, const Ant &ant);
 
     fourmi_etat &as_fourmi_etat() {
         return etat;
@@ -117,9 +117,9 @@ class Ant {
         return current_edge;
     }
 
-	unsigned int get_id() const {
-		return id;
-	}
+    unsigned int get_id() const {
+        return id;
+    }
 
   private:
     Node *current_Node = nullptr;
@@ -128,8 +128,8 @@ class Ant {
     unsigned int max_water = 0;
     unsigned int max_food = 0;
 
-	unsigned int id = 0;
-	static unsigned int next_id;
+    unsigned int id = 0;
+    static unsigned int next_id;
 
     AntActionState action_state = AntActionState::NONE;
     float progress = 0;
