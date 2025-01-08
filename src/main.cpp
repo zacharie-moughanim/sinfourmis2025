@@ -2,14 +2,14 @@
 #include "game/game.hpp"
 #include "interfaces/dummy.hpp"
 #ifdef USING_PYTHON
-	#include "interfaces/python.hpp"
+#include "interfaces/python.hpp"
 #endif
 #include "interfaces/shared.hpp"
 #include "map/map.hpp"
 #include <filesystem>
+#include <format>
 #include <iostream>
 #include <random>
-#include <format>
 
 std::filesystem::path check_path(const std::string &value) {
     if (value.empty()) {
@@ -26,7 +26,7 @@ std::filesystem::path check_path(const std::string &value) {
         }
         return path;
     }
-	std::cerr << "Ouput file already exists" << std::endl;
+    std::cerr << "Ouput file already exists" << std::endl;
     exit(1);
     return path;
 }
@@ -68,15 +68,15 @@ int main(int argc, char **argv) {
         .metavar("DURATION");
     program.add_argument("-s", "--seed")
         .help("The seed to use for the random number generator, default to a random value")
-        .default_value((int)rd())
+        .default_value((unsigned int)rd())
         .nargs(1)
         .scan<'i', unsigned int>()
         .action([](const std::string &value) { return (unsigned int)std::stoul(value); })
         .metavar("SEED");
-	program.add_argument("-f", "--flush")
-		   .help("Flush the animation at each turn")
-		   .default_value(false)
-		   .flag();
+    program.add_argument("-f", "--flush")
+        .help("Flush the animation at each turn")
+        .default_value(false)
+        .flag();
 
     try {
         program.parse_args(argc, argv);
@@ -124,8 +124,8 @@ int main(int argc, char **argv) {
             std::cout << "Loading " << team << " using the python interface" << std::endl;
             interface = new PythonInterface();
 #else
-			std::cerr << "Unknown team file format" << std::endl;
-			return 1;
+            std::cerr << "Unknown team file format" << std::endl;
+            return 1;
 #endif
         }
         interface->load(team);
@@ -135,8 +135,8 @@ int main(int argc, char **argv) {
 
     int duration = program.get<int>("duration");
     int seed = program.get<unsigned int>("seed");
-	auto path = check_path(program.get<std::string>("output"));
-	auto flush = program.get<bool>("flush");
+    auto path = check_path(program.get<std::string>("output"));
+    auto flush = program.get<bool>("flush");
 
     game.run(duration, seed, flush, std::move(path));
 

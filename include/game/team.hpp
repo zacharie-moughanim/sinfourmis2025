@@ -15,9 +15,7 @@ class Team {
     Team(int id, const std::string_view &name, const std::string_view &color) : id(id), name(name) {}
 
 	void add_food(unsigned int amount) {
-		std::cout << "Team " << id << " gain " << amount << " food " << score << std::endl;
 		food += amount;
-		score += amount;
 	}
 
 	bool try_remove_food(unsigned int amount) {
@@ -40,7 +38,7 @@ class Team {
 	}
 
 	unsigned int get_score() const {
-		return score;
+		return food;
 	}
 
     // for json serialization / deserialization
@@ -51,5 +49,4 @@ class Team {
     std::string name = "";
 	std::string color = "#000000";
 	unsigned int food = 0;
-	unsigned int score = 0;
 };

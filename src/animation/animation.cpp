@@ -27,18 +27,19 @@ void to_json(json &j, const Edge &edge) {
     for (auto [key, qt] : groups) {
         float progress = std::get<2>(key);
         float progress_anim = progress + EDGE_CROSS_SPEED;
-        if (std::get<0>(key) == edge.get_node1()->get_id()) {
-            progress /= edge.get_length();
-            progress_anim /= edge.get_length();
-        } else {
-            progress = 1.f - (progress / edge.get_length());
-            progress_anim = 1.f - (progress_anim / edge.get_length());
+		progress /= edge.get_length();
+		progress_anim /= edge.get_length();
+        if (std::get<0>(key) == edge.get_node2()->get_id()) {
+            progress = 1.f - progress;
+            progress_anim = 1.f - progress_anim;
         }
-        progress = std::max(0.f, std::min(1.f, progress));
-        progress_anim = std::max(0.f, std::min(1.f, progress_anim));
-        j["groups"].push_back(AntGroupData{std::get<1>(key), qt, progress});
-        j["groups"].back()["anim"] = json{{"progress", progress_anim}};
-    }
+		progress = std::max(0.f, std::min(1.f, progress));
+		progress_anim = std::max(0.f, std::min(1.f, progress_anim));
+		if (progress_anim == progress && (progress == 0.f || progress == 1.f)) {
+			continue;
+		}
+		j["groups"].push_back(AntGroupData{std::get<1>(key), qt, progress, progress_anim});
+	}
 }
 
 void Animation::write_edges_departure_groups(const Node &node, const Edge *edge, json &json_edge) const {
@@ -58,12 +59,11 @@ void Animation::write_edges_departure_groups(const Node &node, const Edge *edge,
 			json_edge["groups"] = json::array();
 		}
 		for (auto [team, qt] : departures) {
-			json_edge["groups"].push_back(AntGroupData{team, qt, 0});
 			float length = EDGE_CROSS_SPEED / edge->get_length();
-			if (edge->get_node1()->get_id() == node.get_id())
+			if (edge->get_node2()->get_id() == node.get_id()) {
 				length = 1.f - EDGE_CROSS_SPEED / edge->get_length();
-			
-			json_edge["groups"].back()["anim"] = json{{"progress", length}};	
+			}
+			json_edge["groups"].push_back(AntGroupData{team, qt, 0, length});
 		}
 	}
 }
@@ -144,20 +144,24 @@ void Animation::start_frame() {
             }
         }
     }
-	for (auto [_, node]: map->get_nodes()) {
-		for (auto edge : node.get_edges()) {
-			int i = 0;
-			while (edge->get_node1()->get_id() != edges[i].at("id_1").template get<unsigned int>() ||
-			       edge->get_node2()->get_id() != edges[i].at("id_2").template get<unsigned int>()) {
-					i++;
-				   }
-        	write_edges_departure_groups(node, edge.get(), edges[i]);
+
+    for (auto [_, node] : map->get_nodes()) {
+        for (auto edge : node.get_edges()) {
+            int i = 0;
+            while (edge->get_node1()->get_id() !=
+                       edges[i].at("id_1").template get<unsigned int>() ||
+                   edge->get_node2()->get_id() !=
+                       edges[i].at("id_2").template get<unsigned int>()) {
+                i++;
+            }
+            write_edges_departure_groups(node, edge.get(), edges[i]);
         }
 	}
+
 	frame["max_food"] = max_food;
-    frame["nodes"] = nodes;
-    frame["edges"] = edges;
-}
+	frame["nodes"] = nodes;
+	frame["edges"] = edges;
+    }
 
 void Animation::end_frame() {
     if (!started) {

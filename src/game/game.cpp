@@ -133,91 +133,91 @@ void Game::fourmi_action(Ant *ant) {
     }
 }
 
-void Game::queen_action(Queen &queen, std::vector<std::unique_ptr<Ant>> &ants) {
-    queen.game_turn();
-    if (!queen.can_perform_action()) {
+void Game::queen_action(Queen *queen, std::vector<std::unique_ptr<Ant>> &ants) {
+    queen->game_turn();
+    if (!queen->can_perform_action()) {
         return;
     }
-    auto &memories = queen.get_states();
-    auto etat = queen.as_reine_etat();
-    auto salle = queen.get_current_node()->as_salle();
-    auto result = interfaces[queen.get_team_id()]->reine_activation(memories.data(),
+    auto &memories = queen->get_states();
+    auto etat = queen->as_reine_etat();
+    auto salle = queen->get_current_node()->as_salle();
+    auto result = interfaces[queen->get_team_id()]->reine_activation(memories.data(),
                                                                     memories.size(), &etat, &salle);
     switch (result.action) {
         case reine_action::REINE_PASSE:
             break;
         case reine_action::AMELIORE_DEGATS:
-            queen.set_result(!queen.upgrade(Queen::Stat::ATTACK));
+            queen->set_result(!queen->upgrade(Queen::Stat::ATTACK));
             break;
         case reine_action::AMELIORE_VIE:
-            queen.set_result(!queen.upgrade(Queen::Stat::LIFE));
+            queen->set_result(!queen->upgrade(Queen::Stat::LIFE));
             break;
         case reine_action::AMELIORE_EAU:
-            queen.set_result(!queen.upgrade(Queen::Stat::WATER));
+            queen->set_result(!queen->upgrade(Queen::Stat::WATER));
             break;
         case reine_action::AMELIORE_RAMASSAGE:
-            queen.set_result(!queen.upgrade(Queen::Stat::FOOD));
+            queen->set_result(!queen->upgrade(Queen::Stat::FOOD));
             break;
         case reine_action::AMELIORE_VITESSE_AMELIORATION:
-            queen.set_result(!queen.upgrade_queen(Queen::QueenStat::UPGRADE_DURATION));
+            queen->set_result(!queen->upgrade_queen(Queen::QueenStat::UPGRADE_DURATION));
             break;
         case reine_action::AMELIORE_STOCKAGE:
-            queen.set_result(!queen.upgrade_queen(Queen::QueenStat::STORED_ANTS));
+            queen->set_result(!queen->upgrade_queen(Queen::QueenStat::STORED_ANTS));
             break;
         case reine_action::AMELIORE_ENVOI:
-            queen.set_result(!queen.upgrade_queen(Queen::QueenStat::ANTS_SENDING));
+            queen->set_result(!queen->upgrade_queen(Queen::QueenStat::ANTS_SENDING));
             break;
         case reine_action::AMELIORE_PRODUCTION:
-            queen.set_result(!queen.upgrade_queen(Queen::QueenStat::PRODUCED_ANTS));
+            queen->set_result(!queen->upgrade_queen(Queen::QueenStat::PRODUCED_ANTS));
             break;
         case reine_action::CREER_FOURMI:
             {
                 unsigned int created = 0;
-                for (int i = 0; i < result.arg && queen.create_ant(); i++) {
+                for (int i = 0; i < result.arg && queen->create_ant(); i++) {
                     created++;
                 }
-                queen.set_result(created);
+                queen->set_result(created);
             }
             break;
         case reine_action::ENVOYER_FOURMI:
             {
                 unsigned int sent = 0;
-                for (int i = 0; i < std::min(result.arg, (int32_t)queen.get_queen_stat(
+                for (int i = 0; i < std::min(result.arg, (int32_t)queen->get_queen_stat(
                                                              Queen::QueenStat::ANTS_SENDING));
                      i++) {
-                    auto ant_state = queen.pop_ant();
+                    auto ant_state = queen->pop_ant();
                     if (ant_state.has_value()) {
                         sent++;
-                        ants.emplace_back(std::make_unique<Ant>(&queen, std::move(ant_state.value())));
+                        ants.emplace_back(std::make_unique<Ant>(queen, std::move(ant_state.value())));
                     } else {
                         break;
                     }
                 }
-                queen.set_result(sent);
+                queen->set_result(sent);
             }
             break;
         case reine_action::RECUPERER_FOURMI:
             {
                 uint32_t gathered = 0;
-                Node *node = queen.get_current_node();
+                Node *node = queen->get_current_node();
                 auto node_ants = node->get_ants();
 				if (result.arg < 0) {
-					queen.set_result(-1);
+					queen->set_result(-1);
 					break;
 				}
-				auto max_gathered = std::min((uint32_t)result.arg, queen.get_queen_stat(Queen::QueenStat::STORED_ANTS));
+				auto max_gathered = std::min((uint32_t)result.arg, queen->get_queen_stat(Queen::QueenStat::STORED_ANTS));
                 for (auto it = node_ants.begin();
                      it != node_ants.end() && gathered < max_gathered;
                      it++) {
-                    if ((*it)->get_team_id() != queen.get_team_id() || !(*it)->alive()) {
+                    if ((*it)->get_team_id() != queen->get_team_id() || !(*it)->alive()) {
                         continue;
                     }
-                    if (queen.push_ant((*it)->as_fourmi_etat())) {
+                    if (queen->push_ant((*it)->as_fourmi_etat())) {
                         gathered++;
                         (*it)->kill(); // Kill the ant, it will be removed at the end of the turn
                     }
                 }
-                queen.set_result(gathered);
+                queen->set_result(gathered);
             }
             break;
         default:
@@ -238,9 +238,9 @@ void Game::run(unsigned int duration, unsigned int seed, bool flush, std::filesy
 
     gen.seed(seed);
 
-    std::vector<Queen> queens;
+    std::vector<std::unique_ptr<Queen>> queens;
     for (auto &team : map.get_teams()) {
-        queens.emplace_back(&team, map.get_starting_node(team.get_id()));
+        queens.emplace_back(std::make_unique<Queen>(&team, map.get_starting_node(team.get_id())));
     }
     std::vector<std::unique_ptr<Ant>> ants;
 
@@ -260,12 +260,15 @@ void Game::run(unsigned int duration, unsigned int seed, bool flush, std::filesy
         // === Queen turn ===
 		std::ranges::shuffle(queens, gen);
         for (auto &queen : queens) {
-            queen_action(queen, ants);
+            queen_action(queen.get(), ants);
         }
 		animation.end_frame();
 		if (flush) {
 			animation.flush();
 		}
     }
+	for (auto &team: map.get_teams()) {
+		std::cout << "Team " << team.get_id() << " score: " << team.get_score() << std::endl;
+	}
 	animation.flush();
 }

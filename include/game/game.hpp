@@ -50,7 +50,7 @@ class Game {
      * @param queen the queen to run
      * @param ants the vector of ants in the game
      */
-    void queen_action(Queen &queen, std::vector<std::unique_ptr<Ant>> &ants);
+    void queen_action(Queen *queen, std::vector<std::unique_ptr<Ant>> &ants);
 
     std::mt19937_64 gen;
     Map map;

@@ -18,10 +18,8 @@ Ant::Ant(Queen *queen) : current_Node(queen->get_current_node()), queen(queen) {
 }
 
 Ant::Ant(const Ant &&ant) noexcept
-    : current_Node(ant.current_Node), queen(ant.queen), max_water(ant.max_water),
-      max_food(ant.max_food) {
-    etat = ant.etat;
-}
+    : current_Node(ant.current_Node), queen(ant.queen), etat(ant.etat), max_water(ant.max_water),
+      max_food(ant.max_food), action_state(ant.action_state), progress(ant.progress), current_edge(ant.current_edge) {}
 
 Ant &Ant::operator=(const Ant &&ant) noexcept {
     queen = ant.queen;
@@ -29,6 +27,9 @@ Ant &Ant::operator=(const Ant &&ant) noexcept {
     max_water = ant.max_water;
     max_food = ant.max_food;
     etat = ant.etat;
+	action_state = ant.action_state;
+	progress = ant.progress;
+	current_edge = ant.current_edge;
     return *this;
 }
 
@@ -90,7 +91,7 @@ void Ant::move_along(Edge *edge) {
 
 void Ant::displace() {
     assert(action_state == AntActionState::MOVING);
-    if (progress < current_edge->get_length()) {
+    if (progress + EDGE_CROSS_SPEED < current_edge->get_length()) {
         if (current_Node != nullptr && progress == 0) {
 			current_edge->add_ant(this);
             current_Node->remove_ant(this);
@@ -98,12 +99,13 @@ void Ant::displace() {
         if (current_edge->can_be_crossed()) {
             progress += EDGE_CROSS_SPEED;
         }
-    } else {
-        current_Node = current_edge->get_other_node(current_Node);
+    } else if (progress >= current_edge->get_length()) {
 		current_edge->remove_ant(this);
-        current_Node->add_ant(this);
         action_state = AntActionState::NONE;
-        progress = 0;
+	} else {
+        current_Node = current_edge->get_other_node(current_Node);
+        current_Node->add_ant(this);
+		progress = current_edge->get_length();
     }
 }
 

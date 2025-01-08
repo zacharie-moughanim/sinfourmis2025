@@ -23,8 +23,8 @@
 		},
 		{
 			"id": 4,
-			"x": -2,
-			"y": -6,
+			"x": 0,
+			"y": 10,
 			"type": "NOURRITURE",
 			"initial_food": 0,
 			"max_food": 150,
