@@ -184,4 +184,6 @@ void Animation::flush(bool formatted) {
     	file << data;
 	}
     file.close();
+
+    std::cout << "Wrote output to " << path << std::endl;
 }

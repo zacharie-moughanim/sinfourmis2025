@@ -5,6 +5,7 @@ pub enum SalleType {
     Vide,
     Eau,
     Nourriture,
+    Reine,
 }
 
 /// décrit l'action effectuée par une fourmi
@@ -13,7 +14,6 @@ pub enum SalleType {
 pub enum FourmiAction {
     Deplacement,
     RamasseNourriture,
-    DeposePheromone,
     CommenceConstruction,
     TermineConstruction,
     Attaque,
@@ -28,8 +28,10 @@ pub enum ReineAction {
     CreerFourmi,
     EnvouerFourmi,
     RecupererFourmi,
-    AmelioreReine,
+    AmelioreStockate,
+    AmelioreProduction,
     AmelioreEnvoi,
+    AmelioreVitesseAmelioration,
     AmelioreRamassage,
     AmelioreVie,
     AmelioreEau,
@@ -72,6 +74,28 @@ pub struct FourmiEtat {
 pub struct FourmiRetour {
     pub action: FourmiAction,
     pub arg: i32,
+    pub depose_pheromone: bool,
+    pub pheormone: u8,
+}
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+/// structure représentant l'état d'une reine
+///
+/// Cette structure est utilisée lors de l'éveil d'une reine.
+/// Elle contient les fourmis gérées par la reine, les points de nourriture
+/// et le résultat de l'action précédente
+pub struct ReineEtat {
+    nourriture: u32,
+    result: i32,
+    max_nourriture: u32,
+    max_eau: u32,
+    max_vie: u32,
+    max_degats: u32,
+    dureee_amelioration: u32,
+    max_stocakge: u32,
+    max_production: u32,
+    max_envoi: u32,
 }
 
 /// structure décrivant une action de la reine
@@ -83,5 +107,5 @@ pub struct FourmiRetour {
 #[derive(Debug, Clone, Copy)]
 pub struct ReineRetour {
     pub action: ReineAction,
-    pub memoire: [u8; 256],
+    pub arg: i32,
 }

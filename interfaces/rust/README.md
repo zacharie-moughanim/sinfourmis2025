@@ -28,7 +28,7 @@ Puis, votre projet doit définir deux fonctions avec les interfaces suivantes :
 ///
 /// renvoie l'action à effectuer par la fourmi
 #[no_mangle]
-pub extern "C" fn fourmi_activation(etat: *const FourmiEtat, salle: *const Salle) -> FourmiRetour {
+pub extern "C" fn fourmi_activation(etat: *FourmiEtat, salle: *const Salle) -> FourmiRetour {
     // VOTRE CODE ICI
 }
 

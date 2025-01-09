@@ -7,7 +7,6 @@ type salle_type =
 type fourmi_action =
   | DEPLACEMENT
   | RAMASSE_NOURRITURE
-  | DEPOSE_PHEROMONE
   | COMMENCE_CONSTRUCTION
   | TERMINE_CONSTRUCTION
   | ATTAQUE
@@ -44,7 +43,8 @@ type fourmi_etat = {
 
 type fourmi_retour = {
   action : fourmi_action;
-  arg : int
+  arg : int;
+  pheromone : int option
 }
 
 type reine_etat = {
