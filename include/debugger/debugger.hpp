@@ -30,7 +30,7 @@ class Debugger {
     // - display queen 1
 
     struct DebugCommand {
-        enum class Type { STEP, GOTO, EXIT, HELP, DISPLAY, LIST, LISTIN, INVALID };
+        enum class Type { STEP, GOTO, CONTINUE, EXIT, HELP, DISPLAY, LIST, LISTIN, INVALID };
 
         DebugCommand(Type t, const std::string &a, int b, int c)
             : type(t), arg(std::make_tuple(a, b, c)) {}
@@ -40,6 +40,9 @@ class Debugger {
         static DebugCommand step(int n) {
             return DebugCommand(Type::STEP, n);
         }
+		static DebugCommand continue_() {
+			return DebugCommand(Type::CONTINUE, "");
+		}
         static DebugCommand exit() {
             return DebugCommand(Type::EXIT, "");
         }

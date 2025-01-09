@@ -80,6 +80,9 @@ void Debugger::debug(unsigned int turn, const Map &map,
                 } else {
                     skip = cmd.get_int_arg() - turn;
                 }
+				break;
+			case CONTINUE:
+				m_debug = false;
             case INVALID:
                 break;
         }
@@ -95,6 +98,8 @@ Debugger::DebugCommand Debugger::parse_command(const std::string &command) const
         return DebugCommand::help();
     } else if (command == "step") {
         return DebugCommand::step(0);
+	} else if (command == "continue") {
+		return DebugCommand::continue_();
     } else {
         std::istringstream iss(command);
         std::string cmd;
@@ -349,7 +354,8 @@ void Debugger::display_help() const {
     std::cout << "Help :\n";
     std::cout << " - step [n] : execute n steps, default is 1\n";
     std::cout << " - goto <n> : go to turn n\n";
-    std::cout << " - exit : exit the debugger\n";
+	std::cout << " - continue : exit the debugger (it does not stop the simulation)\n";
+    std::cout << " - exit : exit the simulation (it stops the simulation completely)\n";
     std::cout << " - help : display this help\n";
     std::cout << " - display node <id> : display node with id\n";
     std::cout << " - display edge <id1> <id2> : display edge between nodes with id1 and id2\n";
