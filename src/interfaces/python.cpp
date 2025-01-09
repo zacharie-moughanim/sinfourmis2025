@@ -4,6 +4,8 @@
 #include "listobject.h"
 #include "longobject.h"
 #include "object.h"
+#include "pystate.h"
+#include "pythonrun.h"
 #include "pytypedefs.h"
 #include "sinfourmis.h"
 #include <iostream>
@@ -81,6 +83,8 @@ void PythonInterface::load(std::string_view path) {
 
     setenv("PYTHONPATH", ".", 1);
     Py_Initialize();
+    gpy = Py_NewInterpreter();
+
     pName = PyUnicode_DecodeFSDefault(path.data());
     if (pName == NULL) {
         PyErr_Print();
@@ -93,17 +97,14 @@ void PythonInterface::load(std::string_view path) {
     Py_DECREF(pName);
 
     if (pModule != NULL) {
-        pFourmiActivation = PyObject_GetAttrString(pModule, "fourmi_activation");
         pReineActivation = PyObject_GetAttrString(pModule, "reine_activation");
 
-        if (pFourmiActivation && pReineActivation && PyCallable_Check(pFourmiActivation) &&
-            PyCallable_Check(pReineActivation)) {
-            // load successful
-        } else {
+        if (!pReineActivation || !PyCallable_Check(pReineActivation)) {
+            // load unsuccessful
             if (PyErr_Occurred())
                 PyErr_Print();
-            std::cerr << "Cannot find functions fourmi_activation and reine_activation"
-                      << std::endl;
+            std::cerr << "Cannot find function reine_activation" << std::endl;
+            exit(1);
         }
     } else {
         PyErr_Print();
@@ -112,7 +113,6 @@ void PythonInterface::load(std::string_view path) {
 }
 
 PythonInterface::~PythonInterface() {
-    Py_XDECREF(pFourmiActivation);
     Py_XDECREF(pReineActivation);
     Py_XDECREF(pModule);
 
@@ -121,6 +121,8 @@ PythonInterface::~PythonInterface() {
 
 reine_retour PythonInterface::reine_activation(fourmi_etat fourmis[], const size_t nb_fourmis,
                                                const reine_etat *etat, const salle *salle) {
+    PyThreadState_Swap(gpy);
+
     // Convert arguments to python objects
     PyObject *pArgs = PyTuple_New(3);
     PyObject *pFourmis = PyList_New(nb_fourmis);
@@ -145,6 +147,20 @@ reine_retour PythonInterface::reine_activation(fourmi_etat fourmis[], const size
 }
 
 fourmi_retour PythonInterface::fourmi_activation(fourmi_etat *etat, const salle *salle) {
+    PyThreadState *old_state = PyThreadState_Swap(gpy);
+    PyThreadState *py = Py_NewInterpreter();
+
+    // load fourmi_activation
+    PyObject *fourmi_fn = PyObject_GetAttrString(pModule, "fourmi_activation");
+
+    if (!fourmi_fn || !PyCallable_Check(fourmi_fn)) {
+        // load unsuccessful
+        if (PyErr_Occurred())
+            PyErr_Print();
+        std::cerr << "Cannot find function fourmi_activation" << std::endl;
+        exit(1);
+    }
+
     // Convert arguments to python objects
     PyObject *pArgs = PyTuple_New(2);
     PyObject *pEtat = fourmi_etat_to_po(etat);
@@ -154,10 +170,13 @@ fourmi_retour PythonInterface::fourmi_activation(fourmi_etat *etat, const salle 
     PyTuple_SetItem(pArgs, 1, pSalle);
 
     // Calls fourmi_activation and converts result back
-    PyObject *pResult = PyObject_CallObject(pFourmiActivation, pArgs);
+    PyObject *pResult = PyObject_CallObject(fourmi_fn, pArgs);
     fourmi_retour result = po_to_fourmi_retour(pResult);
 
     Py_XDECREF(pArgs);
     Py_XDECREF(pResult);
+    Py_DECREF(fourmi_fn);
+    PyThreadState_Swap(old_state);
+    PyThreadState_Delete(py);
     return result;
 }

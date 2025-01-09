@@ -18,7 +18,8 @@ class PythonInterface : public Interface {
     fourmi_retour fourmi_activation(fourmi_etat *fourmi, const salle *salle) override;
 
   private:
-    PyObject *pModule, *pFourmiActivation, *pReineActivation;
+    PyObject *pModule, *pReineActivation;
+    PyThreadState *gpy; // global python interpreter
 
     PythonInterface(const PythonInterface &) = delete;
     PythonInterface &operator=(const PythonInterface &) = delete;
