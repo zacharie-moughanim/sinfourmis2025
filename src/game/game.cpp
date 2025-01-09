@@ -248,8 +248,8 @@ void Game::run(unsigned int duration, unsigned int seed, bool flush, bool debug,
     }
     std::vector<std::unique_ptr<Ant>> ants;
 
+	debugger.debug(animation.game_turn(), map, ants, queens);
     while (animation.game_turn() < duration && !debugger.exit()) {
-        debugger.debug(animation.game_turn(), map, ants, queens);
 
         animation.start_frame();
         map.regen_food();
@@ -270,8 +270,9 @@ void Game::run(unsigned int duration, unsigned int seed, bool flush, bool debug,
         }
         animation.end_frame();
         if (flush) {
-            animation.flush();
+            animation.flush(debugger.get_debug());
         }
+        debugger.debug(animation.game_turn(), map, ants, queens);
     }
     for (auto &team : map.get_teams()) {
         std::cout << "Team " << team.get_id() << " score: " << team.get_score() << std::endl;

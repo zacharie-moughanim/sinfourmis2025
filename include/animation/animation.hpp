@@ -34,7 +34,7 @@ class Animation {
      * @brief Write the json data to the file
      *
      */
-    void flush();
+    void flush(bool formatted = false);
 
     unsigned int game_turn() const {
         return turn;

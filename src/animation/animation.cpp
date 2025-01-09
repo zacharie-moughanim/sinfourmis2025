@@ -76,7 +76,7 @@ json Animation::write_groups_animation(const Node &node, json &groups) const {
             res.push_back(AntGroupData{group["team"], 0});
         } else {
             if (it->second != group["qt"]) {
-                res.push_back(AntGroupData{group["team"], group["qt"]});
+                res.push_back(AntGroupData{group["team"], it->second});
             }
             groups_map.erase(it);
         }
@@ -172,12 +172,16 @@ void Animation::end_frame() {
     data["data"][std::to_string(turn)] = frame;
 }
 
-void Animation::flush() {
+void Animation::flush(bool formatted) {
     file.open(path);
     if (!file.is_open()) {
         std::cerr << "Failed to open file " << path << std::endl;
         exit(1);
     }
-    file << data;
+	if (formatted) {
+		file << data.dump(4);
+	} else {
+    	file << data;
+	}
     file.close();
 }

@@ -10,6 +10,9 @@ struct AntGroupData {
     float progress = -1;
     float progress_anim = -1;
 
+    AntGroupData(unsigned int team, unsigned int qt, float progress = -1, float progress_anim = -1)
+        : team(team), qt(qt), progress(progress), progress_anim(progress_anim) {}
+
     friend void to_json(json &j, const AntGroupData &data) {
         j = json{
             {"team", data.team},

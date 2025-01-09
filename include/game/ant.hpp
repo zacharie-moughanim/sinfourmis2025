@@ -87,9 +87,11 @@ class Ant {
      */
     unsigned int gather_food();
 
-    friend std::ostream &operator<<(std::ostream &os, const Ant &ant);
-
     fourmi_etat &as_fourmi_etat() {
+        return etat;
+    }
+
+    const fourmi_etat &as_fourmi_etat() const {
         return etat;
     }
 
@@ -120,6 +122,18 @@ class Ant {
     unsigned int get_id() const {
         return id;
     }
+
+	Queen *get_queen() const {
+		return queen;
+	}
+
+	unsigned int get_max_water() const {
+		return max_water;
+	}
+
+	unsigned int get_max_food() const {
+		return max_food;
+	}
 
   private:
     Node *current_Node = nullptr;
