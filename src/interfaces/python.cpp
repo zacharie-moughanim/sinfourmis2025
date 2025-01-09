@@ -55,6 +55,29 @@ PyObject *fourmi_etat_to_po(const fourmi_etat *etat) {
     return py_etat;
 }
 
+/// Converts a PyObject to a fourmi_etat struct
+fourmi_etat po_to_fourmi_etat(PyObject *po) {
+    PyObject *py_vie = PyDict_GetItemString(po, "vie");
+    PyObject *py_result = PyDict_GetItemString(po, "result");
+    PyObject *py_eau = PyDict_GetItemString(po, "eau");
+    PyObject *py_nourriture = PyDict_GetItemString(po, "nourriture");
+    PyObject *py_mem = PyDict_GetItemString(po, "memoire");
+
+    fourmi_etat result = {
+        .vie = (uint8_t)PyLong_AsLong(py_vie),
+        .memoire = {},
+        .result = (int32_t)PyLong_AsLong(py_result),
+        .eau = (int32_t)PyLong_AsLong(py_eau),
+        .nourriture = (int32_t)PyLong_AsLong(py_nourriture),
+    };
+
+    for (int i = 0; i < 256; i++) {
+        result.memoire[i] = (uint8_t)PyLong_AsLong(PyList_GetItem(py_mem, i));
+    }
+
+    return result;
+}
+
 /// Converts a PyObject to a reine_retour struct
 reine_retour po_to_reine_retour(PyObject *po) {
     PyObject *py_action = PyDict_GetItemString(po, "action");
@@ -140,6 +163,10 @@ reine_retour PythonInterface::reine_activation(fourmi_etat fourmis[], const size
     // Calls reine_activation and converts result back
     PyObject *pResult = PyObject_CallObject(pReineActivation, pArgs);
     reine_retour retour = po_to_reine_retour(pResult);
+
+    for (size_t i = 0; i < nb_fourmis; i++) {
+        fourmis[i] = po_to_fourmi_etat(PyList_GetItem(pFourmis, i));
+    }
 
     Py_XDECREF(pArgs);
     Py_XDECREF(pResult);

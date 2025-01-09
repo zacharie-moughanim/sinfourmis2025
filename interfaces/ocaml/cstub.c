@@ -3,6 +3,7 @@
 #include <caml/callback.h>
 #include <caml/memory.h>
 #include <caml/mlvalues.h>
+#include <stdbool.h>
 #include <string.h>
 
 #include "sinfourmis.h"
@@ -12,26 +13,24 @@ fourmi_action val_to_fourmi_action(value val) {
     CAMLparam1(val);
     switch (Int_val(val)) {
         case 0:
-            CAMLreturn(DEPLACEMENT);
+            CAMLreturnT(fourmi_action, DEPLACEMENT);
         case 1:
-            CAMLreturn(RAMASSE_NOURRITURE);
+            CAMLreturnT(fourmi_action, RAMASSE_NOURRITURE);
         case 2:
-            CAMLreturn(DEPOSE_PHEROMONE);
+            CAMLreturnT(fourmi_action, COMMENCE_CONSTRUCTION);
         case 3:
-            CAMLreturn(COMMENCE_CONSTRUCTION);
+            CAMLreturnT(fourmi_action, TERMINE_CONSTRUCTION);
         case 4:
-            CAMLreturn(TERMINE_CONSTRUCTION);
+            CAMLreturnT(fourmi_action, ATTAQUE);
         case 5:
-            CAMLreturn(ATTAQUE);
+            CAMLreturnT(fourmi_action, ATTAQUE_TUNNEL);
         case 6:
-            CAMLreturn(ATTAQUE_TUNNEL);
-        case 7:
-            CAMLreturn(FOURMI_PASSE);
+            CAMLreturnT(fourmi_action, FOURMI_PASSE);
         default:
             fprintf(stderr,
-                    "val_to_fourmi_action error: expected integer value between 0 and 7, got %d",
+                    "val_to_fourmi_action error: expected integer value between 0 and 6, got %d",
                     Int_val(val));
-            CAMLreturn(FOURMI_PASSE);
+            CAMLreturnT(fourmi_action, FOURMI_PASSE);
     }
 }
 
@@ -40,48 +39,71 @@ reine_action val_to_reine_action(value val) {
     CAMLparam1(val);
     switch (Int_val(val)) {
         case 0:
-            CAMLreturn(CREER_FOURMI);
+            CAMLreturnT(reine_action, CREER_FOURMI);
         case 1:
-            CAMLreturn(ENVOYER_FOURMI);
+            CAMLreturnT(reine_action, ENVOYER_FOURMI);
         case 2:
-            CAMLreturn(RECUPERER_FOURMI);
+            CAMLreturnT(reine_action, RECUPERER_FOURMI);
         case 3:
-            CAMLreturn(AMELIORE_STOCKAGE);
+            CAMLreturnT(reine_action, AMELIORE_STOCKAGE);
         case 4:
-            CAMLreturn(AMELIORE_PRODUCTION);
+            CAMLreturnT(reine_action, AMELIORE_PRODUCTION);
         case 5:
-            CAMLreturn(AMELIORE_ENVOI);
+            CAMLreturnT(reine_action, AMELIORE_ENVOI);
         case 6:
-            CAMLreturn(AMELIORE_VITESSE_AMELIORATION);
+            CAMLreturnT(reine_action, AMELIORE_VITESSE_AMELIORATION);
         case 7:
-            CAMLreturn(AMELIORE_RAMASSAGE);
+            CAMLreturnT(reine_action, AMELIORE_RAMASSAGE);
         case 8:
-            CAMLreturn(AMELIORE_VIE);
+            CAMLreturnT(reine_action, AMELIORE_VIE);
         case 9:
-            CAMLreturn(AMELIORE_EAU);
+            CAMLreturnT(reine_action, AMELIORE_EAU);
         case 10:
-            CAMLreturn(AMELIORE_DEGATS);
+            CAMLreturnT(reine_action, AMELIORE_DEGATS);
         case 11:
-            CAMLreturn(REINE_PASSE);
+            CAMLreturnT(reine_action, REINE_PASSE);
         default:
             fprintf(stderr,
                     "val_to_reine_action error: expected integer value between 0 and 11, got %d",
                     Int_val(val));
-            CAMLreturn(REINE_PASSE);
+            CAMLreturnT(reine_action, REINE_PASSE);
     }
+}
+
+/// Converts a caml value to a fourmi_etat struct
+fourmi_etat val_to_fourmi_etat(value etat) {
+    CAMLparam1(etat);
+    fourmi_etat result = {.vie = Int_val(Field(etat, 0)),
+                          .result = Int_val(Field(etat, 2)),
+                          .eau = Int_val(Field(etat, 3)),
+                          .nourriture = Int_val(Field(etat, 4))};
+    for (size_t i = 0; i < 256; i++) {
+        result.memoire[i] = Int_val(Field(Field(etat, 1), i));
+    }
+    return result;
 }
 
 /// Converts a caml value to a fourmi_retour struct
 fourmi_retour val_to_fourmi_retour(value val) {
     CAMLparam1(val);
-    fourmi_retour result = {val_to_fourmi_action(Field(val, 0)), Int_val(Field(val, 1))};
+    CAMLlocal1(val_pheoromone);
+
+    val_pheoromone = Field(val, 2);
+    bool depose_pheromone = Is_some(val_pheoromone);
+    uint8_t pheromone = depose_pheromone ? Int_val(Some_val(val_pheoromone)) : 0;
+
+    fourmi_retour result = {.action = val_to_fourmi_action(Field(val, 0)),
+                            .arg = Int_val(Field(val, 1)),
+                            .depose_pheromone = depose_pheromone,
+                            .pheromone = pheromone};
     CAMLreturnT(fourmi_retour, result);
 }
 
 /// converts a caml value to a reine_retour struct
 reine_retour val_to_reine_retour(value val) {
     CAMLparam1(val);
-    reine_retour result = {val_to_reine_action(Field(val, 0)), Int_val(Field(val, 1))};
+    reine_retour result = {.action = val_to_reine_action(Field(val, 0)),
+                           .arg = Int_val(Field(val, 1))};
     CAMLreturnT(reine_retour, result);
 }
 
@@ -105,9 +127,9 @@ value fourmi_etat_to_val(const fourmi_etat *etat) {
     Store_field(res, 2, result);
 
     eau = Val_int(etat->eau);
-    Store_field(res, 3, result);
+    Store_field(res, 3, eau);
 
-    nourriture = Val_int(etat->nouriture);
+    nourriture = Val_int(etat->nourriture);
     Store_field(res, 4, nourriture);
 
     CAMLreturn(res);
@@ -231,6 +253,11 @@ reine_retour reine_activation(fourmi_etat fourmis[], const unsigned int nb_fourm
     result = caml_callback3(*_reine_activation, val_etats_fourmis, val_etat, val_salle);
     assert(Tag_val(result) == 0);
     assert(Wosize_val(result) == 2);
+
+    // write back fourmis in case they got modified
+    for (size_t i = 0; i < nb_fourmis; i++) {
+        fourmis[i] = val_to_fourmi_etat(Field(val_etats_fourmis, i));
+    }
 
     CAMLreturnT(reine_retour, val_to_reine_retour(result));
 }
