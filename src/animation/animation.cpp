@@ -1,7 +1,8 @@
 #include "animation/animation.hpp"
 
-Animation::Animation(const Map *map, const std::filesystem::path &path) : map(map), path(path) {
+Animation::Animation(const Map *map, const std::filesystem::path &path, unsigned int seed) : map(map), path(path) {
     data["data"] = json::object();
+	data["seed"] = seed;
 }
 
 void to_json(json &j, const Edge &edge) {
@@ -164,6 +165,9 @@ void Animation::end_frame() {
         if (node_json["anim"]["ants"].size() == 0) {
             node_json["anim"].erase("ants");
         }
+		if (node_json["anim"].size() == 0) {
+			node_json.erase("anim");
+		}
     }
     data["data"][std::to_string(turn)] = frame;
 }

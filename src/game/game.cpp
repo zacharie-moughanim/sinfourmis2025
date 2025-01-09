@@ -237,7 +237,7 @@ void Game::run(unsigned int duration, unsigned int seed, bool flush, bool debug,
 
     std::cout << "Running game with seed " << seed << std::endl;
 
-    Animation animation(&map, path);
+    Animation animation(&map, path, seed);
     Debugger debugger(debug);
 
     gen.seed(seed);
@@ -249,7 +249,7 @@ void Game::run(unsigned int duration, unsigned int seed, bool flush, bool debug,
     std::vector<std::unique_ptr<Ant>> ants;
 
     while (animation.game_turn() < duration && !debugger.exit()) {
-        debugger.debug(map, ants, queens);
+        debugger.debug(animation.game_turn(), map, ants, queens);
 
         animation.start_frame();
         map.regen_food();

@@ -32,7 +32,8 @@ std::ostream &operator<<(std::ostream &os, const Edge &edge) {
     return os;
 }
 
-void Debugger::debug(const Map &map, const std::vector<std::unique_ptr<Ant>> &ants,
+void Debugger::debug(unsigned int turn, const Map &map,
+                     const std::vector<std::unique_ptr<Ant>> &ants,
                      const std::vector<std::unique_ptr<Queen>> &queens) {
     if (!m_debug) {
         return;
@@ -43,7 +44,7 @@ void Debugger::debug(const Map &map, const std::vector<std::unique_ptr<Ant>> &an
     }
     std::string command;
     while (skip == 0 && !m_exit) {
-        std::cout << "> ";
+        std::cout << turn << "> ";
         std::getline(std::cin, command);
         auto cmd = parse_command(command);
         using enum DebugCommand::Type;
@@ -55,29 +56,30 @@ void Debugger::debug(const Map &map, const std::vector<std::unique_ptr<Ant>> &an
                 display_help();
                 break;
             case STEP:
-                if (cmd.arg.has_value()) {
-                    skip = std::get<int>(cmd.arg.value()) + 1;
-                } else {
-                    skip = 1;
-                }
+				skip = cmd.get_int_arg() + 1;
                 break;
             case DISPLAY:
                 {
-                    auto args = std::get<std::tuple<std::string, int, int>>(cmd.arg.value());
-                    display_element(map, ants, queens, std::get<0>(args), std::get<1>(args),
-                                    std::get<2>(args));
+                    auto [type, id1, id2] = cmd.get_tuple_arg();
+                    display_element(map, ants, queens, type, id1, id2);
                 }
                 break;
             case LIST:
-                list_elements(map, ants, queens, std::get<0>(std::get<1>(cmd.arg.value())));
+                list_elements(map, ants, queens, std::get<0>(cmd.get_tuple_arg()));
                 break;
             case LISTIN:
                 {
-                    auto args = std::get<std::tuple<std::string, int, int>>(cmd.arg.value());
-                    list_ants_in(map, ants, std::get<0>(args), std::get<1>(args),
-                                 std::get<2>(args));
+                    auto [type, id1, id2] = cmd.get_tuple_arg();
+                    list_ants_in(map, ants, type, id1, id2);
                 }
                 break;
+            case GOTO:
+                if (cmd.get_int_arg() <= (int)turn) {
+                    std::cerr << "Turn must be greater than current turn (" << turn << ")"
+                              << std::endl;
+                } else {
+                    skip = cmd.get_int_arg() - turn;
+                }
             case INVALID:
                 break;
         }
@@ -88,35 +90,43 @@ void Debugger::debug(const Map &map, const std::vector<std::unique_ptr<Ant>> &an
 Debugger::DebugCommand Debugger::parse_command(const std::string &command) const {
     using enum DebugCommand::Type;
     if (command == "exit") {
-        return DebugCommand(EXIT);
+        return DebugCommand::exit();
     } else if (command == "help") {
-        return DebugCommand(HELP);
+        return DebugCommand::help();
     } else if (command == "step") {
-        return DebugCommand(STEP);
+        return DebugCommand::step(0);
     } else {
         std::istringstream iss(command);
         std::string cmd;
         iss >> cmd;
-        if (cmd == "step") {
+        if (cmd == "step" || cmd == "goto") {
             int steps;
+			auto cursor = iss.tellg();
             iss >> steps;
             if (iss.fail()) {
                 print_error(command, iss.tellg(), "Invalid number of steps");
-                return DebugCommand();
+                return DebugCommand::invalid();
             }
+			if (steps < 1) {
+				print_error(command, cursor, "The argument must be greater than 0");
+			}
             if (iss.tellg() != -1) {
                 print_error(command, iss.tellg(), "Invalid command");
-                return DebugCommand();
+                return DebugCommand::invalid();
             }
-            return DebugCommand(steps);
+            if (cmd == "step") {
+                return DebugCommand::step(steps);
+            } else {
+                return DebugCommand::goto_step(steps);
+            }
         } else if (cmd == "display" || cmd == "listin") {
             auto debug_command = parse_id_command(iss, command);
             if (debug_command.type != INVALID && cmd == "listin") {
                 debug_command.type = LISTIN;
-                auto type = std::get<0>(std::get<1>((debug_command.arg.value())));
+                auto type = std::get<0>(debug_command.get_tuple_arg());
                 if (type != "node" && type != "edge") {
                     print_error(command, 0, "Invalid listin type, expected node or edge");
-                    return DebugCommand();
+                    return DebugCommand::invalid();
                 }
             }
             return debug_command;
@@ -127,23 +137,23 @@ Debugger::DebugCommand Debugger::parse_command(const std::string &command) const
             if (iss.fail()) {
                 print_error(command, cursor,
                             "Invalid list type, expected nodes, edges, ants or queens");
-                return DebugCommand();
+                return DebugCommand::invalid();
             }
             if (iss.tellg() != -1) {
                 print_error(command, 0, "Invalid command");
-                return DebugCommand();
+                return DebugCommand::invalid();
             }
             if (type != "nodes" && type != "edges" && type != "ants" && type != "queens") {
                 print_error(command, cursor,
                             "Invalid list type, expected nodes, edges, ants or queens");
-                return DebugCommand();
+                return DebugCommand::invalid();
             }
-            return DebugCommand(type);
+            return DebugCommand::list(type);
         } else {
             print_error(command, 0, "Invalid command");
         }
     }
-    return DebugCommand();
+    return DebugCommand::invalid();
 }
 
 const Debugger::DebugCommand Debugger::parse_id_command(std::istringstream &iss,
@@ -153,39 +163,39 @@ const Debugger::DebugCommand Debugger::parse_id_command(std::istringstream &iss,
     if (iss.fail()) {
         print_error(command, iss.tellg(),
                     "Invalid display type, expected node, edge, ant or queen");
-        return DebugCommand();
+        return DebugCommand::invalid();
     }
     if (type == "global") {
         if (iss.tellg() != -1) {
             print_error(command, iss.tellg(), "Invalid command");
-            return DebugCommand();
+            return DebugCommand::invalid();
         }
-        return DebugCommand("global", -1);
+        return DebugCommand::display("global", -1, -1);
     }
     if (type != "node" && type != "edge" && type != "ant" && type != "queen") {
         print_error(command, iss.tellg(),
                     "Invalid display type, expected node, edge, ant or queen");
-        return DebugCommand();
+        return DebugCommand::invalid();
     }
     int id = -1;
     iss >> id;
     if (iss.fail()) {
         print_error(command, iss.tellg(), "Invalid id");
-        return DebugCommand();
+        return DebugCommand::invalid();
     }
     int id2 = -1;
     if (type == "edge") {
         iss >> id2;
         if (iss.fail()) {
             print_error(command, iss.tellg(), "Invalid id");
-            return DebugCommand();
+            return DebugCommand::invalid();
         }
     }
     if (iss.tellg() != -1) {
         print_error(command, iss.tellg(), "Invalid command");
-        return DebugCommand();
+        return DebugCommand::invalid();
     }
-    return DebugCommand(type, id, id2);
+    return DebugCommand::display(type, id, id2);
 }
 void Debugger::print_error(const std::string &command, int column,
                            const std::string &message) const {
@@ -214,8 +224,8 @@ void Debugger::display_element(const Map &map, const std::vector<std::unique_ptr
         std::cerr << "Invalid id\n";
         return;
     }
-    unsigned int uid1 = static_cast<unsigned int>(id1);
-    unsigned int uid2 = static_cast<unsigned int>(id2);
+    auto uid1 = static_cast<unsigned int>(id1);
+    auto uid2 = static_cast<unsigned int>(id2);
 
     if (type == "global") {
         std::cout << "== Global statistics ==\n";
@@ -338,6 +348,7 @@ void Debugger::list_ants_in(const Map &map, const std::vector<std::unique_ptr<An
 void Debugger::display_help() const {
     std::cout << "Help :\n";
     std::cout << " - step [n] : execute n steps, default is 1\n";
+    std::cout << " - goto <n> : go to turn n\n";
     std::cout << " - exit : exit the debugger\n";
     std::cout << " - help : display this help\n";
     std::cout << " - display node <id> : display node with id\n";

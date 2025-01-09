@@ -16,7 +16,7 @@ using json = nlohmann::json;
 
 class Animation {
   public:
-    Animation(const Map *map, const std::filesystem::path &path);
+    Animation(const Map *map, const std::filesystem::path &path, unsigned int seed);
 
     /**
      * @brief start a new animation frame

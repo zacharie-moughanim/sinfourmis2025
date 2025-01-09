@@ -11,7 +11,7 @@ class Debugger {
   public:
     explicit Debugger(bool debug) : m_debug(debug) {};
 
-    void debug(const Map &map, const std::vector<std::unique_ptr<Ant>> &ants,
+    void debug(unsigned int turn, const Map &map, const std::vector<std::unique_ptr<Ant>> &ants,
                const std::vector<std::unique_ptr<Queen>> &queens);
 
     bool exit() const {
@@ -30,17 +30,53 @@ class Debugger {
     // - display queen 1
 
     struct DebugCommand {
-        enum class Type { STEP, EXIT, HELP, DISPLAY, LIST, LISTIN, INVALID };
+        enum class Type { STEP, GOTO, EXIT, HELP, DISPLAY, LIST, LISTIN, INVALID };
 
-        DebugCommand() : type(Type::INVALID) {}
-        DebugCommand(Type t) : type(t) {}
-        DebugCommand(int a) : type(Type::STEP), arg(a) {}
-        DebugCommand(const std::string &a) : type(Type::LIST), arg(std::make_tuple(a, -1, -1)) {}
-        DebugCommand(const std::string &a, int b, int c = -1)
-            : type(Type::DISPLAY), arg(std::make_tuple(a, b, c)) {}
+        DebugCommand(Type t, const std::string &a, int b, int c)
+            : type(t), arg(std::make_tuple(a, b, c)) {}
+        DebugCommand(Type t, int a) : type(t), arg(a) {}
+        DebugCommand(Type t, const std::string &a) : type(t), arg(a) {}
+
+        static DebugCommand step(int n) {
+            return DebugCommand(Type::STEP, n);
+        }
+        static DebugCommand exit() {
+            return DebugCommand(Type::EXIT, "");
+        }
+        static DebugCommand help() {
+            return DebugCommand(Type::HELP, "");
+        }
+        static DebugCommand display(const std::string &type, int id1, int id2) {
+            return DebugCommand(Type::DISPLAY, type, id1, id2);
+        }
+        static DebugCommand list(const std::string &type) {
+            return DebugCommand(Type::LIST, type);
+        }
+        static DebugCommand listin(const std::string &type, int id1, int id2) {
+            return DebugCommand(Type::LISTIN, type, id1, id2);
+        }
+        static DebugCommand invalid() {
+            return DebugCommand(Type::INVALID, "");
+        }
+
+        static DebugCommand goto_step(int n) {
+            return DebugCommand(Type::GOTO, n);
+        }
+
+        int get_int_arg() const {
+            return std::get<int>(arg);
+        }
+
+        std::string get_string_arg() const {
+            return std::get<std::string>(arg);
+        }
+
+        std::tuple<std::string, int, int> get_tuple_arg() const {
+            return std::get<std::tuple<std::string, int, int>>(arg);
+        }
 
         Type type;
-        std::optional<std::variant<int, std::tuple<std::string, int, int>>> arg;
+        std::variant<int, std::string, std::tuple<std::string, int, int>> arg;
     };
 
     DebugCommand parse_command(const std::string &command) const;
