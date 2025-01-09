@@ -73,6 +73,10 @@ bool Queen::can_perform_action() const {
     return waiting_upgrade == 0;
 }
 
+bool Queen::is_upgrading() const {
+    return waiting_upgrade > 0;
+}
+
 bool Queen::upgrade(Stat type) {
     if (waiting_upgrade > 0) {
         return false;
@@ -80,6 +84,8 @@ bool Queen::upgrade(Stat type) {
     if (!team->try_remove_food(upgrade_costs[(unsigned int)type])) {
         return false;
     }
+	upgrading = IsUpgrading::ANTS;
+	current_ants_upgrade = type;
     std::cout << "Queen " << team->get_id() << " upgrade " << (unsigned int)type << std::endl;
     stats[(unsigned int)type]++;
     waiting_upgrade = get_queen_stat(QueenStat::UPGRADE_DURATION);
@@ -93,6 +99,8 @@ bool Queen::upgrade_queen(QueenStat type) {
     if (!team->try_remove_food(queen_upgrade_costs[(uint32_t)type])) {
         return false;
     }
+	upgrading = IsUpgrading::QUEEN;
+	current_queen_upgrade = type;
     std::cout << "Queen " << team->get_id() << " upgrade " << (unsigned int)type << std::endl;
     switch (type) {
         case QueenStat::UPGRADE_DURATION:
@@ -109,6 +117,22 @@ bool Queen::upgrade_queen(QueenStat type) {
     }
     waiting_upgrade = get_queen_stat(QueenStat::UPGRADE_DURATION);
     return true;
+}
+
+std::string Queen::current_upgrade() {
+    std::stringstream ss;
+	switch (upgrading) {
+		case IsUpgrading::ANTS:
+			ss << current_ants_upgrade;
+			break;
+		case IsUpgrading::QUEEN:
+			ss << current_queen_upgrade;
+			break;
+		case IsUpgrading::NONE:
+			ss << "NONE";
+			break;
+	}
+	return ss.str();			
 }
 
 uint32_t Queen::get_stat(Stat type) const {

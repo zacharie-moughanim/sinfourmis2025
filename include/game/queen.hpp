@@ -36,6 +36,13 @@ class Queen {
      */
     bool can_perform_action() const;
 
+	/**
+	 * @brief Check if the queen is upgrading
+	 * 
+	 * @return true if the queen is upgrading
+	 */
+	bool is_upgrading() const;
+
     /**
      * @brief Run the upgrade of the given ant stat
      *
@@ -51,6 +58,8 @@ class Queen {
      * @return true if the upgrade can be performed
      */
     bool upgrade_queen(QueenStat type);
+
+	std::string current_upgrade();
 
     uint32_t get_stat(Stat type) const;
     uint32_t get_queen_stat(QueenStat type) const;
@@ -108,6 +117,13 @@ class Queen {
     Node *current_node = nullptr;
     unsigned int waiting_upgrade = 0;
     int32_t result = 0;
+
+	enum class IsUpgrading {
+		ANTS, QUEEN, NONE
+	};
+	IsUpgrading upgrading = IsUpgrading::NONE;
+	QueenStat current_queen_upgrade;
+	Stat current_ants_upgrade;
 
     std::array<uint32_t, 4> stats{DEFAULT_MAX_LIFE, DEFAULT_MAX_WATER, DEFAULT_MAX_FOOD,
                                   DEFAULT_ATTACK};

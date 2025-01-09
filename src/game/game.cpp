@@ -259,16 +259,16 @@ void Game::run(unsigned int duration, unsigned int seed, bool flush, bool debug,
             std::erase_if(ants, [](auto &ant) { return !ant->alive(); });
             std::ranges::shuffle(ants, gen);
         }
-        for (auto &ant : ants) {
+        for (const auto &ant : ants) {
             fourmi_action(ant.get());
         }
 
         // === Queen turn ===
         std::ranges::shuffle(queens, gen);
-        for (auto &queen : queens) {
+        for (const auto &queen : queens) {
             queen_action(queen.get(), ants);
         }
-        animation.end_frame();
+        animation.end_frame(queens);
         if (flush) {
             animation.flush(debugger.get_debug());
         }

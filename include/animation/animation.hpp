@@ -28,7 +28,7 @@ class Animation {
      * @brief End the animation frame
      *
      */
-    void end_frame();
+    void end_frame(const std::vector<std::unique_ptr<Queen>> &queen);
 
     /**
      * @brief Write the json data to the file
