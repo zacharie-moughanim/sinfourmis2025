@@ -43,9 +43,11 @@ void Game::fourmi_action(Ant *ant) {
     auto room = ant->get_current_node()->as_salle(ant->get_team_id());
     auto ant_result = interfaces[ant->get_team_id()]->fourmi_activation(&etat, &room);
     free(room.compteurs_fourmis);
-    if (ant_result.depose_pheromone) {
+    if (ant_result.depose_pheromone == PRIVE) {
         ant->get_current_node()->set_pheromone(ant_result.pheromone, ant->get_team_id());
-    }
+    } else if (ant_result.depose_pheromone == PUBLIC) {
+		ant->get_current_node()->set_public_pheromone(ant_result.pheromone);
+	}
     switch (ant_result.action) {
         case FOURMI_PASSE:
             ant->set_result(0);
