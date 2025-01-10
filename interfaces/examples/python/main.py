@@ -47,21 +47,29 @@ def reine_retour(action, arg):
     }
 
 def fourmi_activation(fourmi_etat, salle):
-    if fourmi_etat[0].memoire[0] == 0:
-        fourmi_etat[0].memoire[0] = 1
+    fourmi_etat["memoire"][0] += 1
+    if fourmi_etat["memoire"][0] == 1:
         print("Fourmi: Je suis une fourmi")
+    else:
+        print("Fourmi: Je suis une fourmi et je sais compter")
     
     return fourmi_retour(FourmiAction.FOURMI_PASSE, 0)
 
-count = 0
-def reine_activation(fourmis, reine_etat, salle):
-    if count > 5:
+nb_sent = 0
+def reine_activation(fourmis, reine_etat, salle):   
+    global nb_sent
+    print("Sent: ", nb_sent) 
+    if nb_sent > 2:
         return reine_retour(ReineAction.REINE_PASSE, 0)
-    count += 1
+    
+
     if len(fourmis) < 1:
+        print("Création d'une fourmis")
         return reine_retour(ReineAction.CREER_FOURMI, 1)
     
     for i in range(256):
-        fourmis[0].memoire[i] = i
+        fourmis[0]["memoire"][i] = i
      
+    print("Envoi d'une fourmi")
+    nb_sent += 1
     return reine_retour(ReineAction.ENVOYER_FOURMI, 1)
