@@ -31,7 +31,7 @@ PyObject *salle_to_po(const salle *s) {
     for (size_t i = 0; i < s->taille_liste; i++) {
         PyList_SetItem(py_compteurs, i, fourmis_compteur_to_po(&s->compteurs_fourmis[i]));
     }
-    PyDict_SetItemString(py_compteurs, "compteurs_fourmis", py_compteurs);
+    PyDict_SetItemString(py_salle, "compteurs_fourmis", py_compteurs);
     Py_DECREF(py_compteurs);
 
     return py_salle;
