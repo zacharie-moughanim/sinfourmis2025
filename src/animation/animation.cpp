@@ -1,8 +1,9 @@
 #include "animation/animation.hpp"
 
-Animation::Animation(const Map *map, const std::filesystem::path &path, unsigned int seed) : map(map), path(path) {
+Animation::Animation(const Map *map, const std::filesystem::path &path, unsigned int seed)
+    : map(map), path(path) {
     data["data"] = json::object();
-	data["seed"] = seed;
+    data["seed"] = seed;
 }
 
 void to_json(json &j, const Edge &edge) {
@@ -34,17 +35,17 @@ void Animation::write_edges_departure_groups(const Node &node, const Edge *edge,
                                              json &json_edge) const {
     std::map<unsigned int, unsigned int> departures;
     for (const auto &ant_group : node.get_ants()) {
-		for (auto ant: ant_group.second) {
-			if (ant->get_action_state() == AntActionState::MOVING && ant->get_progress() == 0 &&
-				ant->get_current_edge() == edge) {
-				auto it = departures.find(ant->get_team_id());
-				if (it == departures.end()) {
-					departures[ant->get_team_id()] = 1;
-				} else {
-					departures[ant->get_team_id()]++;
-				}
-			}
-		}
+        for (auto ant : ant_group.second) {
+            if (ant->get_action_state() == AntActionState::MOVING && ant->get_progress() == 0 &&
+                ant->get_current_edge() == edge) {
+                auto it = departures.find(ant->get_team_id());
+                if (it == departures.end()) {
+                    departures[ant->get_team_id()] = 1;
+                } else {
+                    departures[ant->get_team_id()]++;
+                }
+            }
+        }
     }
     if (!departures.empty()) {
         if (!json_edge.contains("groups")) {
@@ -52,10 +53,10 @@ void Animation::write_edges_departure_groups(const Node &node, const Edge *edge,
         }
         for (auto [team, qt] : departures) {
             float length = EDGE_CROSS_SPEED / edge->get_length();
-			float start = 0;
+            float start = 0;
             if (edge->get_node2()->get_id() == node.get_id()) {
                 length = 1.f - EDGE_CROSS_SPEED / edge->get_length();
-				start = 1;
+                start = 1;
             }
             json_edge["groups"].push_back(AntGroupData{team, qt, start, length});
         }
@@ -154,13 +155,13 @@ void Animation::end_frame(const std::vector<std::unique_ptr<Queen>> &queens) {
         if (frame["teams"][i]["score"] != teams[i].get_score()) {
             frame["teams"][i]["next"]["score"] = teams[i].get_score();
         }
-		const auto &queen = std::ranges::find_if(queens, [&teams, i](const auto &queen){
-			return queen->get_team_id() == teams[i].get_id();
-		});
-		assert(queen != queens.end());
-		if ((*queen)->is_upgrading()) {
-			frame["teams"][i]["upgrading"] = (*queen)->current_upgrade();
-		}
+        const auto &queen = std::ranges::find_if(queens, [&teams, i](const auto &queen) {
+            return queen->get_team_id() == teams[i].get_id();
+        });
+        assert(queen != queens.end());
+        if ((*queen)->is_upgrading()) {
+            frame["teams"][i]["upgrading"] = (*queen)->current_upgrade();
+        }
     }
 
     // nodes animation
@@ -174,9 +175,9 @@ void Animation::end_frame(const std::vector<std::unique_ptr<Queen>> &queens) {
         if (node_json["anim"]["ants"].size() == 0) {
             node_json["anim"].erase("ants");
         }
-		if (node_json["anim"].size() == 0) {
-			node_json.erase("anim");
-		}
+        if (node_json["anim"].size() == 0) {
+            node_json.erase("anim");
+        }
     }
     data["data"][std::to_string(turn)] = frame;
 }
@@ -187,11 +188,11 @@ void Animation::flush(bool formatted) {
         std::cerr << "Failed to open file " << path << std::endl;
         exit(1);
     }
-	if (formatted) {
-		file << data.dump(4);
-	} else {
-    	file << data;
-	}
+    if (formatted) {
+        file << data.dump(4);
+    } else {
+        file << data;
+    }
     file.close();
 
     std::cout << "Wrote output to " << path << std::endl;

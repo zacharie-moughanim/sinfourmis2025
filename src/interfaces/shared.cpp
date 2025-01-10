@@ -20,7 +20,7 @@ bool SharedInterface::load(std::string_view path) {
         std::cerr << "Error loading reine_activation: " << dlerror() << std::endl;
         return false;
     }
-	return true;
+    return true;
 }
 
 SharedInterface::~SharedInterface() {

@@ -134,7 +134,7 @@ void Game::fourmi_action(Ant *ant) {
                 ant->get_current_node()->get_edge(ant_result.arg)->attack(ant->get_attack()));
             break;
         default:
-			std::cerr << "Invalid action: " << ant_result.action << std::endl;
+            std::cerr << "Invalid action: " << ant_result.action << std::endl;
             exit(4);
             break;
     }
@@ -180,7 +180,7 @@ void Game::queen_action(Queen *queen, std::vector<std::unique_ptr<Ant>> &ants) {
             break;
         case reine_action::CREER_FOURMI:
             {
-                int nb_fourmis = queen->team->get_food() / (result.arg * FOURMI_COST);
+                int nb_fourmis = queen->get_food() / (result.arg * FOURMI_COST);
                 if (nb_fourmis > 0) {
                     int i;
                     for (i = 0; i < nb_fourmis && queen->create_ant(); i++) {
@@ -189,8 +189,7 @@ void Game::queen_action(Queen *queen, std::vector<std::unique_ptr<Ant>> &ants) {
                 } else {
                     queen->set_result(0);
                 }
-                queen->waiting_upgrade +=
-                    Queen::queen_upgrade_costs[(uint32_t)Queen::QueenStat::PRODUCTION_DELAY];
+                queen->add_production_delay();
             }
             break;
         case reine_action::ENVOYER_FOURMI:
@@ -209,8 +208,6 @@ void Game::queen_action(Queen *queen, std::vector<std::unique_ptr<Ant>> &ants) {
                     }
                 }
                 queen->set_result(sent);
-                queen->waiting_upgrade +=
-                    Queen::queen_upgrade_costs[(uint32_t)Queen::QueenStat::PRODUCTION_DELAY];
             }
             break;
         case reine_action::RECUPERER_FOURMI:
@@ -239,7 +236,7 @@ void Game::queen_action(Queen *queen, std::vector<std::unique_ptr<Ant>> &ants) {
             break;
         default:
             std::cerr << "Invalid action: " << result.action << std::endl;
-			exit(4);
+            exit(4);
             break;
     }
 }
@@ -293,7 +290,7 @@ void Game::run(unsigned int duration, unsigned int seed, bool flush, bool debug,
     for (auto &team : map.get_teams()) {
         std::cout << "Team " << team.get_id() << " score: " << team.get_score() << std::endl;
     }
-	if (!debugger.exit()) {
-    	animation.flush();
-	}
+    if (!debugger.exit()) {
+        animation.flush();
+    }
 }

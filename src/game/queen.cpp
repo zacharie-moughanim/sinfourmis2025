@@ -84,8 +84,8 @@ bool Queen::upgrade(Stat type) {
     if (!team->try_remove_food(upgrade_costs[(unsigned int)type])) {
         return false;
     }
-	upgrading = IsUpgrading::ANTS;
-	current_ants_upgrade = type;
+    upgrading = IsUpgrading::ANTS;
+    current_ants_upgrade = type;
     std::cout << "Queen " << team->get_id() << " upgrade " << (unsigned int)type << std::endl;
     if (type == Stat::WATER) {
         stats[(unsigned int)type] += 10;
@@ -103,8 +103,8 @@ bool Queen::upgrade_queen(QueenStat type) {
     if (!team->try_remove_food(queen_upgrade_costs[(uint32_t)type])) {
         return false;
     }
-	upgrading = IsUpgrading::QUEEN;
-	current_queen_upgrade = type;
+    upgrading = IsUpgrading::QUEEN;
+    current_queen_upgrade = type;
     std::cout << "Queen " << team->get_id() << " upgrade " << (unsigned int)type << std::endl;
     switch (type) {
         case QueenStat::UPGRADE_DURATION:
@@ -125,18 +125,18 @@ bool Queen::upgrade_queen(QueenStat type) {
 
 std::string Queen::current_upgrade() {
     std::stringstream ss;
-	switch (upgrading) {
-		case IsUpgrading::ANTS:
-			ss << current_ants_upgrade;
-			break;
-		case IsUpgrading::QUEEN:
-			ss << current_queen_upgrade;
-			break;
-		case IsUpgrading::NONE:
-			ss << "NONE";
-			break;
-	}
-	return ss.str();			
+    switch (upgrading) {
+        case IsUpgrading::ANTS:
+            ss << current_ants_upgrade;
+            break;
+        case IsUpgrading::QUEEN:
+            ss << current_queen_upgrade;
+            break;
+        case IsUpgrading::NONE:
+            ss << "NONE";
+            break;
+    }
+    return ss.str();
 }
 
 uint32_t Queen::get_stat(Stat type) const {
@@ -181,6 +181,9 @@ bool Queen::create_ant() {
     return true;
 }
 
+void Queen::add_production_delay() {
+    waiting_upgrade += Queen::queen_upgrade_costs[(uint32_t)Queen::QueenStat::PRODUCTION_DELAY];
+}
 bool Queen::push_ant(fourmi_etat ant) {
     if (ants_memory.size() >= get_queen_stat(QueenStat::MAX_STORED_ANTS)) {
         return false;

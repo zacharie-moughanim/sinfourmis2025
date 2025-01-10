@@ -112,12 +112,12 @@ void Debugger::debug(unsigned int turn, const Map &map,
     while (m_debug && skip == 0 && !m_exit) {
         std::cout << turn << "> ";
         std::getline(std::cin, command);
-		DebugCommand cmd = DebugCommand::exit();
-		if (!std::cin.eof()) {
-        	cmd = parse_command(command);
-		} else {
-			std::cout << std::endl;
-		}
+        DebugCommand cmd = DebugCommand::exit();
+        if (!std::cin.eof()) {
+            cmd = parse_command(command);
+        } else {
+            std::cout << std::endl;
+        }
         using enum DebugCommand::Type;
         switch (cmd.type) {
             case EXIT:
@@ -419,9 +419,9 @@ void Debugger::list_ants_in(const Map &map, const std::vector<std::unique_ptr<An
         const auto &node = nodeit->second;
         std::cout << "== Ants in node " << node.get_id() << " ==\n";
         for (const auto &group : node.get_ants()) {
-			for (auto ant : group.second) {
-            	std::cout << "Ant (" << ant->get_team_id() << ") :" << ant->get_id() << "\n";
-			}
+            for (auto ant : group.second) {
+                std::cout << "Ant (" << ant->get_team_id() << ") :" << ant->get_id() << "\n";
+            }
         }
     } else if (type == "edge") {
         auto edge = map.get_edge(uid1, uid2);

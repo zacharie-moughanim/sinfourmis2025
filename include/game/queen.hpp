@@ -25,10 +25,6 @@ class Queen {
 
     const static std::array<uint32_t, 4> upgrade_costs;
     const static std::array<uint32_t, 4> queen_upgrade_costs;
-
-    Team *team;
-    unsigned int waiting_upgrade = 0;
-
     /**
      * @brief Signal the queen that a game turn passed
      *
@@ -42,12 +38,12 @@ class Queen {
      */
     bool can_perform_action() const;
 
-	/**
-	 * @brief Check if the queen is upgrading
-	 * 
-	 * @return true if the queen is upgrading
-	 */
-	bool is_upgrading() const;
+    /**
+     * @brief Check if the queen is upgrading
+     *
+     * @return true if the queen is upgrading
+     */
+    bool is_upgrading() const;
 
     /**
      * @brief Run the upgrade of the given ant stat
@@ -65,7 +61,7 @@ class Queen {
      */
     bool upgrade_queen(QueenStat type);
 
-	std::string current_upgrade();
+    std::string current_upgrade();
 
     uint32_t get_stat(Stat type) const;
     uint32_t get_queen_stat(QueenStat type) const;
@@ -79,6 +75,12 @@ class Queen {
      * @return true if the ant has been created
      */
     bool create_ant();
+
+    /**
+     * @brief put the queen in production mode (i.e: wait for the [PRODUCTION_DELAY] turns)
+     *
+     */
+    void add_production_delay();
 
     /**
      * @brief push the given ant to the queen storage
@@ -96,7 +98,7 @@ class Queen {
      */
     std::optional<fourmi_etat> pop_ant();
 
-    unsigned int get_victory_points() const {
+    unsigned int get_food() const {
         return team->get_food();
     }
 
@@ -119,15 +121,15 @@ class Queen {
     friend std::ostream &operator<<(std::ostream &os, const Queen &queen);
 
   private:
+    Team *team = nullptr;
     Node *current_node = nullptr;
     int32_t result = 0;
+    unsigned int waiting_upgrade = 0;
 
-	enum class IsUpgrading {
-		ANTS, QUEEN, NONE
-	};
-	IsUpgrading upgrading = IsUpgrading::NONE;
-	QueenStat current_queen_upgrade;
-	Stat current_ants_upgrade;
+    enum class IsUpgrading { ANTS, QUEEN, NONE };
+    IsUpgrading upgrading = IsUpgrading::NONE;
+    QueenStat current_queen_upgrade;
+    Stat current_ants_upgrade;
 
     std::array<uint32_t, 4> stats{DEFAULT_MAX_LIFE, DEFAULT_MAX_WATER, DEFAULT_MAX_FOOD,
                                   DEFAULT_ATTACK};

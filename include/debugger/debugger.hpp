@@ -4,14 +4,13 @@
 #include "game/queen.hpp"
 #include "map/map.hpp"
 #include "utils/groups.hpp"
+#include <bitset>
 #include <optional>
 #include <variant>
-#include <bitset>
 
 class Debugger {
   public:
     explicit Debugger(bool debug) : m_debug(debug) {};
-
 
     void debug(unsigned int turn, const Map &map, const std::vector<std::unique_ptr<Ant>> &ants,
                const std::vector<std::unique_ptr<Queen>> &queens);
@@ -20,9 +19,9 @@ class Debugger {
         return m_exit;
     }
 
-	bool get_debug() const {
-		return m_debug;
-	}
+    bool get_debug() const {
+        return m_debug;
+    }
 
   private:
     // Example commands:
@@ -34,10 +33,23 @@ class Debugger {
     // - display edge 1 2
     // - display ant 1
     // - display queen 1
-	// - continue
-	enum class DisplayMode { HEX, BIN, DEC };
+    // - continue
+    enum class DisplayMode { HEX, BIN, DEC };
     struct DebugCommand {
-        enum class Type { STEP, GOTO, CONTINUE, EXIT, HELP, DISPLAY, LIST, LISTIN, HEX_MODE, BIN_MODE, DEC_MODE, INVALID };
+        enum class Type {
+            STEP,
+            GOTO,
+            CONTINUE,
+            EXIT,
+            HELP,
+            DISPLAY,
+            LIST,
+            LISTIN,
+            HEX_MODE,
+            BIN_MODE,
+            DEC_MODE,
+            INVALID
+        };
 
         DebugCommand(Type t, const std::string &a, int b, int c)
             : type(t), arg(std::make_tuple(a, b, c)) {}
@@ -47,9 +59,9 @@ class Debugger {
         static DebugCommand step(int n) {
             return DebugCommand(Type::STEP, n);
         }
-		static DebugCommand continue_() {
-			return DebugCommand(Type::CONTINUE, "");
-		}
+        static DebugCommand continue_() {
+            return DebugCommand(Type::CONTINUE, "");
+        }
         static DebugCommand exit() {
             return DebugCommand(Type::EXIT, "");
         }
@@ -73,17 +85,17 @@ class Debugger {
             return DebugCommand(Type::GOTO, n);
         }
 
-		static DebugCommand display_hex() {
-			return DebugCommand(Type::HEX_MODE, "");
-		}
+        static DebugCommand display_hex() {
+            return DebugCommand(Type::HEX_MODE, "");
+        }
 
-		static DebugCommand display_bin() {
-			return DebugCommand(Type::BIN_MODE, "");
-		}
+        static DebugCommand display_bin() {
+            return DebugCommand(Type::BIN_MODE, "");
+        }
 
-		static DebugCommand display_dec() {
-			return DebugCommand(Type::DEC_MODE, "");
-		}
+        static DebugCommand display_dec() {
+            return DebugCommand(Type::DEC_MODE, "");
+        }
 
         int get_int_arg() const {
             return std::get<int>(arg);
@@ -102,8 +114,8 @@ class Debugger {
     };
 
     static void print_node(Debugger::DisplayMode mode, const Node &node);
-	static void print_edge(const Edge &edge);
-	static void print_ant(Debugger::DisplayMode mode, const Ant &ant);
+    static void print_edge(const Edge &edge);
+    static void print_ant(Debugger::DisplayMode mode, const Ant &ant);
 
     DebugCommand parse_command(const std::string &command) const;
 
