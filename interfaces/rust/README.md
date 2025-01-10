@@ -15,7 +15,7 @@ name = "NOM"
 crate-type = ["cdylib"] # Creates dynamic lib
 
 [dependencies]
-sinfourmis = { git = "https://gitlab.ens-rennes.fr/sinfonie/sinfourmis2025" }
+sinfourmis = { git = "https://github.com/ErwanTLG/sinfourmis2025" }
 ```
 
 Puis, votre projet doit définir deux fonctions avec les interfaces suivantes :

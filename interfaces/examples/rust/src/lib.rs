@@ -5,8 +5,10 @@ use sinfourmis::{FourmiAction, FourmiEtat, FourmiRetour, ReineAction, ReineRetou
 #[no_mangle]
 pub extern "C" fn fourmi_activation(etat: *const FourmiEtat, salle: *const Salle) -> FourmiRetour {
     FourmiRetour {
-        action: FourmiAction::DeposePheromone,
-        arg: 10,
+        action: FourmiAction::Deplacement,
+        arg: 1,
+        depose_pheromone: false,
+        pheormone: 0,
     }
 }
 
@@ -27,6 +29,6 @@ pub extern "C" fn reine_activation(
     mem[0] = i as u8;
     ReineRetour {
         action: ReineAction::RecupererFourmi,
-        memoire: mem,
+        arg: 0,
     }
 }

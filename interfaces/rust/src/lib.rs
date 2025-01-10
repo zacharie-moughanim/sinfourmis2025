@@ -26,9 +26,9 @@ pub enum FourmiAction {
 #[derive(Debug, Clone, Copy)]
 pub enum ReineAction {
     CreerFourmi,
-    EnvouerFourmi,
+    EnvoyerFourmi,
     RecupererFourmi,
-    AmelioreStockate,
+    AmelioreStockage,
     AmelioreProduction,
     AmelioreEnvoi,
     AmelioreVitesseAmelioration,
@@ -39,14 +39,22 @@ pub enum ReineAction {
     Passe,
 }
 
-/// structure représentant une salle
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
+pub struct FourmisCompteur {
+    pub equipe: u32,
+    pub nombre: u32,
+}
+
+/// structure représentant une salle
+#[repr(C)]
+#[derive(Debug, Clone)]
 pub struct Salle {
     pub salle_type: SalleType,
     pub pheromone: u8,
-    /// nombre de salles voisines
     pub degre: i32,
+    pub taille_liste: usize,
+    pub compteurs_fourmis: *const FourmisCompteur,
 }
 
 /// structure représentant l'état d'une fourmi
