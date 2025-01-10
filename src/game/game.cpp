@@ -129,7 +129,8 @@ void Game::fourmi_action(Ant *ant) {
                 ant->get_current_node()->get_edge(ant_result.arg)->attack(ant->get_attack()));
             break;
         default:
-            throw std::runtime_error("Invalid action");
+			std::cerr << "Invalid action: " << ant_result.action << std::endl;
+            exit(4);
             break;
     }
 }
@@ -223,7 +224,8 @@ void Game::queen_action(Queen *queen, std::vector<std::unique_ptr<Ant>> &ants) {
             }
             break;
         default:
-            throw std::runtime_error("Invalid action");
+            std::cerr << "Invalid action: " << result.action << std::endl;
+			exit(4);
             break;
     }
 }
