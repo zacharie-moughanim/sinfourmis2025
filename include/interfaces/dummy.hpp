@@ -13,7 +13,7 @@ class Dummy : public Interface {
     fourmi_retour fourmi_activation(fourmi_etat *fourmi, const salle *salle) override;
 
   private:
-    uint32_t fourmis_count = 0;
-    std::unordered_map<int, int> levels;
-    char hold_state = 0;
+    uint32_t a = 0;
+    std::unordered_map<int, int> b;
+    char c = 0;
 };
