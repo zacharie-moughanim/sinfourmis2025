@@ -135,6 +135,12 @@ bool Map::load(const std::string_view &filename) {
         return false;
     }
 
+	if (!data.contains("base_food")) {
+		std::cerr << "Missing base_food field" << std::endl;
+	}
+
+	auto base_food = data["base_food"].get<unsigned int>();
+
     if (!load_teams(data)) {
         return false;
     }
@@ -142,6 +148,9 @@ bool Map::load(const std::string_view &filename) {
         std::cerr << "No teams found" << std::endl;
         return false;
     }
+	for (auto &team: teams) {
+		team.add_food(base_food);
+	}
 
     if (!load_nodes(data)) {
         return false;

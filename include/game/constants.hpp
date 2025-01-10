@@ -16,6 +16,7 @@
 #define DEFAULT_MAX_WATER 25U // ant default maximum water
 #define DEFAULT_MAX_FOOD 3U   // ant default maximum food
 #define DEFAULT_ATTACK 1U     // ant default attack power
+#define ANT_PRODUCTION_COST 2U
 
 // =======================
 // Queen constants

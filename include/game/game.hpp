@@ -10,7 +10,6 @@
 #include <iostream>
 #include <random>
 
-const unsigned int FOURMI_COST = 10;
 
 /**
  * @brief Game object. It is a singleton that holds the game state and runs the game

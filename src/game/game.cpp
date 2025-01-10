@@ -179,7 +179,7 @@ void Game::queen_action(Queen *queen, std::vector<std::unique_ptr<Ant>> &ants) {
             break;
         case reine_action::CREER_FOURMI:
             {
-                int nb_fourmis = queen->get_food() / (result.arg * FOURMI_COST);
+                int nb_fourmis = queen->get_food() / (result.arg * ANT_PRODUCTION_COST);
                 if (nb_fourmis > 0) {
                     int i;
                     for (i = 0; i < nb_fourmis && queen->create_ant(); i++) {

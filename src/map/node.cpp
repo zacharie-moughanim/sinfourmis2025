@@ -38,7 +38,7 @@ salle Node::as_salle() const {
 }
 
 void Node::add_ant(Ant *ant) {
-    ants.at(ant->get_team_id()).push_back(ant);
+    ants[ant->get_team_id()].push_back(ant);
 }
 
 void Node::remove_ant(Ant *ant) {
