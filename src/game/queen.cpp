@@ -88,7 +88,7 @@ bool Queen::upgrade(Stat type) {
     current_ants_upgrade = type;
     std::cout << "Queen " << team->get_id() << " upgrade " << (unsigned int)type << std::endl;
     if (type == Stat::WATER) {
-        stats[(unsigned int)type] += 10;
+        stats[(unsigned int)type] += 5;
     } else {
         stats[(unsigned int)type]++;
     }

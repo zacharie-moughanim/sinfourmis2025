@@ -100,7 +100,6 @@ void Game::fourmi_action(Ant *ant) {
                 }
             }
             break;
-        // TODO: fix digging
         case fourmi_action::COMMENCE_CONSTRUCTION:
             if (ant->get_action_state() != AntActionState::NONE) {
                 ant->set_result(-1);
