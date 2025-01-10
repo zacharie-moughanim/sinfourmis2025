@@ -14,8 +14,8 @@ edge_groups(const Edge &edge) {
 
 std::unordered_map<unsigned int, unsigned int> node_groups(const Node &node) {
     std::unordered_map<unsigned int, unsigned int> groups;
-    for (auto ant : node.get_ants()) {
-        groups[ant->get_team_id()]++;
+    for (const auto &ant : node.get_ants()) {
+        groups[ant.first] = ant.second.size();
     }
     return groups;
 }

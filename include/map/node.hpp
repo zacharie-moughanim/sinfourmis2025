@@ -98,16 +98,8 @@ class Node {
         return edges;
     }
 
-    std::vector<Ant *> &get_ants() const {
-        size_t size = 0;
-        for (auto &team_ants : ants) {
-            size += team_ants.second.size();
-        }
-        std::vector<Ant *> *ants_full = new std::vector<Ant *>(size);
-        for (auto &team_ants : ants) {
-            ants_full->insert(ants_full->end(), team_ants.second.begin(), team_ants.second.end());
-        }
-        return *ants_full;
+    const std::map<unsigned int, std::vector<Ant *>> &get_ants() const {
+        return ants;
     }
 
     std::vector<Ant *> &get_team_ants(unsigned int team) {

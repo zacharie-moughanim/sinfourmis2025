@@ -418,8 +418,10 @@ void Debugger::list_ants_in(const Map &map, const std::vector<std::unique_ptr<An
         }
         const auto &node = nodeit->second;
         std::cout << "== Ants in node " << node.get_id() << " ==\n";
-        for (const auto &ant : node.get_ants()) {
-            std::cout << "Ant (" << ant->get_team_id() << ") :" << ant->get_id() << "\n";
+        for (const auto &group : node.get_ants()) {
+			for (auto ant : group.second) {
+            	std::cout << "Ant (" << ant->get_team_id() << ") :" << ant->get_id() << "\n";
+			}
         }
     } else if (type == "edge") {
         auto edge = map.get_edge(uid1, uid2);

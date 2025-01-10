@@ -33,16 +33,18 @@ void to_json(json &j, const Edge &edge) {
 void Animation::write_edges_departure_groups(const Node &node, const Edge *edge,
                                              json &json_edge) const {
     std::map<unsigned int, unsigned int> departures;
-    for (auto ant : node.get_ants()) {
-        if (ant->get_action_state() == AntActionState::MOVING && ant->get_progress() == 0 &&
-            ant->get_current_edge() == edge) {
-            auto it = departures.find(ant->get_team_id());
-            if (it == departures.end()) {
-                departures[ant->get_team_id()] = 1;
-            } else {
-                departures[ant->get_team_id()]++;
-            }
-        }
+    for (const auto &ant_group : node.get_ants()) {
+		for (auto ant: ant_group.second) {
+			if (ant->get_action_state() == AntActionState::MOVING && ant->get_progress() == 0 &&
+				ant->get_current_edge() == edge) {
+				auto it = departures.find(ant->get_team_id());
+				if (it == departures.end()) {
+					departures[ant->get_team_id()] = 1;
+				} else {
+					departures[ant->get_team_id()]++;
+				}
+			}
+		}
     }
     if (!departures.empty()) {
         if (!json_edge.contains("groups")) {
