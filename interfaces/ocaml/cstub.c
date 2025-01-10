@@ -200,6 +200,7 @@ value salle_to_val(const salle *salle) {
         Store_field(cons, 1, compteurs);
         compteurs = cons;
     }
+    Store_field(res, 3, compteurs);
 
     CAMLreturn(res);
 }
