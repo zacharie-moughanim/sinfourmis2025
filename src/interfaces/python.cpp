@@ -11,12 +11,28 @@
 #include <iostream>
 #include <sys/types.h>
 
+/// Converts a fourmis_compteur struct to a PyObject
+PyObject *fourmis_compteur_to_po(const fourmis_compteur *compteur) {
+    PyObject *py_compteur = PyDict_New();
+    PyDict_SetItemString(py_compteur, "equipe", PyLong_FromLong(compteur->equipe));
+    PyDict_SetItemString(py_compteur, "nombre", PyLong_FromLong(compteur->nombre));
+
+    return py_compteur;
+}
+
 /// Converts a salle struct to a PyObject
 PyObject *salle_to_po(const salle *s) {
     PyObject *py_salle = PyDict_New();
     PyDict_SetItemString(py_salle, "type", PyLong_FromLong(s->type));
     PyDict_SetItemString(py_salle, "pheromone", PyLong_FromLong(s->pheromone));
     PyDict_SetItemString(py_salle, "degre", PyLong_FromLong(s->degre));
+
+    PyObject *py_compteurs = PyList_New(s->taille_liste);
+    for (size_t i = 0; i < s->taille_liste; i++) {
+        PyList_SetItem(py_compteurs, i, fourmis_compteur_to_po(&s->compteurs_fourmis[i]));
+    }
+    PyDict_SetItemString(py_compteurs, "compteurs_fourmis", py_compteurs);
+    Py_DECREF(py_compteurs);
 
     return py_salle;
 }
@@ -78,10 +94,10 @@ reine_retour po_to_reine_retour(PyObject *po) {
     PyObject *py_action = PyDict_GetItemString(po, "action");
     PyObject *py_arg = PyDict_GetItemString(po, "arg");
 
-	if (py_action == nullptr || py_arg == nullptr) {
-		std::cerr << "Reine retour is expected to have action and arg fields" << std::endl;
-		exit(4);
-	}
+    if (py_action == nullptr || py_arg == nullptr) {
+        std::cerr << "Reine retour is expected to have action and arg fields" << std::endl;
+        exit(4);
+    }
 
     return {
         .action = (reine_action)PyLong_AsLong(py_action),
@@ -93,19 +109,21 @@ reine_retour po_to_reine_retour(PyObject *po) {
 fourmi_retour po_to_fourmi_retour(PyObject *po) {
     PyObject *py_action = PyDict_GetItemString(po, "action");
     PyObject *py_arg = PyDict_GetItemString(po, "arg");
-	PyObject *py_depose_pheromone = PyDict_GetItemString(po, "depose_pheromone");
-	PyObject *py_pheromone = PyDict_GetItemString(po, "pheromone");
+    PyObject *py_depose_pheromone = PyDict_GetItemString(po, "depose_pheromone");
+    PyObject *py_pheromone = PyDict_GetItemString(po, "pheromone");
 
-	if (py_action == nullptr || py_arg == nullptr || py_depose_pheromone == nullptr || py_pheromone == nullptr) {
-		std::cerr << "Fourmi retour is expected to have action, arg, depose_pheromone and pheromone fields" << std::endl;
-		exit(4);
-	}
+    if (py_action == nullptr || py_arg == nullptr || py_depose_pheromone == nullptr ||
+        py_pheromone == nullptr) {
+        std::cerr << "Fourmi retour is expected to have action, arg, depose_pheromone and "
+                     "pheromone fields"
+                  << std::endl;
+        exit(4);
+    }
 
     return {.action = (fourmi_action)PyLong_AsLong(py_action),
             .arg = (int32_t)PyLong_AsLong(py_arg),
             .depose_pheromone = PyObject_IsTrue(py_depose_pheromone) == 1,
-            .pheromone = (uint8_t)PyLong_AsLong(py_pheromone)
-	};
+            .pheromone = (uint8_t)PyLong_AsLong(py_pheromone)};
 }
 
 bool PythonInterface::load(std::string_view path) {
