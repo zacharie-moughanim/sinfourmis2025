@@ -100,7 +100,6 @@ void Game::fourmi_action(Ant *ant) {
                 }
             }
             break;
-        // TODO: fix digging
         case fourmi_action::COMMENCE_CONSTRUCTION:
             if (ant->get_action_state() != AntActionState::NONE) {
                 ant->set_result(-1);
@@ -134,7 +133,7 @@ void Game::fourmi_action(Ant *ant) {
                 ant->get_current_node()->get_edge(ant_result.arg)->attack(ant->get_attack()));
             break;
         default:
-			std::cerr << "Invalid action: " << ant_result.action << std::endl;
+            std::cerr << "Invalid action: " << ant_result.action << std::endl;
             exit(4);
             break;
     }
@@ -241,7 +240,7 @@ void Game::queen_action(Queen *queen, std::vector<std::unique_ptr<Ant>> &ants) {
             break;
         default:
             std::cerr << "Invalid action: " << result.action << std::endl;
-			exit(4);
+            exit(4);
             break;
     }
 }
@@ -295,7 +294,7 @@ void Game::run(unsigned int duration, unsigned int seed, bool flush, bool debug,
     for (auto &team : map.get_teams()) {
         std::cout << "Team " << team.get_id() << " score: " << team.get_score() << std::endl;
     }
-	if (!debugger.exit()) {
-    	animation.flush();
-	}
+    if (!debugger.exit()) {
+        animation.flush();
+    }
 }
