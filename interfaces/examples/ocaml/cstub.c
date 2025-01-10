@@ -16,16 +16,14 @@ fourmi_action val_to_fourmi_action(value val) {
         case 1:
             CAMLreturn(RAMASSE_NOURRITURE);
         case 2:
-            CAMLreturn(DEPOSE_PHEROMONE);
-        case 3:
             CAMLreturn(COMMENCE_CONSTRUCTION);
-        case 4:
+        case 3:
             CAMLreturn(TERMINE_CONSTRUCTION);
-        case 5:
+        case 4:
             CAMLreturn(ATTAQUE);
-        case 6:
+        case 5:
             CAMLreturn(ATTAQUE_TUNNEL);
-        case 7:
+        case 6:
             CAMLreturn(FOURMI_PASSE);
         default:
             fprintf(stderr,
@@ -107,7 +105,7 @@ value fourmi_etat_to_val(const fourmi_etat *etat) {
     eau = Val_int(etat->eau);
     Store_field(res, 3, result);
 
-    nourriture = Val_int(etat->nouriture);
+    nourriture = Val_int(etat->nourriture);
     Store_field(res, 4, nourriture);
 
     CAMLreturn(res);
@@ -157,7 +155,7 @@ value reine_etat_to_val(const reine_etat *etat) {
 /// Converts a salle struct to a caml value
 value salle_to_val(const salle *salle) {
     CAMLparam0();
-    CAMLlocal4(res, type, pheromone, degre);
+    CAMLlocal5(res, type, pheromone, degre, compteurs);
     res = caml_alloc(3, 0);
 
     type = Val_int(salle->type);
@@ -168,6 +166,18 @@ value salle_to_val(const salle *salle) {
 
     degre = Val_int(salle->degre);
     Store_field(res, 2, degre);
+
+    compteurs = Val_emptylist;
+    for (size_t i = 0; i < salle->taille_liste; i++) {
+        CAMLlocal2(cons, pair);
+        cons = caml_alloc(2, 0);
+        pair = caml_alloc(2, 0);
+        Store_field(pair, 0, Val_int(salle->compteurs_fourmis[i].equipe));
+        Store_field(pair, 1, Val_int(salle->compteurs_fourmis[i].nombre));
+        Store_field(cons, 0, pair);
+        Store_field(cons, 1, compteurs);
+        compteurs = cons;
+    }
 
     CAMLreturn(res);
 }

@@ -30,7 +30,8 @@ type reine_action =
 type salle = {
   salle_type : salle_type;
   pheromone : int;
-  degre : int
+  degre : int;
+  compteurs_fourmis : (int * int) list
 }
 
 type fourmi_etat = {
@@ -62,7 +63,7 @@ type reine_etat = {
 
 type reine_retour = {
   action : reine_action;
-  arg : int
+arg : int
 }
 
 let register_functions

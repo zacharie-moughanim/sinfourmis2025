@@ -61,7 +61,7 @@ typedef struct salle {
 
     /// tableau de taille `taille_liste`, indiquant pour chaque équipe le nombre de fourmis
     /// présentes dans la salle
-    fourmis_compteur *compteurs_fourmis;
+    fourmis_compteur *const compteurs_fourmis;
 } salle;
 
 /// structure représentant l'état d'une fourmi
