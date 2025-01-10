@@ -50,10 +50,12 @@ void Animation::write_edges_departure_groups(const Node &node, const Edge *edge,
         }
         for (auto [team, qt] : departures) {
             float length = EDGE_CROSS_SPEED / edge->get_length();
+			float start = 0;
             if (edge->get_node2()->get_id() == node.get_id()) {
                 length = 1.f - EDGE_CROSS_SPEED / edge->get_length();
+				start = 1;
             }
-            json_edge["groups"].push_back(AntGroupData{team, qt, 0, length});
+            json_edge["groups"].push_back(AntGroupData{team, qt, start, length});
         }
     }
 }
