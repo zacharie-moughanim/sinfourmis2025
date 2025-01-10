@@ -235,8 +235,6 @@ void Game::queen_action(Queen *queen, std::vector<std::unique_ptr<Ant>> &ants) {
                     }
                 }
                 queen->set_result(gathered);
-                queen->waiting_upgrade +=
-                    Queen::queen_upgrade_costs[(uint32_t)Queen::QueenStat::PRODUCTION_DELAY];
             }
             break;
         default:
