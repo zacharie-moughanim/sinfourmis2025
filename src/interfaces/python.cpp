@@ -78,6 +78,11 @@ reine_retour po_to_reine_retour(PyObject *po) {
     PyObject *py_action = PyDict_GetItemString(po, "action");
     PyObject *py_arg = PyDict_GetItemString(po, "arg");
 
+	if (py_action == nullptr || py_arg == nullptr) {
+		std::cerr << "Reine retour is expected to have action and arg fields" << std::endl;
+		exit(4);
+	}
+
     return {
         .action = (reine_action)PyLong_AsLong(py_action),
         .arg = (int32_t)PyLong_AsLong(py_arg),
@@ -88,12 +93,19 @@ reine_retour po_to_reine_retour(PyObject *po) {
 fourmi_retour po_to_fourmi_retour(PyObject *po) {
     PyObject *py_action = PyDict_GetItemString(po, "action");
     PyObject *py_arg = PyDict_GetItemString(po, "arg");
+	PyObject *py_depose_pheromone = PyDict_GetItemString(po, "depose_pheromone");
+	PyObject *py_pheromone = PyDict_GetItemString(po, "pheromone");
 
-    // TODO: Complete api
+	if (py_action == nullptr || py_arg == nullptr || py_depose_pheromone == nullptr || py_pheromone == nullptr) {
+		std::cerr << "Fourmi retour is expected to have action, arg, depose_pheromone and pheromone fields" << std::endl;
+		exit(4);
+	}
+
     return {.action = (fourmi_action)PyLong_AsLong(py_action),
             .arg = (int32_t)PyLong_AsLong(py_arg),
-            .depose_pheromone = false,
-            .pheromone = 0};
+            .depose_pheromone = PyObject_IsTrue(py_depose_pheromone) == 1,
+            .pheromone = (uint8_t)PyLong_AsLong(py_pheromone)
+	};
 }
 
 bool PythonInterface::load(std::string_view path) {
