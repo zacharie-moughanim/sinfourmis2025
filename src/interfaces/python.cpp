@@ -164,6 +164,11 @@ reine_retour PythonInterface::reine_activation(fourmi_etat fourmis[], const size
 
     // Calls reine_activation and converts result back
     PyObject *pResult = PyObject_CallObject(pReineActivation, pArgs);
+	if (pResult == NULL) {
+		PyErr_Print();
+		std::cerr << "Error in reine_activation" << std::endl;
+		exit(4);
+	}
     reine_retour retour = po_to_reine_retour(pResult);
 
     for (size_t i = 0; i < nb_fourmis; i++) {
@@ -200,6 +205,11 @@ fourmi_retour PythonInterface::fourmi_activation(fourmi_etat *etat, const salle 
 
     // Calls fourmi_activation and converts result back
     PyObject *pResult = PyObject_CallObject(fourmi_fn, pArgs);
+	if (pResult == NULL) {
+		PyErr_Print();
+		std::cerr << "Error in fourmi_activation" << std::endl;
+		exit(4);
+	}
     fourmi_retour result = po_to_fourmi_retour(pResult);
 
     Py_XDECREF(pArgs);
