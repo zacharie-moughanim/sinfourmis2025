@@ -3,6 +3,7 @@
 #include <caml/callback.h>
 #include <caml/memory.h>
 #include <caml/mlvalues.h>
+#include <stdbool.h>
 #include <string.h>
 
 #include "sinfourmis.h"
@@ -211,7 +212,7 @@ fourmi_retour fourmi_activation(fourmi_etat *etat, const salle *salle) {
 
     result = caml_callback2(*_fourmi_activation, val_etat, val_salle);
     assert(Tag_val(result) == 0); // 0 is the tag of a record
-    assert(Wosize_val(result) == 2);
+    assert(Wosize_val(result) == 3);
 
     // write back etat->memoire because it is currently stored in val_etat
     for (size_t i = 0; i < 256; i++) {

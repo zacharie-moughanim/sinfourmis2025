@@ -63,7 +63,7 @@ type reine_etat = {
 
 type reine_retour = {
   action : reine_action;
-arg : int
+  arg : int
 }
 
 let register_functions
