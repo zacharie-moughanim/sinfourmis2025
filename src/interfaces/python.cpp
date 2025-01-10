@@ -51,7 +51,7 @@ PyObject *fourmi_etat_to_po(const fourmi_etat *etat) {
         PyList_SetItem(py_mem, i, PyLong_FromLong(etat->memoire[i]));
     }
     PyDict_SetItemString(py_etat, "memoire", py_mem);
-
+	Py_DECREF(py_mem);
     return py_etat;
 }
 
@@ -104,7 +104,7 @@ bool PythonInterface::load(std::string_view path) {
     gpy = Py_NewInterpreter();
 
     pName = PyUnicode_DecodeFSDefault(path.data());
-    if (pName == NULL) {
+    if (pName == nullptr) {
         PyErr_Print();
         std::cerr << "Failed to decode path" << std::endl;
         Py_XDECREF(pName);
@@ -114,7 +114,7 @@ bool PythonInterface::load(std::string_view path) {
     pModule = PyImport_Import(pName);
     Py_DECREF(pName);
 
-    if (pModule != NULL) {
+    if (pModule != nullptr) {
         pReineActivation = PyObject_GetAttrString(pModule, "reine_activation");
 
         if (!pReineActivation || !PyCallable_Check(pReineActivation)) {
@@ -147,7 +147,7 @@ reine_retour PythonInterface::reine_activation(fourmi_etat fourmis[], const size
     PyObject *pArgs = PyTuple_New(3);
     PyObject *pFourmis = PyList_New(nb_fourmis);
     for (size_t i = 0; i < nb_fourmis; i++) {
-        PyList_SetItem(pFourmis, i, fourmi_etat_to_po(&fourmis[i]));
+		PyList_SetItem(pFourmis, i, fourmi_etat_to_po(&fourmis[i]));
     }
     PyTuple_SetItem(pArgs, 0, pFourmis);
 
@@ -159,7 +159,7 @@ reine_retour PythonInterface::reine_activation(fourmi_etat fourmis[], const size
 
     // Calls reine_activation and converts result back
     PyObject *pResult = PyObject_CallObject(pReineActivation, pArgs);
-	if (pResult == NULL) {
+	if (pResult == nullptr) {
 		PyErr_Print();
 		std::cerr << "Error in reine_activation" << std::endl;
 		exit(4);
@@ -169,7 +169,7 @@ reine_retour PythonInterface::reine_activation(fourmi_etat fourmis[], const size
     for (size_t i = 0; i < nb_fourmis; i++) {
         po_to_fourmi_etat(PyList_GetItem(pFourmis, i), &fourmis[i]);
     }
-
+	
     Py_XDECREF(pArgs);
     Py_XDECREF(pResult);
     return retour;
@@ -209,6 +209,7 @@ fourmi_retour PythonInterface::fourmi_activation(fourmi_etat *etat, const salle 
 	po_to_fourmi_etat(pEtat, etat);
 	
 
+	
     Py_XDECREF(pArgs);
     Py_XDECREF(pResult);
     Py_DECREF(fourmi_fn);

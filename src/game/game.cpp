@@ -279,5 +279,7 @@ void Game::run(unsigned int duration, unsigned int seed, bool flush, bool debug,
     for (auto &team : map.get_teams()) {
         std::cout << "Team " << team.get_id() << " score: " << team.get_score() << std::endl;
     }
-    animation.flush();
+	if (!debugger.exit()) {
+    	animation.flush();
+	}
 }

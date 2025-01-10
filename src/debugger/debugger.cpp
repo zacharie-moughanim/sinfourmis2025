@@ -112,7 +112,12 @@ void Debugger::debug(unsigned int turn, const Map &map,
     while (m_debug && skip == 0 && !m_exit) {
         std::cout << turn << "> ";
         std::getline(std::cin, command);
-        auto cmd = parse_command(command);
+		DebugCommand cmd = DebugCommand::exit();
+		if (!std::cin.eof()) {
+        	cmd = parse_command(command);
+		} else {
+			std::cout << std::endl;
+		}
         using enum DebugCommand::Type;
         switch (cmd.type) {
             case EXIT:

@@ -58,7 +58,6 @@ def fourmi_activation(fourmi_etat, salle):
 nb_sent = 0
 def reine_activation(fourmis, reine_etat, salle):   
     global nb_sent
-    print("Sent: ", nb_sent) 
     if nb_sent > 2:
         return reine_retour(ReineAction.REINE_PASSE, 0)
     
