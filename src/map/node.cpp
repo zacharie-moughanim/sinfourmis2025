@@ -12,15 +12,37 @@ void Node::remove_edge(const std::shared_ptr<Edge> &edge) {
 }
 
 salle Node::as_salle() const {
-    return {.type = type, .pheromone = pheromone, .degre = (int32_t)edges.size()};
+    size_t count = 0;
+    for (const auto &team_ants : ants) {
+        if (team_ants.second.size() > 0) {
+            count++;
+        }
+    }
+    fourmis_compteur *compteurs_fourmis = new fourmis_compteur[count];
+    count = 0;
+    for (const auto &team_ants : ants) {
+        if (team_ants.second.size() > 0) {
+            compteurs_fourmis[count].equipe = team_ants.first;
+            compteurs_fourmis[count].nombre = team_ants.second.size();
+            count++;
+        }
+    }
+    return {
+        .type = type,
+        .pheromone = pheromone,
+        .degre = (int32_t)edges.size(),
+        .nourriture = food,
+        .taille_liste = count,
+        .compteurs_fourmis = compteurs_fourmis,
+    };
 }
 
 void Node::add_ant(Ant *ant) {
-    ants.push_back(ant);
+    ants.at(ant->get_team_id()).push_back(ant);
 }
 
 void Node::remove_ant(Ant *ant) {
-    std::erase(ants, ant);
+    std::erase(ants.at(ant->get_team_id()), ant);
 }
 
 Edge *Node::get_edge(unsigned int edge_id) const {

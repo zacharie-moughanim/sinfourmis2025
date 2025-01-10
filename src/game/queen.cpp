@@ -31,7 +31,7 @@ std::ostream &operator<<(std::ostream &os, const Queen::QueenStat &stat) {
         case Queen::QueenStat::MAX_STORED_ANTS:
             os << "MAX_STORED_ANTS";
             break;
-        case Queen::QueenStat::PRODUCED_ANTS:
+        case Queen::QueenStat::PRODUCTION_DELAY:
             os << "PRODUCED_ANTS";
             break;
         case Queen::QueenStat::UPGRADE_DURATION:
@@ -87,7 +87,11 @@ bool Queen::upgrade(Stat type) {
 	upgrading = IsUpgrading::ANTS;
 	current_ants_upgrade = type;
     std::cout << "Queen " << team->get_id() << " upgrade " << (unsigned int)type << std::endl;
-    stats[(unsigned int)type]++;
+    if (type == Stat::WATER) {
+        stats[(unsigned int)type] += 10;
+    } else {
+        stats[(unsigned int)type]++;
+    }
     waiting_upgrade = get_queen_stat(QueenStat::UPGRADE_DURATION);
     return true;
 }
@@ -153,7 +157,7 @@ reine_etat Queen::as_reine_etat() const {
     etat.max_degats = get_stat(Stat::ATTACK);
     etat.duree_amelioration = get_queen_stat(QueenStat::UPGRADE_DURATION);
     etat.max_stockage = get_queen_stat(QueenStat::MAX_STORED_ANTS);
-    etat.max_production = get_queen_stat(QueenStat::PRODUCED_ANTS);
+    etat.max_production = get_queen_stat(QueenStat::PRODUCTION_DELAY);
     etat.max_envoi = get_queen_stat(QueenStat::ANTS_SENDING);
     return etat;
 }

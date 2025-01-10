@@ -1,13 +1,12 @@
 #pragma once
 
-#include "game/constants.hpp"
+#include "game/ant.hpp"
 #include "map/edge.hpp"
-#include "nlohmann/json.hpp"
 #include "sinfourmis.h"
 #include "utils/salle_parser.hpp"
+#include <cstddef>
 #include <iostream>
 #include <memory>
-#include <unordered_set>
 
 using json = nlohmann::json;
 
@@ -99,12 +98,20 @@ class Node {
         return edges;
     }
 
-    const std::vector<Ant *> &get_ants() const {
-        return ants;
+    std::vector<Ant *> &get_ants() const {
+        size_t size = 0;
+        for (auto &team_ants : ants) {
+            size += team_ants.second.size();
+        }
+        std::vector<Ant *> *ants_full = new std::vector<Ant *>(size);
+        for (auto &team_ants : ants) {
+            ants_full->insert(ants_full->end(), team_ants.second.begin(), team_ants.second.end());
+        }
+        return *ants_full;
     }
 
-    std::vector<Ant *> &get_ants() {
-        return ants;
+    std::vector<Ant *> &get_team_ants(unsigned int team) {
+        return ants.at(team);
     }
 
     salle_type get_type() const {
@@ -173,7 +180,9 @@ class Node {
     unsigned int team = 0;
 
     std::vector<std::shared_ptr<Edge>> edges;
-    std::vector<Ant *> ants;
+
+    /// ants[team_id] is the ants present in this Node belonging to the given team
+    std::map<unsigned int, std::vector<Ant *>> ants;
 };
 
 std::ostream &operator<<(std::ostream &os, const salle_type &type);

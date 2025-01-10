@@ -1,4 +1,6 @@
 #include "game/game.hpp"
+#include "game/queen.hpp"
+#include <cstdint>
 
 void Game::set_map(Map &&map) {
     this->map = std::move(map);
@@ -40,6 +42,7 @@ void Game::fourmi_action(Ant *ant) {
     auto &etat = ant->as_fourmi_etat();
     auto room = ant->get_current_node()->as_salle();
     auto ant_result = interfaces[ant->get_team_id()]->fourmi_activation(&etat, &room);
+    free(room.compteurs_fourmis);
     if (ant_result.depose_pheromone) {
         ant->get_current_node()->set_pheromone(ant_result.pheromone);
     }
@@ -86,16 +89,18 @@ void Game::fourmi_action(Ant *ant) {
                 if (ant->get_team_id() == team_id_attacked) {
                     std::cout << "Warning: self-attack on team" << ant->get_team_id() << std::endl;
                 }
-                int32_t result = 0;
-                for (auto &node_ant : ant->get_current_node()->get_ants()) {
-                    if (node_ant->get_team_id() == team_id_attacked) {
-                        result++;
-                        node_ant->apply_damages((uint8_t)node_ant->get_attack());
-                    }
+                if (ant->get_current_node()->get_team_ants(team_id_attacked).size() > 0) {
+                    ant->get_current_node()
+                        ->get_team_ants(team_id_attacked)
+                        .back()
+                        ->apply_damages(ant->get_attack());
+                    ant->set_result(1);
+                } else {
+                    ant->set_result(0);
                 }
-                ant->set_result(result);
             }
             break;
+        // TODO: fix digging
         case fourmi_action::COMMENCE_CONSTRUCTION:
             if (ant->get_action_state() != AntActionState::NONE) {
                 ant->set_result(-1);
@@ -145,6 +150,7 @@ void Game::queen_action(Queen *queen, std::vector<std::unique_ptr<Ant>> &ants) {
     auto salle = queen->get_current_node()->as_salle();
     auto result = interfaces[queen->get_team_id()]->reine_activation(
         memories.data(), memories.size(), &etat, &salle);
+    free(salle.compteurs_fourmis);
     switch (result.action) {
         case reine_action::REINE_PASSE:
             break;
@@ -170,15 +176,21 @@ void Game::queen_action(Queen *queen, std::vector<std::unique_ptr<Ant>> &ants) {
             queen->set_result(!queen->upgrade_queen(Queen::QueenStat::ANTS_SENDING));
             break;
         case reine_action::AMELIORE_PRODUCTION:
-            queen->set_result(!queen->upgrade_queen(Queen::QueenStat::PRODUCED_ANTS));
+            queen->set_result(!queen->upgrade_queen(Queen::QueenStat::PRODUCTION_DELAY));
             break;
         case reine_action::CREER_FOURMI:
             {
-                unsigned int created = 0;
-                for (int i = 0; i < result.arg && queen->create_ant(); i++) {
-                    created++;
+                int nb_fourmis = queen->team->get_food() / (result.arg * FOURMI_COST);
+                if (nb_fourmis > 0) {
+                    int i;
+                    for (i = 0; i < nb_fourmis && queen->create_ant(); i++) {
+                    }
+                    queen->set_result(i);
+                } else {
+                    queen->set_result(0);
                 }
-                queen->set_result(created);
+                queen->waiting_upgrade +=
+                    Queen::queen_upgrade_costs[(uint32_t)Queen::QueenStat::PRODUCTION_DELAY];
             }
             break;
         case reine_action::ENVOYER_FOURMI:
@@ -197,6 +209,8 @@ void Game::queen_action(Queen *queen, std::vector<std::unique_ptr<Ant>> &ants) {
                     }
                 }
                 queen->set_result(sent);
+                queen->waiting_upgrade +=
+                    Queen::queen_upgrade_costs[(uint32_t)Queen::QueenStat::PRODUCTION_DELAY];
             }
             break;
         case reine_action::RECUPERER_FOURMI:
@@ -221,6 +235,8 @@ void Game::queen_action(Queen *queen, std::vector<std::unique_ptr<Ant>> &ants) {
                     }
                 }
                 queen->set_result(gathered);
+                queen->waiting_upgrade +=
+                    Queen::queen_upgrade_costs[(uint32_t)Queen::QueenStat::PRODUCTION_DELAY];
             }
             break;
         default:
@@ -250,7 +266,7 @@ void Game::run(unsigned int duration, unsigned int seed, bool flush, bool debug,
     }
     std::vector<std::unique_ptr<Ant>> ants;
 
-	debugger.debug(animation.game_turn(), map, ants, queens);
+    debugger.debug(animation.game_turn(), map, ants, queens);
     while (animation.game_turn() < duration && !debugger.exit()) {
 
         animation.start_frame();

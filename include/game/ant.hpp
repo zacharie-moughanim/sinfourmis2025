@@ -1,10 +1,11 @@
 #pragma once
 
-#include "game/constants.hpp"
 #include "game/queen.hpp"
+#include "map/edge.hpp"
 #include "map/node.hpp"
 #include "sinfourmis.h"
-#include <functional>
+
+class Edge;
 
 enum class AntActionState {
     NONE,
@@ -123,17 +124,17 @@ class Ant {
         return id;
     }
 
-	Queen *get_queen() const {
-		return queen;
-	}
+    Queen *get_queen() const {
+        return queen;
+    }
 
-	unsigned int get_max_water() const {
-		return max_water;
-	}
+    unsigned int get_max_water() const {
+        return max_water;
+    }
 
-	unsigned int get_max_food() const {
-		return max_food;
-	}
+    unsigned int get_max_food() const {
+        return max_food;
+    }
 
   private:
     Node *current_Node = nullptr;
