@@ -18,10 +18,16 @@ class Queen {
     enum class Stat : uint32_t { LIFE, WATER, FOOD, ATTACK };
     enum class QueenStat : uint32_t {
         MAX_STORED_ANTS,
-        PRODUCED_ANTS,
+        PRODUCTION_DELAY,
         UPGRADE_DURATION,
         ANTS_SENDING
     };
+
+    const static std::array<uint32_t, 4> upgrade_costs;
+    const static std::array<uint32_t, 4> queen_upgrade_costs;
+
+    Team *team;
+    unsigned int waiting_upgrade = 0;
 
     /**
      * @brief Signal the queen that a game turn passed
@@ -113,9 +119,7 @@ class Queen {
     friend std::ostream &operator<<(std::ostream &os, const Queen &queen);
 
   private:
-    Team *team;
     Node *current_node = nullptr;
-    unsigned int waiting_upgrade = 0;
     int32_t result = 0;
 
 	enum class IsUpgrading {
@@ -128,11 +132,9 @@ class Queen {
     std::array<uint32_t, 4> stats{DEFAULT_MAX_LIFE, DEFAULT_MAX_WATER, DEFAULT_MAX_FOOD,
                                   DEFAULT_ATTACK};
 
-    std::array<uint32_t, 4> queen_stats{QUEEN_DEFAULT_MAX_STORED_ANT, QUEEN_DEFAULT_PRODUCED_ANTS,
+    std::array<uint32_t, 4> queen_stats{QUEEN_DEFAULT_MAX_STORED_ANT,
+                                        QUEEN_DEFAULT_PRODUCTION_DELAY,
                                         QUEEN_DEFAULT_UPGRADE_DURATION, QUEEN_DEFAULT_SENT_ANTS};
-
-    const static std::array<uint32_t, 4> upgrade_costs;
-    const static std::array<uint32_t, 4> queen_upgrade_costs;
 
     std::vector<fourmi_etat> ants_memory;
 };
