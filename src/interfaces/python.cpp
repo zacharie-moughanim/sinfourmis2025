@@ -122,7 +122,7 @@ fourmi_retour po_to_fourmi_retour(PyObject *po) {
 
     return {.action = (fourmi_action)PyLong_AsLong(py_action),
             .arg = (int32_t)PyLong_AsLong(py_arg),
-            .depose_pheromone = PyObject_IsTrue(py_depose_pheromone) == 1,
+            .depose_pheromone = (pheromone_type)PyLong_AsLong(py_depose_pheromone),
             .pheromone = (uint8_t)PyLong_AsLong(py_pheromone)};
 }
 
@@ -165,7 +165,7 @@ bool PythonInterface::load(std::string_view path) {
 PythonInterface::~PythonInterface() {
     Py_XDECREF(pReineActivation);
     Py_XDECREF(pModule);
-
+	PyThreadState_Swap(NULL);
     Py_Finalize();
 }
 

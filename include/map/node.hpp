@@ -88,7 +88,7 @@ class Node {
     void regen_food();
 
     void set_pheromone(uint8_t pheromone, unsigned int team_id) {
-        this->pheromones.at(team_id) = pheromone;
+        this->pheromones[team_id] = pheromone;
     }
 
     unsigned int get_id() const {
@@ -158,6 +158,14 @@ class Node {
 		return pheromones;
 	}
 
+	unsigned int get_public_pheromone() const {
+		return public_pheromone;
+	}
+
+	void set_public_pheromone(unsigned int pheromone) {
+		public_pheromone = pheromone;
+	}
+
   private:
     void remove_edge(const std::shared_ptr<Edge> &edge);
 
@@ -166,6 +174,7 @@ class Node {
     float x = 0;
     float y = 0;
     std::unordered_map<unsigned int, uint8_t> pheromones;
+	unsigned int public_pheromone = 0;
 
     unsigned int food = 0;
     unsigned int regen = 0;

@@ -70,10 +70,28 @@ reine_action val_to_reine_action(value val) {
     }
 }
 
+pheromone_type val_to_pheromone_type(value val) {
+    CAMLparam1(val);
+    switch (Int_val(val)) {
+        case 0:
+            CAMLreturn(NO_PHEROMONE);
+        case 1:
+            CAMLreturn(PRIVE);
+        case 2:
+            CAMLreturn(PUBLIC);
+        default:
+            fprintf(stderr,
+                    "val_to_pheromone_type error: expected integer value between 0 and 2, got %d",
+                    Int_val(val));
+            CAMLreturn(NO_PHEROMONE);
+    }
+}
+
 /// Converts a caml value to a fourmi_retour struct
 fourmi_retour val_to_fourmi_retour(value val) {
     CAMLparam1(val);
-    fourmi_retour result = {val_to_fourmi_action(Field(val, 0)), Int_val(Field(val, 1))};
+    fourmi_retour result = {val_to_fourmi_action(Field(val, 0)), Int_val(Field(val, 1)),
+                            val_to_pheromone_type(Field(val, 2)), Int_val(Field(val, 3))};
     CAMLreturnT(fourmi_retour, result);
 }
 
@@ -123,8 +141,8 @@ value reine_etat_to_val(const reine_etat *etat) {
     nourriture = Val_int(etat->nourriture);
     Store_field(res, 0, nourriture);
 
-	team_id = Val_int(etat->team_id);
-	Store_field(res, 1, team_id);
+    team_id = Val_int(etat->team_id);
+    Store_field(res, 1, team_id);
 
     result = Val_int(etat->result);
     Store_field(res, 2, result);
@@ -215,7 +233,7 @@ fourmi_retour fourmi_activation(fourmi_etat *etat, const salle *salle) {
 
     result = caml_callback2(*_fourmi_activation, val_etat, val_salle);
     assert(Tag_val(result) == 0); // 0 is the tag of a record
-    assert(Wosize_val(result) == 3);
+    assert(Wosize_val(result) == 4);
 
     // write back etat->memoire because it is currently stored in val_etat
     for (size_t i = 0; i < 256; i++) {
