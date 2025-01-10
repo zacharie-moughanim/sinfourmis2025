@@ -75,9 +75,7 @@ json Animation::write_groups_animation(const Node &node, json &groups) const {
         if (it == groups_map.end()) {
             res.push_back(AntGroupData{group["team"], 0});
         } else {
-            if (it->second != group["qt"]) {
-                res.push_back(AntGroupData{group["team"], it->second});
-            }
+            res.push_back(AntGroupData{group["team"], it->second});
             groups_map.erase(it);
         }
     }
