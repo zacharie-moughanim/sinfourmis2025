@@ -5,21 +5,22 @@
 #include <dlfcn.h>
 #include <iostream>
 
-void SharedInterface::load(std::string_view path) {
+bool SharedInterface::load(std::string_view path) {
     gpath = path;
 
     ghandle = dlopen(path.data(), RTLD_LAZY);
     if (!ghandle) {
         std::cerr << "Error loading shared object " << path.data() << std::endl;
-        exit(1);
+        return false;
     }
 
     reine_fn = (reine_retour(*)(fourmi_etat *, const size_t, const reine_etat *,
                                 const salle *))dlsym(ghandle, "reine_activation");
     if (!reine_fn) {
         std::cerr << "Error loading reine_activation: " << dlerror() << std::endl;
-        exit(1);
+        return false;
     }
+	return true;
 }
 
 SharedInterface::~SharedInterface() {

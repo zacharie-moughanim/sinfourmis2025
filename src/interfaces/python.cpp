@@ -101,7 +101,7 @@ fourmi_retour po_to_fourmi_retour(PyObject *po) {
             .pheromone = 0};
 }
 
-void PythonInterface::load(std::string_view path) {
+bool PythonInterface::load(std::string_view path) {
     PyObject *pName;
 
     setenv("PYTHONPATH", ".", 1);
@@ -113,7 +113,7 @@ void PythonInterface::load(std::string_view path) {
         PyErr_Print();
         std::cerr << "Failed to decode path" << std::endl;
         Py_XDECREF(pName);
-        return;
+        return false;
     }
 
     pModule = PyImport_Import(pName);
@@ -127,12 +127,14 @@ void PythonInterface::load(std::string_view path) {
             if (PyErr_Occurred())
                 PyErr_Print();
             std::cerr << "Cannot find function reine_activation" << std::endl;
-            exit(1);
+            return false;
         }
     } else {
         PyErr_Print();
         std::cerr << "Failed to load " << path << std::endl;
+		return false;
     }
+	return true;
 }
 
 PythonInterface::~PythonInterface() {

@@ -132,7 +132,10 @@ int main(int argc, char **argv) {
             return 1;
 #endif
         }
-        interface->load(team);
+        if (!interface->load(team)) {
+			std::cerr << "Failed to load team file" << std::endl;
+			return 3;
+		}
         game.add_interface(team_id, interface);
         team_id++;
     }
