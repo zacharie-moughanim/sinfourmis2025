@@ -222,7 +222,7 @@ void Game::queen_action(Queen *queen, std::vector<std::unique_ptr<Ant>> &ants) {
                 auto node_ants = node->get_team_ants(queen->get_team_id());
                 for (auto it = node_ants.begin(); it != node_ants.end() && gathered < max_gathered;
                      it++) {
-                    if (!(*it)->alive()) {
+                    if (!(*it)->alive() || (*it)->get_action_state() != AntActionState::MOVING) {
                         continue;
                     }
                     if (queen->push_ant((*it)->as_fourmi_etat())) {
