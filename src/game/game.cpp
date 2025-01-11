@@ -186,7 +186,8 @@ void Game::queen_action(Queen *queen, std::vector<std::unique_ptr<Ant>> &ants) {
                     break;
                 }
 
-                int nb_fourmis = queen->get_food() / (result.arg * ANT_PRODUCTION_COST);
+                int max_ants = queen->get_food() / ANT_PRODUCTION_COST;
+				int nb_fourmis = std::min(max_ants, result.arg);
                 if (nb_fourmis > 0) {
                     int i;
                     for (i = 0; i < nb_fourmis && queen->create_ant(); i++) {
