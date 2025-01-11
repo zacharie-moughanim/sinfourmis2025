@@ -115,8 +115,6 @@ value fourmi_etat_to_val(const fourmi_etat *etat) {
     memoire = caml_alloc_shr(256, 0);
     for (size_t i = 0; i < 256; i++) {
         caml_initialize(&Field(memoire, i), Val_int(etat->memoire[i]));
-        // Field(memoire, i) = Val_int(etat->memoire[i]);
-        // Store_field(memoire, i, Val_int(etat->memoire[i]));
     }
     Store_field(res, 1, memoire);
 
