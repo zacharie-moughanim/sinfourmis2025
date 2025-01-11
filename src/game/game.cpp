@@ -42,7 +42,7 @@ void Game::fourmi_action(Ant *ant) {
     auto &etat = ant->as_fourmi_etat();
     auto room = ant->get_current_node()->as_salle(ant->get_team_id());
     auto ant_result = interfaces[ant->get_team_id()]->fourmi_activation(&etat, &room);
-    free(room.compteurs_fourmis);
+    delete[] room.compteurs_fourmis;
     if (ant_result.depose_pheromone == PRIVE) {
         ant->get_current_node()->set_pheromone(ant_result.pheromone, ant->get_team_id());
     } else if (ant_result.depose_pheromone == PUBLIC) {
@@ -151,7 +151,7 @@ void Game::queen_action(Queen *queen, std::vector<std::unique_ptr<Ant>> &ants) {
     auto salle = queen->get_current_node()->as_salle(queen->get_team_id());
     auto result = interfaces[queen->get_team_id()]->reine_activation(
         memories.data(), memories.size(), &etat, &salle);
-    free(salle.compteurs_fourmis);
+    delete[] salle.compteurs_fourmis;
     switch (result.action) {
         case reine_action::REINE_PASSE:
             break;
@@ -181,6 +181,11 @@ void Game::queen_action(Queen *queen, std::vector<std::unique_ptr<Ant>> &ants) {
             break;
         case reine_action::CREER_FOURMI:
             {
+                if (!result.arg) {
+                    queen->set_result(0);
+                    break;
+                }
+
                 int nb_fourmis = queen->get_food() / (result.arg * ANT_PRODUCTION_COST);
                 if (nb_fourmis > 0) {
                     int i;
