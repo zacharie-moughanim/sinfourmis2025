@@ -191,10 +191,12 @@ void Game::queen_action(Queen *queen, std::vector<std::unique_ptr<Ant>> &ants) {
                     int i;
                     for (i = 0; i < nb_fourmis && queen->create_ant(); i++) {
                     }
+					queen->remove_food(i * ANT_PRODUCTION_COST);
                     queen->set_result(i);
                 } else {
                     queen->set_result(0);
                 }
+				
                 queen->add_production_delay();
             }
             break;
