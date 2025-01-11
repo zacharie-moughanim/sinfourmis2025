@@ -74,16 +74,16 @@ pheromone_type val_to_pheromone_type(value val) {
     CAMLparam1(val);
     switch (Int_val(val)) {
         case 0:
-            CAMLreturn(NO_PHEROMONE);
+            CAMLreturnT(pheromone_type, NO_PHEROMONE);
         case 1:
-            CAMLreturn(PRIVE);
+            CAMLreturnT(pheromone_type, PRIVE);
         case 2:
-            CAMLreturn(PUBLIC);
+            CAMLreturnT(pheromone_type, PUBLIC);
         default:
             fprintf(stderr,
                     "val_to_pheromone_type error: expected integer value between 0 and 2, got %d",
                     Int_val(val));
-            CAMLreturn(NO_PHEROMONE);
+            CAMLreturnT(pheromone_type, NO_PHEROMONE);
     }
 }
 
@@ -112,9 +112,11 @@ value fourmi_etat_to_val(const fourmi_etat *etat) {
     vie = Val_int(etat->vie);
     Store_field(res, 0, vie);
 
-    memoire = caml_alloc(256, 0);
+    memoire = caml_alloc_shr(256, 0);
     for (size_t i = 0; i < 256; i++) {
-        Store_field(memoire, i, Val_int(etat->memoire[i]));
+        caml_initialize(&Field(memoire, i), Val_int(etat->memoire[i]));
+        // Field(memoire, i) = Val_int(etat->memoire[i]);
+        // Store_field(memoire, i, Val_int(etat->memoire[i]));
     }
     Store_field(res, 1, memoire);
 
@@ -178,7 +180,7 @@ value reine_etat_to_val(const reine_etat *etat) {
 value salle_to_val(const salle *salle) {
     CAMLparam0();
     CAMLlocal5(res, type, pheromone, degre, compteurs);
-    res = caml_alloc(3, 0);
+    res = caml_alloc(4, 0);
 
     type = Val_int(salle->type);
     Store_field(res, 0, type);
