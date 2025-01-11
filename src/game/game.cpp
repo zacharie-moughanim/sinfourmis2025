@@ -36,7 +36,7 @@ void Game::fourmi_action(Ant *ant) {
         return;
     }
     if (ant->get_action_state() == AntActionState::DIGGING) {
-        ant->dig();
+        ant->dig(ant->get_attack());
         // we can still perform other actions while digging
     }
     auto &etat = ant->as_fourmi_etat();
@@ -46,8 +46,8 @@ void Game::fourmi_action(Ant *ant) {
     if (ant_result.depose_pheromone == PRIVE) {
         ant->get_current_node()->set_pheromone(ant_result.pheromone, ant->get_team_id());
     } else if (ant_result.depose_pheromone == PUBLIC) {
-		ant->get_current_node()->set_public_pheromone(ant_result.pheromone);
-	}
+        ant->get_current_node()->set_public_pheromone(ant_result.pheromone);
+    }
     switch (ant_result.action) {
         case FOURMI_PASSE:
             ant->set_result(0);
