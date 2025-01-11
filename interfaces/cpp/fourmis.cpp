@@ -1,5 +1,5 @@
 #include "sinfourmis.h"
-#include <bits/stdc++.h>
+#include <iostream>
 
 typedef enum type_ouvrieres {
     BAT_ATTAQUE, // 0
@@ -27,9 +27,9 @@ type_ouvrieres_e int_to_type_fourmi(char n) {
             return BAT_NOU_CRS;
         break;
         default :
-            std::cerr << "Invalid fourmitype" << std::endl; 
-            1/0;
-            
+            std::cout << "Invalid fourmitype"; 
+            free(NULL);
+            return BAT_ATTAQUE;
     }
 }
 
